@@ -1,38 +1,69 @@
-import { useEffect } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { lazy, Suspense } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { Loader2 } from 'lucide-react'
+import { ProtectedRoute } from '@/guards/ProtectedRoute'
+import { RoleGuard } from '@/guards/RoleGuard'
 
-/**
- * App — top-level route shell.
- *
- * Each team member registers their page routes here under the appropriate path.
- * Wrap protected pages with <ProtectedRoute> and role-restricted pages with <RoleGuard>.
- *
- * TODO (module owners):
- *  - Auth team     : /login, /register, /forgot-password, /reset-password/:token
- *  - Stations team : /, /map, /stations/:id, /stations/add, /search
- *  - Reviews team  : (embedded in StationDetailPage)
- *  - Weather team  : (embedded in StationDetailPage)
- *  - Users/Admin   : /profile, /admin, /moderator
- */
-function App() {
-  useEffect(() => {
-    // TODO: silent re-auth on mount — dispatch refresh token thunk
-    // dispatch(refreshTokenThunk())
-  }, [])
+// Lazy-load page bundles for code splitting
+const StationMapPage      = lazy(() => import('@/pages/StationMapPage'))
+const StationDetailPage   = lazy(() => import('@/pages/StationDetailPage'))
+const ModerationQueuePage = lazy(() => import('@/pages/ModerationQueuePage'))
+const MyStationsPage      = lazy(() => import('@/pages/MyStationsPage'))
 
+function FullPageSpinner() {
   return (
-    <Routes>
-      {/* ── Public placeholder ─────────────────────────────── */}
-      <Route
-        path="*"
-        element={
-          <div style={{ fontFamily: 'sans-serif', padding: '2rem' }}>
-            <h1>🌞 SolarSpot</h1>
-            <p>Initial project setup — routes will be registered here by each module team.</p>
-          </div>
-        }
-      />
-    </Routes>
+    <div className="flex h-screen items-center justify-center">
+      <Loader2 className="h-8 w-8 animate-spin text-green-600" />
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <Suspense fallback={<FullPageSpinner />}>
+      <Routes>
+        {/* ── Public ─────────────────────────────────────────────── */}
+        <Route path="/"            element={<Navigate to="/stations" replace />} />
+        <Route path="/stations"    element={<StationMapPage />} />
+        <Route path="/stations/:id" element={<StationDetailPage />} />
+
+        {/* ── Authenticated ─────────────────────────────────────── */}
+        <Route
+          path="/profile/stations"
+          element={
+            <ProtectedRoute>
+              <MyStationsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ── Moderator / Admin only ─────────────────────────────── */}
+        <Route
+          path="/admin/stations/pending"
+          element={
+            <ProtectedRoute>
+              <RoleGuard minRole="moderator">
+                <ModerationQueuePage />
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ── Catch-all ──────────────────────────────────────────── */}
+        <Route
+          path="*"
+          element={
+            <div className="flex h-screen flex-col items-center justify-center gap-4">
+              <h1 className="text-4xl font-bold text-gray-300">404</h1>
+              <p className="text-gray-500">Page not found</p>
+              <a href="/stations" className="text-green-600 hover:underline text-sm">
+                ← Back to map
+              </a>
+            </div>
+          }
+        />
+      </Routes>
+    </Suspense>
   )
 }
 

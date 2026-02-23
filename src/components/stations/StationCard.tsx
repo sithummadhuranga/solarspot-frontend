@@ -72,7 +72,7 @@ export function StationCard({ station, className, actions }: StationCardProps) {
 
           <div className="flex items-center gap-1 shrink-0">
             {station.isVerified && (
-              <CheckCircle className="h-4 w-4 text-green-600" title="Verified" />
+            <CheckCircle className="h-4 w-4 text-green-600" aria-label="Verified" />
             )}
             <span className="flex items-center gap-0.5 text-xs font-medium text-gray-700">
               <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
