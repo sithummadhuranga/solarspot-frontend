@@ -1,39 +1,17 @@
-import { useEffect } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { AppRouter } from '@/router'
 
 /**
- * App — top-level route shell.
+ * App — root component. Renders the full route tree.
  *
- * Each team member registers their page routes here under the appropriate path.
- * Wrap protected pages with <ProtectedRoute> and role-restricted pages with <RoleGuard>.
+ * All routes are declared in src/router/index.tsx.
+ * Add global providers (toast, modals, theme) here as needed.
  *
- * TODO (module owners):
- *  - Auth team     : /login, /register, /forgot-password, /reset-password/:token
- *  - Stations team : /, /map, /stations/:id, /stations/add, /search
- *  - Reviews team  : (embedded in StationDetailPage)
- *  - Weather team  : (embedded in StationDetailPage)
- *  - Users/Admin   : /profile, /admin, /moderator
+ * TODO (Member 4): add silent re-auth on mount:
+ *   const dispatch = useAppDispatch()
+ *   useEffect(() => { dispatch(refreshTokenThunk()) }, [dispatch])
  */
 function App() {
-  useEffect(() => {
-    // TODO: silent re-auth on mount — dispatch refresh token thunk
-    // dispatch(refreshTokenThunk())
-  }, [])
-
-  return (
-    <Routes>
-      {/* ── Public placeholder ─────────────────────────────── */}
-      <Route
-        path="*"
-        element={
-          <div style={{ fontFamily: 'sans-serif', padding: '2rem' }}>
-            <h1>🌞 SolarSpot</h1>
-            <p>Initial project setup — routes will be registered here by each module team.</p>
-          </div>
-        }
-      />
-    </Routes>
-  )
+  return <AppRouter />
 }
 
 export default App
