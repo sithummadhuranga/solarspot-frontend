@@ -18,6 +18,8 @@ import '@/features/users/usersApi'
 import '@/features/permissions/permissionsApi'
 // ──────────────────────────────────────────────────────────────────────────────
 
+const queryClient = new QueryClient()
+
 const root = document.getElementById('root')
 if (!root) throw new Error('Root element #root not found in document')
 
