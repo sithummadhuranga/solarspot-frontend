@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useForm, useFieldArray, Controller } from 'react-hook-form'
+import { useForm, useFieldArray, Controller, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Plus, Trash2, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
@@ -83,7 +83,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
     handleSubmit,
     control,
     trigger,
-    watch,
     reset,
     formState: { errors },
   } = useForm<StationFormValues>({
@@ -118,8 +117,8 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
   const { fields: scheduleFields, append: addDay, remove: removeDay } =
     useFieldArray({ control, name: 'schedule' })
 
-  const addressMode = watch('addressMode')
-  const alwaysOpen  = watch('alwaysOpen')
+  const addressMode = useWatch({ control, name: 'addressMode' })
+  const alwaysOpen  = useWatch({ control, name: 'alwaysOpen' })
 
   async function goNext() {
     const fields = step === 0 ? STEP_1_FIELDS : STEP_2_FIELDS

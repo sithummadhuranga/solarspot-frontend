@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import {
@@ -37,11 +37,11 @@ export function RejectionReasonModal({
     register,
     handleSubmit,
     reset,
-    watch,
+    control,
     formState: { errors },
   } = useForm<RejectionForm>({ resolver: zodResolver(rejectionSchema) })
 
-  const reason = watch('rejectionReason', '')
+  const reason = useWatch({ control, name: 'rejectionReason', defaultValue: '' })
 
   function submit(data: RejectionForm) {
     onSubmit(data.rejectionReason)

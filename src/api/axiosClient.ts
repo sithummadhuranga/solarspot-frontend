@@ -50,7 +50,6 @@ axiosClient.interceptors.response.use(
             originalRequest.headers.Authorization = `Bearer ${token}`
             resolve(axiosClient(originalRequest))
           })
-          // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
           void reject // keep TS happy — reject is intentionally unused here
         })
       }
