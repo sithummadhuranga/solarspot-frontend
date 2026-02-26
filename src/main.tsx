@@ -8,15 +8,15 @@ import { store } from '@/app/store'
 import App from './App'
 import './index.css'
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-      staleTime: 30_000,
-    },
-  },
-})
+// ── Register RTK Query endpoint injections before any component mounts ─────────
+// Each import is a side-effect that calls baseApi.injectEndpoints().
+import '@/features/auth/authApi'
+import '@/features/stations/stationsApi'
+import '@/features/reviews/reviewsApi'
+import '@/features/weather/weatherApi'
+import '@/features/users/usersApi'
+import '@/features/permissions/permissionsApi'
+// ──────────────────────────────────────────────────────────────────────────────
 
 const root = document.getElementById('root')
 if (!root) throw new Error('Root element #root not found in document')

@@ -1,22 +1,23 @@
-import { Navigate, useLocation } from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAppSelector } from '@/app/hooks'
-import { selectIsAuthenticated } from '@/features/auth/authSlice'
-
-interface ProtectedRouteProps {
-  children: React.ReactNode
-}
+import { selectCurrentUser } from '@/features/auth/authSlice'
 
 /**
- * Redirects unauthenticated users to /login, preserving the attempted URL
- * so they can be sent back after logging in.
+ * ProtectedRoute — redirects unauthenticated users to /login.
+ *
+ * Wrap any route that requires a logged-in user:
+ *   <Route element={<ProtectedRoute />}>
+ *     <Route path="/dashboard" element={<DashboardPage />} />
+ *   </Route>
  */
-export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const isAuthenticated = useAppSelector(selectIsAuthenticated)
+export function ProtectedRoute() {
+  const user     = useAppSelector(selectCurrentUser)
   const location = useLocation()
 
-  if (!isAuthenticated) {
+  if (!user) {
+    // Preserve intended destination so LoginPage can redirect back after auth.
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 
-  return <>{children}</>
+  return <Outlet />
 }

@@ -1,36 +1,28 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { authReducer } from '@/features/auth/authSlice'
+import { baseApi }     from './baseApi'
 
-// ─── Store ─────────────────────────────────────────────────────────────────────
 /**
- * Redux store — initial project setup.
+ * Redux store.
  *
- * Each feature team adds their RTK Query API slice here:
+ * All RTK Query endpoints are injected into the single `baseApi` instance,
+ * so only ONE reducer path and ONE middleware entry are needed regardless of
+ * how many feature modules exist.
  *
- *   import { stationsApi } from '@/features/stations/stationsApi'
- *   reducer:    { [stationsApi.reducerPath]: stationsApi.reducer, ... }
- *   middleware: getDefaultMiddleware().concat(stationsApi.middleware, ...)
+ * Each feature module calls baseApi.injectEndpoints() in its own *Api.ts file.
+ * Those files are imported (side-effect) in main.tsx so endpoints are registered
+ * before any component mounts.
  */
 export const store = configureStore({
   reducer: {
-    // ── Auth state (synchronous slice) ───────────────────────────
+    // ── Synchronous state slices ──────────────────────────────────
     auth: authReducer,
 
-    // ── RTK Query API slices (add when implementing each module) ──
-    // [stationsApi.reducerPath]: stationsApi.reducer,
-    // [reviewsApi.reducerPath]:  reviewsApi.reducer,
-    // [weatherApi.reducerPath]:  weatherApi.reducer,
-    // [usersApi.reducerPath]:    usersApi.reducer,
-    // [authApi.reducerPath]:     authApi.reducer,
+    // ── Single RTK Query cache (all features share one instance) ──
+    [baseApi.reducerPath]: baseApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
-    // .concat(stationsApi.middleware)
-    // .concat(reviewsApi.middleware)
-    // .concat(weatherApi.middleware)
-    // .concat(usersApi.middleware)
-    // .concat(authApi.middleware)
-  ,
+    getDefaultMiddleware().concat(baseApi.middleware),
   devTools: import.meta.env.DEV,
 })
 

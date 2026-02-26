@@ -1,49 +1,39 @@
-import { useAppSelector } from '@/app/hooks'
+import { useCallback } from 'react'
+import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import {
   selectCurrentUser,
-  selectToken,
-  selectIsAuthenticated,
-  selectUserRole,
+  clearCredentials,
+  setCredentials,
 } from '@/features/auth/authSlice'
-import { ROLE_LEVEL } from '@/lib/constants'
+import type { User } from '@/types/user.types'
 
 /**
- * Convenience hook that exposes auth state and derived role helpers.
+ * useAuth — convenience hook for auth state and actions.
  *
- * @example
- * const { user, isAuthenticated, isAdmin, isAtLeast } = useAuth()
- * if (isAtLeast('moderator')) { ... }
+ * Returns the current user, a typed isAuthenticated flag, and action helpers.
+ * Always use this hook instead of selecting auth state directly.
+ *
+ * TODO (Member 4): wire loginFn / logoutFn to authApi mutations once implemented.
  */
 export function useAuth() {
-  const user            = useAppSelector(selectCurrentUser)
-  const accessToken     = useAppSelector(selectToken)
-  const isAuthenticated = useAppSelector(selectIsAuthenticated)
-  const role            = useAppSelector(selectUserRole)
+  const dispatch = useAppDispatch()
+  const user     = useAppSelector(selectCurrentUser)
 
-  const userLevel = ROLE_LEVEL[role] ?? 0
+  const signIn = useCallback((token: string, profile: User) => {
+    dispatch(setCredentials({ token, user: profile }))
+  }, [dispatch])
 
-  const isAdmin     = role === 'admin'
-  const isModerator = role === 'moderator' || role === 'admin'
-
-  /** Returns true if the user's role level is >= the given role's level. */
-  function isAtLeast(minRole: string): boolean {
-    return userLevel >= (ROLE_LEVEL[minRole] ?? 0)
-  }
-
-  /** Returns true if the user is the owner of the given resource by _id field. */
-  function isOwner(ownerId: string | undefined): boolean {
-    if (!user || !ownerId) return false
-    return user._id === ownerId
-  }
+  const signOut = useCallback(() => {
+    dispatch(clearCredentials())
+    // TODO (Member 4): call authApi.logout mutation to invalidate server-side token
+  }, [dispatch])
 
   return {
     user,
-    accessToken,
-    isAuthenticated,
-    role,
-    isAdmin,
-    isModerator,
-    isAtLeast,
-    isOwner,
+    isAuthenticated: user !== null,
+    isEmailVerified: user?.isEmailVerified ?? false,
+    role:            user?.role ?? null,
+    signIn,
+    signOut,
   }
 }

@@ -41,3 +41,28 @@ export interface SolarIndex {
   cloudPct:   number
   calculatedAt: string
 }
+
+// ─── Composite types used by weatherApi ───────────────────────────────────────
+
+/** Full forecast response (array of slots keyed by stationId) */
+export interface WeatherForecast {
+  stationId: string
+  slots:     ForecastSlot[]
+  generatedAt: string
+}
+
+/** Heatmap data point — alias for SolarIndex, used by GET /weather/heatmap */
+export type HeatmapPoint = SolarIndex
+
+/** Best time response returned by GET /weather/best-time/:stationId */
+export interface BestTimeResult {
+  stationId: string
+  slots:     BestTimeSlot[]
+  generatedAt: string
+}
+
+/** Body for POST /weather/bulk-refresh (Member 3) */
+export interface BulkRefreshInput {
+  stationIds?: string[]  // empty = refresh all
+  force?:      boolean
+}
