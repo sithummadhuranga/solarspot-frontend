@@ -77,9 +77,11 @@ function SidebarStationRow({ station }: { station: NearbyStation }) {
               )} />
             ))}
           </div>
-          <span className="rounded-full bg-solar-green-50 px-2 py-0.5 text-[10px] font-semibold text-solar-green-600">
-            {station.distanceKm.toFixed(1)} km
-          </span>
+          {station.distanceKm != null && (
+            <span className="rounded-full bg-solar-green-50 px-2 py-0.5 text-[10px] font-semibold text-solar-green-600">
+              {station.distanceKm.toFixed(1)} km
+            </span>
+          )}
         </div>
       </div>
     </Link>
@@ -110,7 +112,7 @@ function PopupCard({ station }: { station: NearbyStation }) {
                   ? 'fill-amber-400 text-amber-400' : 'fill-gray-200 text-gray-200'
               )} />
             ))}
-            <span className="ml-1 text-xs text-gray-500">{station.averageRating.toFixed(1)}</span>
+            <span className="ml-1 text-xs text-gray-500">{(station.averageRating ?? 0).toFixed(1)}</span>
           </div>
           {station.isVerified && (
             <span className="flex items-center gap-0.5 text-xs font-medium text-emerald-600">

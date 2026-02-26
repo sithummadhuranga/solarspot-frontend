@@ -8,8 +8,6 @@ import { store } from '@/app/store'
 import App from './App'
 import './index.css'
 
-// ── Register RTK Query endpoint injections before any component mounts ─────────
-// Each import is a side-effect that calls baseApi.injectEndpoints().
 import '@/features/auth/authApi'
 import '@/features/stations/stationsApi'
 import '@/features/reviews/reviewsApi'
