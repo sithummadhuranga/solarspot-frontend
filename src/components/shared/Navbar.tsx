@@ -43,17 +43,21 @@ export function Navbar() {
         </div>
 
         {/* Auth actions */}
-        <div className="flex items-center gap-2 text-sm">
+        <div className="flex items-center gap-3 text-sm">
           {isAuthenticated ? (
             <>
-              <span className="text-muted-foreground">{user?.displayName}</span>
-              <Link to="/profile" className="hover:text-foreground">Profile</Link>
-              <button onClick={signOut} className="hover:text-foreground">Sign out</button>
+              <span className="text-muted-foreground mr-2 font-medium">{user?.displayName}</span>
+              <Link to="/profile" className="hover:text-solar-green-700 font-medium transition-colors">Profile</Link>
+              <button onClick={signOut} className="hover:text-red-600 font-medium transition-colors">Sign out</button>
             </>
           ) : (
             <>
-              <Link to="/login"    className="hover:text-foreground">Sign in</Link>
-              <Link to="/register" className="hover:text-foreground font-medium">Register</Link>
+              <Link to="/login" className="nav-btn-login">
+                Log In
+              </Link>
+              <Link to="/register" className="nav-btn-signup">
+                Sign Up
+              </Link>
             </>
           )}
         </div>

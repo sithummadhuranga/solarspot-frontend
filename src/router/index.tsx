@@ -1,21 +1,21 @@
 import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { ProtectedRoute } from '@/guards/ProtectedRoute'
-import { RoleGuard }      from '@/guards/RoleGuard'
+import { RoleGuard } from '@/guards/RoleGuard'
 
 // ─── Lazy-loaded pages ─────────────────────────────────────────────────────────
 // Code-split each page so the initial bundle stays small.
-const HomePage            = lazy(() => import('@/pages/HomePage'))
-const LoginPage           = lazy(() => import('@/pages/LoginPage'))
-const RegisterPage        = lazy(() => import('@/pages/RegisterPage'))
-const DashboardPage       = lazy(() => import('@/pages/DashboardPage'))
-const StationsPage        = lazy(() => import('@/pages/StationsPage'))
-const StationDetailPage   = lazy(() => import('@/pages/StationDetailPage'))
-const WeatherPage         = lazy(() => import('@/pages/WeatherPage'))
-const ReviewsPage         = lazy(() => import('@/pages/ReviewsPage'))
-const PermissionsPage     = lazy(() => import('@/pages/PermissionsPage'))
-const ProfilePage         = lazy(() => import('@/pages/ProfilePage'))
-const NotFoundPage        = lazy(() => import('@/pages/NotFoundPage'))
+const HomePage = lazy(() => import('@/pages/HomePage'))
+const LoginPage = lazy(() => import('@/pages/LoginPage'))
+const RegisterPage = lazy(() => import('@/pages/RegisterPage'))
+const DashboardPage = lazy(() => import('@/pages/DashboardPage'))
+const StationsPage = lazy(() => import('@/pages/StationsPage'))
+const StationDetailPage = lazy(() => import('@/pages/StationDetailPage'))
+const WeatherPage = lazy(() => import('@/pages/WeatherPage'))
+const ReviewsPage = lazy(() => import('@/pages/ReviewsPage'))
+const PermissionsPage = lazy(() => import('@/pages/PermissionsPage'))
+const ProfilePage = lazy(() => import('@/pages/ProfilePage'))
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
 /** Fallback shown while a lazy chunk is loading. */
 function PageSkeleton() {
@@ -46,19 +46,19 @@ export function AppRouter() {
       <Routes>
 
         {/* ── Public routes ───────────────────────────────────────────────── */}
-        <Route path="/"           element={<HomePage />} />
-        <Route path="/login"      element={<LoginPage />} />
-        <Route path="/register"   element={<RegisterPage />} />
-        <Route path="/stations"   element={<StationsPage />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/stations" element={<StationsPage />} />
         <Route path="/stations/:id" element={<StationDetailPage />} />
 
         {/* ── Authenticated routes ────────────────────────────────────────── */}
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/profile"   element={<ProfilePage />} />
+          <Route path="/profile" element={<ProfilePage />} />
 
           {/* Weather — accessible to all logged-in users */}
-          <Route path="/weather"   element={<WeatherPage />} />
+          <Route path="/weather" element={<WeatherPage />} />
 
           {/* Moderation — review_moderator + moderator + admin */}
           <Route
