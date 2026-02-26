@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Loader2, CheckCircle, XCircle, Eye, ClipboardList } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Navbar } from '@/components/shared/Navbar'
 import { RejectionReasonModal } from '@/components/stations/RejectionReasonModal'
 import { usePendingStations, useApproveStation, useRejectStation } from '@/hooks/useStations'
 import { formatDate } from '@/lib/utils'
@@ -86,20 +87,30 @@ export default function ModerationQueuePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-5xl px-4 py-8">
-        {/* Header */}
-        <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100">
-            <ClipboardList className="h-5 w-5 text-amber-600" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">Moderation Queue</h1>
-            <p className="text-sm text-gray-500">
-              {pagination ? `${pagination.total} station${pagination.total !== 1 ? 's' : ''} awaiting review` : 'Loading…'}
-            </p>
+    <div className="min-h-screen bg-[#f8fafc]">
+      <Navbar />
+
+      {/* Hero banner */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-amber-700 via-amber-600 to-orange-500">
+        <div className="absolute inset-0 opacity-10"
+          style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, #fde68a 0%, transparent 60%)' }}
+        />
+        <div className="relative mx-auto max-w-5xl px-4 py-8">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
+              <ClipboardList className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-white sm:text-3xl">Moderation Queue</h1>
+              <p className="text-amber-100 text-sm">
+                {pagination ? `${pagination.total} station${pagination.total !== 1 ? 's' : ''} awaiting review` : 'Loading…'}
+              </p>
+            </div>
           </div>
         </div>
+      </div>
+
+      <div className="mx-auto max-w-5xl px-4 py-8">
 
         {/* Table */}
         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">

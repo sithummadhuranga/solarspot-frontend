@@ -49,7 +49,13 @@ export function StationCard({ station, className, actions }: StationCardProps) {
           </div>
         )}
 
-        {station.solarPanelKw > 0 && (
+        {station.isFeatured && (
+          <div className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-amber-500/90 backdrop-blur-sm px-2.5 py-1">
+            <Star className="h-3 w-3 fill-white text-white" />
+            <span className="text-xs font-semibold text-white">Featured</span>
+          </div>
+        )}
+        {!station.isFeatured && station.solarPanelKw > 0 && (
           <div className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-black/60 backdrop-blur-sm px-2.5 py-1">
             <Sun className="h-3 w-3 text-amber-400" />
             <span className="text-xs font-semibold text-white">{station.solarPanelKw} kW</span>
@@ -111,8 +117,8 @@ export function StationCard({ station, className, actions }: StationCardProps) {
               <ConnectorBadge key={i} type={c.type} powerKw={c.powerKw} size="sm" />
             ))}
             {station.connectors.length > 3 && (
-              <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500">
-                +{station.connectors.length - 3}
+              <span className="inline-flex items-center rounded-full border border-solar-green-200 bg-solar-green-50 px-2 py-0.5 text-xs font-medium text-solar-green-600">
+                +{station.connectors.length - 3} more
               </span>
             )}
           </div>

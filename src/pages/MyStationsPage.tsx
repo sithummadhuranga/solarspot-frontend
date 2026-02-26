@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { PlusCircle, Loader2, Zap, Trash2, Edit2, Sun, CheckCircle, Clock, ChevronLeft, ChevronRight } from 'lucide-react'
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
 import { Button } from '@/components/ui/button'
+import { Navbar } from '@/components/shared/Navbar'
 import { StationCard } from '@/components/stations/StationCard'
 import { StationFormModal } from '@/components/stations/StationFormModal'
 import { useStationsList, useDeleteStation } from '@/hooks/useStations'
@@ -79,23 +80,32 @@ export default function MyStationsPage() {
   function closeForm() { setFormOpen(false); setEditTarget(null) }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-5xl px-4 py-8 lg:px-8">
+    <div className="min-h-screen bg-[#f8fafc]">
+      <Navbar />
 
-        {/* Header */}
-        <div className="mb-6 flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">My Stations</h1>
-            <p className="mt-0.5 text-sm text-gray-500">
-              {pagination?.total ?? 0} station{(pagination?.total ?? 0) !== 1 ? 's' : ''} submitted
-            </p>
+      {/* Hero banner */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-solar-green-800 via-solar-green-700 to-solar-green-600">
+        <div className="absolute inset-0 opacity-10"
+          style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, #86efac 0%, transparent 60%)' }}
+        />
+        <div className="relative mx-auto max-w-5xl px-4 py-8 lg:px-8">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-2xl font-bold text-white sm:text-3xl">My Stations</h1>
+              <p className="mt-1 text-solar-green-200 text-sm">
+                {pagination?.total ?? 0} station{(pagination?.total ?? 0) !== 1 ? 's' : ''} submitted by you
+              </p>
+            </div>
+            <Link to="/stations/new">
+              <Button className="gap-1.5 bg-white text-solar-green-700 hover:bg-solar-green-50 font-semibold shrink-0 shadow-sm">
+                <PlusCircle className="h-4 w-4" /> Submit Station
+              </Button>
+            </Link>
           </div>
-          <Link to="/stations/new">
-            <Button className="gap-1.5 bg-solar-green-600 hover:bg-solar-green-700 text-white shrink-0">
-              <PlusCircle className="h-4 w-4" /> Submit Station
-            </Button>
-          </Link>
         </div>
+      </div>
+
+      <div className="mx-auto max-w-5xl px-4 py-8 lg:px-8">
 
         {/* Stats bar */}
         <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">

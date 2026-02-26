@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Navbar } from '@/components/shared/Navbar'
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -243,7 +244,8 @@ export default function AddStationPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f8fafc]">
+      <Navbar />
       <div className="mx-auto max-w-2xl px-4 py-8">
 
         {/* Header */}
