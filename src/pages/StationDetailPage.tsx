@@ -91,12 +91,12 @@ export default function StationDetailPage() {
   // ── Loading & Error states ─────────────────────────────────────────────────
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#f8fafc]">
+      <div className="min-h-screen bg-[#f5faf0]">
         <Navbar />
         <div className="flex h-96 items-center justify-center">
           <div className="text-center space-y-3">
-            <Loader2 className="h-10 w-10 animate-spin text-solar-green-500 mx-auto" />
-            <p className="text-sm text-gray-500">Loading station…</p>
+            <Loader2 className="h-10 w-10 animate-spin text-[#1a6b3c] mx-auto" />
+            <p className="text-sm font-bold text-gray-500 font-sg">Loading station…</p>
           </div>
         </div>
       </div>
@@ -105,16 +105,16 @@ export default function StationDetailPage() {
 
   if (error || !station) {
     return (
-      <div className="min-h-screen bg-[#f8fafc]">
+      <div className="min-h-screen bg-[#f5faf0]">
         <Navbar />
         <div className="flex h-96 items-center justify-center">
           <div className="text-center space-y-4">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50 mx-auto">
               <AlertTriangle className="h-8 w-8 text-red-400" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-900">Station not found</h2>
-            <p className="text-sm text-gray-500">This station may have been removed or is unavailable.</p>
-            <Button variant="outline" onClick={() => navigate('/stations')}>
+            <h2 className="text-xl font-extrabold text-[#133c1d] font-sg">Station not found</h2>
+            <p className="text-sm font-medium text-gray-500">This station may have been removed or is unavailable.</p>
+            <Button variant="outline" onClick={() => navigate('/stations')} className="border-2 border-gray-200 hover:border-[#8cc63f] hover:text-[#133c1d] font-bold">
               <ChevronLeft className="mr-1.5 h-4 w-4" /> Back to Stations
             </Button>
           </div>
@@ -128,11 +128,11 @@ export default function StationDetailPage() {
   const hasMap = coords && coords.length === 2
 
   return (
-    <div className="min-h-screen bg-[#f8fafc]">
+    <div className="min-h-screen bg-[#f5faf0]">
       <Navbar />
 
       {/* ── Hero ────────────────────────────────────────────────────────── */}
-      <div className="relative h-72 w-full overflow-hidden bg-gradient-to-br from-solar-green-800 via-solar-green-700 to-solar-green-600 sm:h-80 lg:h-96">
+      <div className="relative h-72 w-full overflow-hidden bg-[#8cc63f] sm:h-80 lg:h-96">
         {station.images.length > 0 && (
           <>
             <img
@@ -140,17 +140,17 @@ export default function StationDetailPage() {
               alt={station.name}
               className="absolute inset-0 h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0b2614]/90 via-[#0b2614]/40 to-transparent" />
             {/* Image dots */}
             {station.images.length > 1 && (
-              <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-1.5">
+              <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-2">
                 {station.images.map((_, i) => (
                   <button
                     key={i}
                     onClick={() => setImgIndex(i)}
                     className={cn(
-                      'h-2 rounded-full transition-all',
-                      i === imgIndex ? 'w-6 bg-white' : 'w-2 bg-white/50 hover:bg-white/80'
+                      'h-2.5 rounded-full transition-all',
+                      i === imgIndex ? 'w-8 bg-[#8cc63f]' : 'w-2.5 bg-white/50 hover:bg-white/80'
                     )}
                   />
                 ))}
@@ -163,40 +163,40 @@ export default function StationDetailPage() {
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-1.5 rounded-xl bg-black/30 backdrop-blur-sm px-3 py-2 text-sm font-medium text-white hover:bg-black/50 transition-colors"
+            className="flex items-center gap-1.5 rounded-xl bg-black/40 backdrop-blur-md px-4 py-2 text-sm font-bold text-white hover:bg-black/60 transition-colors font-sg"
           >
             <ChevronLeft className="h-4 w-4" /> Back
           </button>
           <div className={cn(
-            'flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold backdrop-blur-sm',
+            'flex items-center gap-1.5 rounded-full border-2 px-3 py-1.5 text-xs font-bold backdrop-blur-md shadow-sm tracking-wide',
             status.bg
           )}>
-            <span className={cn('h-1.5 w-1.5 rounded-full', status.dot)} />
+            <span className={cn('h-2 w-2 rounded-full', status.dot)} />
             {status.label}
           </div>
         </div>
 
         {/* Station name overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-5">
+        <div className="absolute bottom-0 left-0 right-0 p-6">
           <div className="mx-auto max-w-7xl">
             <div className="flex items-end justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-bold text-white sm:text-3xl drop-shadow-sm">
+                <h1 className="text-3xl font-extrabold text-white sm:text-4xl drop-shadow-md font-sg">
                   {station.name}
                 </h1>
-                <div className="mt-1.5 flex flex-wrap items-center gap-2">
-                  <span className="flex items-center gap-1 text-sm text-white/80">
-                    <MapPin className="h-3.5 w-3.5 shrink-0" />
+                <div className="mt-2 flex flex-wrap items-center gap-3">
+                  <span className="flex items-center gap-1.5 text-sm font-medium text-white/90">
+                    <MapPin className="h-4 w-4 shrink-0 text-[#8cc63f]" />
                     {station.address?.city ?? station.address?.district ?? station.address?.formattedAddress ?? 'Location not set'}
                   </span>
                   {station.isVerified && (
-                    <span className="flex items-center gap-1 rounded-full bg-emerald-500/90 backdrop-blur-sm px-2 py-0.5 text-xs font-semibold text-white">
-                      <CheckCircle className="h-3 w-3" /> Verified
+                    <span className="flex items-center gap-1 rounded-full bg-emerald-500/95 backdrop-blur-md px-2.5 py-1 text-xs font-bold text-white shadow-sm">
+                      <CheckCircle className="h-3.5 w-3.5" /> Verified
                     </span>
                   )}
                   {station.isFeatured && (
-                    <span className="rounded-full bg-amber-500/90 backdrop-blur-sm px-2 py-0.5 text-xs font-semibold text-white">
-                      ⭐ Featured
+                    <span className="rounded-full bg-amber-500/95 backdrop-blur-md px-2.5 py-1 text-xs font-bold text-white shadow-sm tracking-wide">
+                      ⭐ FEATURED
                     </span>
                   )}
                 </div>
@@ -226,34 +226,34 @@ export default function StationDetailPage() {
       </div>
 
       {/* ── Body ─────────────────────────────────────────────────────────── */}
-      <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
-        <div className="grid gap-6 lg:grid-cols-3">
+      <div className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-3">
 
           {/* ── Left / Main column  ───────────────────────────────────────── */}
-          <div className="space-y-6 lg:col-span-2">
+          <div className="space-y-8 lg:col-span-2">
 
             {/* Quick stats row */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
               <StatCard
-                icon={<Star className="h-5 w-5 text-amber-500" />}
+                icon={<Star className="h-6 w-6 text-amber-500" />}
                 label="Rating"
                 value={station.averageRating > 0 ? `${station.averageRating.toFixed(1)} / 5` : '—'}
                 sub={station.reviewCount > 0 ? `${station.reviewCount} reviews` : 'No reviews'}
               />
               <StatCard
-                icon={<Sun className="h-5 w-5 text-solar-green-600" />}
+                icon={<Sun className="h-6 w-6 text-[#1a6b3c]" />}
                 label="Solar"
                 value={station.solarPanelKw > 0 ? `${station.solarPanelKw} kWp` : '—'}
                 sub="Installed panels"
               />
               <StatCard
-                icon={<Zap className="h-5 w-5 text-solar-green-600" />}
+                icon={<Zap className="h-6 w-6 text-[#1a6b3c]" />}
                 label="Connectors"
                 value={`${station.connectors.length} type${station.connectors.length !== 1 ? 's' : ''}`}
                 sub={`${station.connectors.reduce((a, c) => a + c.count, 0)} total ports`}
               />
               <StatCard
-                icon={<MapPin className="h-5 w-5 text-solar-green-600" />}
+                icon={<MapPin className="h-6 w-6 text-[#1a6b3c]" />}
                 label="Amenities"
                 value={`${station.amenities.length}`}
                 sub="Available"
@@ -262,40 +262,40 @@ export default function StationDetailPage() {
 
             {/* Description */}
             {station.description && (
-              <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-                <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-gray-500">
+              <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+                <h2 className="mb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
                   About this station
                 </h2>
-                <p className="text-sm leading-relaxed text-gray-700">{station.description}</p>
+                <p className="text-[0.95rem] leading-relaxed text-gray-700 font-medium">{station.description}</p>
               </div>
             )}
 
             {/* Connectors */}
             {station.connectors.length > 0 && (
-              <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-                <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500">
+              <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+                <h2 className="mb-5 text-sm font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
                   Charging Connectors
                 </h2>
-                <div className="divide-y divide-gray-50">
+                <div className="divide-y divide-gray-100">
                   {station.connectors.map((c, i) => (
-                    <div key={i} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-solar-green-50">
-                          <Zap className="h-4 w-4 text-solar-green-600" />
+                    <div key={i} className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
+                      <div className="flex items-center gap-4">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#f5faf0]">
+                          <Zap className="h-6 w-6 text-[#1a6b3c]" />
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">{c.type}</p>
-                          <p className="text-xs text-gray-500">{c.powerKw} kW per port</p>
+                          <p className="text-[0.95rem] font-bold text-[#133c1d]">{c.type}</p>
+                          <p className="text-xs font-medium text-gray-500">{c.powerKw} kW per port</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-bold text-gray-900">{c.count}</p>
-                        <p className="text-xs text-gray-400">port{c.count !== 1 ? 's' : ''}</p>
+                        <p className="text-lg font-extrabold text-[#133c1d]">{c.count}</p>
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">port{c.count !== 1 ? 's' : ''}</p>
                       </div>
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 flex flex-wrap gap-2">
+                <div className="mt-5 flex flex-wrap gap-2">
                   {station.connectors.map((c, i) => (
                     <ConnectorBadge key={i} type={c.type} powerKw={c.powerKw} />
                   ))}
@@ -305,17 +305,17 @@ export default function StationDetailPage() {
 
             {/* Amenities */}
             {station.amenities.length > 0 && (
-              <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-                <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500">
+              <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+                <h2 className="mb-5 text-sm font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
                   Amenities
                 </h2>
-                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+                <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
                   {station.amenities.map((a) => {
                     const info = AMENITY_INFO[a]
                     return (
-                      <div key={a} className="flex flex-col items-center gap-1.5 rounded-xl border border-solar-green-100 bg-solar-green-50 px-3 py-3 text-center">
-                        <span className="text-2xl">{info.emoji}</span>
-                        <span className="text-xs font-medium text-solar-green-800">{info.label}</span>
+                      <div key={a} className="flex flex-col items-center gap-2 rounded-2xl border border-[#dcfce7] bg-[#f5faf0] px-4 py-4 text-center transition-transform hover:-translate-y-1">
+                        <span className="text-3xl">{info.emoji}</span>
+                        <span className="text-xs font-bold text-[#133c1d]">{info.label}</span>
                       </div>
                     )
                   })}
@@ -324,60 +324,60 @@ export default function StationDetailPage() {
             )}
 
             {/* Operating Hours */}
-            <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-              <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-gray-500">
-                <Clock className="h-4 w-4" /> Operating Hours
+            <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+              <h2 className="mb-5 flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
+                <Clock className="h-5 w-5" /> Operating Hours
               </h2>
               {station.operatingHours?.alwaysOpen ? (
-                <div className="flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-100 px-4 py-3">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                  <p className="text-sm font-semibold text-emerald-700">Open 24 / 7 — Always available</p>
+                <div className="flex items-center gap-3 rounded-xl bg-emerald-50 border border-emerald-200 px-5 py-4">
+                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                  <p className="text-sm font-bold text-emerald-800">Open 24 / 7 — Always available</p>
                 </div>
               ) : station.operatingHours?.schedule && station.operatingHours.schedule.length > 0 ? (
-                <div className="divide-y divide-gray-50">
+                <div className="divide-y divide-gray-100">
                   {station.operatingHours.schedule.map((s) => (
-                    <div key={s.day} className="flex items-center justify-between py-2.5 first:pt-0 last:pb-0">
-                      <span className="w-12 text-sm font-semibold text-gray-700">{s.day}</span>
-                      <span className="text-sm text-gray-500">{s.openTime} – {s.closeTime}</span>
+                    <div key={s.day} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
+                      <span className="w-12 text-sm font-bold text-[#133c1d]">{s.day}</span>
+                      <span className="text-sm font-medium text-gray-600">{s.openTime} – {s.closeTime}</span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-gray-400">Hours not specified</p>
+                <p className="text-sm font-medium text-gray-500">Hours not specified</p>
               )}
             </div>
 
             {/* ── Placeholder: Reviews (Member 2) ──────────────────────── */}
-            <div className="rounded-2xl border-2 border-dashed border-gray-200 bg-white p-6 text-center">
-              <MessageSquare className="mx-auto h-8 w-8 text-gray-300 mb-2" />
-              <p className="text-sm font-medium text-gray-500">Reviews & Ratings</p>
-              <p className="text-xs text-gray-400 mt-1">Member 2 — Reviews section will appear here</p>
+            <div className="rounded-[20px] border-2 border-dashed border-gray-200 bg-white p-8 text-center">
+              <MessageSquare className="mx-auto h-10 w-10 text-gray-300 mb-3" />
+              <p className="text-sm font-bold text-gray-500 font-sg">Reviews & Ratings</p>
+              <p className="text-xs font-medium text-gray-400 mt-1">Member 2 — Reviews section will appear here</p>
             </div>
 
             {/* ── Placeholder: Weather (Member 3) ─────────────────────── */}
-            <div className="rounded-2xl border-2 border-dashed border-blue-100 bg-blue-50/50 p-6 text-center">
-              <CloudSun className="mx-auto h-8 w-8 text-blue-300 mb-2" />
-              <p className="text-sm font-medium text-blue-500">Weather & Best Charging Time</p>
-              <p className="text-xs text-blue-400 mt-1">Member 3 — Weather widget will appear here</p>
+            <div className="rounded-[20px] border-2 border-dashed border-blue-200 bg-blue-50/50 p-8 text-center">
+              <CloudSun className="mx-auto h-10 w-10 text-blue-300 mb-3" />
+              <p className="text-sm font-bold text-blue-600 font-sg">Weather & Best Charging Time</p>
+              <p className="text-xs font-medium text-blue-400 mt-1">Member 3 — Weather widget will appear here</p>
             </div>
           </div>
 
           {/* ── Right / Sidebar ────────────────────────────────────────────── */}
-          <div className="space-y-4">
+          <div className="space-y-6">
 
             {/* Action buttons */}
-            <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm space-y-3">
+            <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] space-y-3">
               {/* Edit own station */}
               {isOwner && station.status !== 'active' && (
                 <Link to={`/my-stations`}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-gray-200 py-3 text-sm font-bold text-gray-700 hover:border-[#8cc63f] hover:text-[#133c1d] transition-all"
                 >
                   <Edit2 className="h-4 w-4" /> Edit Station
                 </Link>
               )}
 
               <Link to="/map"
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-solar-green-600 py-2.5 text-sm font-semibold text-white hover:bg-solar-green-700 transition-colors"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1a1a1a] py-3 text-sm font-bold text-white hover:bg-black transition-colors shadow-md font-sg"
               >
                 <MapPin className="h-4 w-4" /> View on Map
               </Link>
@@ -385,26 +385,26 @@ export default function StationDetailPage() {
 
             {/* Moderation panel */}
             {isMod && station.status === 'pending' && (
-              <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 space-y-3">
+              <div className="rounded-[20px] border border-amber-200 bg-amber-50 p-6 space-y-4 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
                 <div className="flex items-center gap-2">
-                  <Shield className="h-4 w-4 text-amber-600" />
-                  <p className="text-sm font-semibold text-amber-800">Moderation Required</p>
+                  <Shield className="h-5 w-5 text-amber-600" />
+                  <p className="text-sm font-bold text-amber-800 font-sg">Moderation Required</p>
                 </div>
-                <p className="text-xs text-amber-600">This station is pending your review before going live.</p>
+                <p className="text-xs font-medium text-amber-700">This station is pending your review before going live.</p>
 
                 {approveConf ? (
-                  <div className="rounded-xl border border-emerald-200 bg-white p-3 space-y-2">
-                    <p className="text-xs font-medium text-gray-700">Approve this station?</p>
+                  <div className="rounded-xl border border-emerald-200 bg-white p-4 space-y-3 shadow-sm">
+                    <p className="text-xs font-bold text-gray-700">Approve this station?</p>
                     <div className="flex gap-2">
                       <Button
                         size="sm"
-                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
                         onClick={handleApprove}
                         disabled={approveMutation.isPending}
                       >
-                        {approveMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Yes, Approve'}
+                        {approveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Yes, Approve'}
                       </Button>
-                      <Button size="sm" variant="outline" className="flex-1" onClick={() => setApproveConf(false)}>
+                      <Button size="sm" variant="outline" className="flex-1 font-bold" onClick={() => setApproveConf(false)}>
                         Cancel
                       </Button>
                     </div>
@@ -413,15 +413,15 @@ export default function StationDetailPage() {
                   <div className="flex gap-2">
                     <Button
                       size="sm"
-                      className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+                      className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
                       onClick={() => setApproveConf(true)}
                     >
-                      <CheckCircle className="mr-1 h-3.5 w-3.5" /> Approve
+                      <CheckCircle className="mr-1.5 h-4 w-4" /> Approve
                     </Button>
                     <Button
                       size="sm"
                       variant="outline"
-                      className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
+                      className="flex-1 border-red-200 text-red-600 hover:bg-red-50 font-bold"
                       onClick={() => setRejectOpen(true)}
                     >
                       Reject
@@ -433,38 +433,38 @@ export default function StationDetailPage() {
 
             {/* Rejection reason */}
             {station.status === 'rejected' && station.rejectionReason && (
-              <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
-                <p className="text-xs font-semibold text-red-700 mb-1">Rejection Reason</p>
-                <p className="text-sm text-red-600 italic">"{station.rejectionReason}"</p>
+              <div className="rounded-[20px] border border-red-200 bg-red-50 p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+                <p className="text-xs font-bold text-red-700 mb-1.5 font-sg">Rejection Reason</p>
+                <p className="text-sm font-medium text-red-600 italic">"{station.rejectionReason}"</p>
               </div>
             )}
 
             {/* Meta info */}
-            <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm space-y-3">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400">Station Info</h3>
-              <div className="space-y-2.5">
-                <div className="flex items-start gap-2.5">
+            <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">Station Info</h3>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
                   <User className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
                   <div>
-                    <p className="text-xs text-gray-400">Submitted by</p>
-                    <p className="text-sm font-medium text-gray-800">{station.submittedBy?.displayName ?? 'Unknown'}</p>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Submitted by</p>
+                    <p className="text-sm font-bold text-[#133c1d]">{station.submittedBy?.displayName ?? 'Unknown'}</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-2.5">
+                <div className="flex items-start gap-3">
                   <Calendar className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
                   <div>
-                    <p className="text-xs text-gray-400">Added on</p>
-                    <p className="text-sm font-medium text-gray-800">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Added on</p>
+                    <p className="text-sm font-bold text-[#133c1d]">
                       {new Date(station.createdAt).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })}
                     </p>
                   </div>
                 </div>
                 {station.isVerified && station.verifiedAt && (
-                  <div className="flex items-start gap-2.5">
+                  <div className="flex items-start gap-3">
                     <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
                     <div>
-                      <p className="text-xs text-gray-400">Verified on</p>
-                      <p className="text-sm font-medium text-gray-800">
+                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Verified on</p>
+                      <p className="text-sm font-bold text-[#133c1d]">
                         {new Date(station.verifiedAt).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })}
                       </p>
                     </div>
@@ -475,11 +475,11 @@ export default function StationDetailPage() {
 
             {/* Mini map */}
             {hasMap && (
-              <div className="overflow-hidden rounded-2xl border border-gray-100 shadow-sm">
+              <div className="overflow-hidden rounded-[20px] border border-gray-100 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
                 <MapContainer
                   center={[coords[1], coords[0]]}
                   zoom={14}
-                  style={{ height: 200, width: '100%' }}
+                  style={{ height: 220, width: '100%' }}
                   zoomControl={false}
                   scrollWheelZoom={false}
                   dragging={false}
@@ -490,12 +490,12 @@ export default function StationDetailPage() {
                   />
                   <Marker position={[coords[1], coords[0]]} icon={STATION_PIN} />
                 </MapContainer>
-                <div className="border-t border-gray-100 bg-gray-50 px-3 py-2">
+                <div className="border-t border-gray-100 bg-[#f5faf0] px-4 py-3">
                   <Link
                     to="/map"
-                    className="text-xs font-medium text-solar-green-600 hover:text-solar-green-700 transition-colors"
+                    className="text-xs font-bold text-[#1a6b3c] hover:text-[#133c1d] transition-colors flex items-center gap-1"
                   >
-                    Open in Map View →
+                    Open in Map View <span className="text-lg leading-none">›</span>
                   </Link>
                 </div>
               </div>

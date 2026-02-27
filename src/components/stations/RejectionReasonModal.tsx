@@ -57,9 +57,9 @@ export function RejectionReasonModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md sm:rounded-[20px]">
         <DialogHeader>
-          <DialogTitle>Reject Station</DialogTitle>
+          <DialogTitle className="font-sg font-bold text-[#133c1d]">Reject Station</DialogTitle>
           <DialogDescription>
             Provide a clear reason for rejecting <strong>{stationName}</strong>.
             The submitter will receive this message by email.

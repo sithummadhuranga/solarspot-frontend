@@ -21,18 +21,18 @@ export default function ReviewsPage() {
         description="Reviews pending moderation review"
       />
 
-      {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
+      {isLoading && <p className="text-sm font-medium text-gray-500">Loading…</p>}
 
       {/* TODO (Member 2): replace with <FlaggedReviewCard review={r} /> list */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-4">
         {data?.data.map((review) => (
-          <div key={review._id} className="rounded-lg border p-4">
-            <p className="font-medium">{review.title}</p>
-            <p className="text-sm text-muted-foreground line-clamp-2">{review.body}</p>
-            <div className="mt-2 flex gap-2">
+          <div key={review._id} className="rounded-[20px] border border-gray-100 bg-white p-5 shadow-sm">
+            <p className="font-bold text-[#133c1d]">{review.title}</p>
+            <p className="mt-1 text-sm font-medium text-gray-600 line-clamp-2">{review.body}</p>
+            <div className="mt-4 flex gap-2">
               {/* TODO (Member 2): wire these to useModerateReviewMutation */}
-              <button className="rounded bg-green-600 px-3 py-1 text-xs text-white">Approve</button>
-              <button className="rounded bg-destructive px-3 py-1 text-xs text-white">Remove</button>
+              <button className="rounded-xl bg-[#8cc63f] px-4 py-2 text-xs font-bold text-[#133c1d] hover:bg-[#97cf42] transition-colors">Approve</button>
+              <button className="rounded-xl bg-red-500 px-4 py-2 text-xs font-bold text-white hover:bg-red-600 transition-colors">Remove</button>
             </div>
           </div>
         ))}

@@ -80,24 +80,24 @@ export default function MyStationsPage() {
   function closeForm() { setFormOpen(false); setEditTarget(null) }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc]">
+    <div className="min-h-screen bg-[#f5faf0]">
       <Navbar />
 
       {/* Hero banner */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-solar-green-800 via-solar-green-700 to-solar-green-600">
-        <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, #86efac 0%, transparent 60%)' }}
+      <div className="relative overflow-hidden bg-[#8cc63f]">
+        <div className="absolute inset-0 opacity-20"
+          style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, #97cf42 0%, transparent 60%)' }}
         />
-        <div className="relative mx-auto max-w-5xl px-4 py-8 lg:px-8">
+        <div className="relative mx-auto max-w-5xl px-4 py-12 lg:px-8">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-white sm:text-3xl">My Stations</h1>
-              <p className="mt-1 text-solar-green-200 text-sm">
+              <h1 className="text-3xl font-extrabold text-[#133c1d] sm:text-4xl font-sg">My Stations</h1>
+              <p className="mt-2 text-[#133c1d]/80 text-sm font-medium">
                 {pagination?.total ?? 0} station{(pagination?.total ?? 0) !== 1 ? 's' : ''} submitted by you
               </p>
             </div>
             <Link to="/stations/new">
-              <Button className="gap-1.5 bg-white text-solar-green-700 hover:bg-solar-green-50 font-semibold shrink-0 shadow-sm">
+              <Button className="gap-2 bg-[#1a1a1a] text-white hover:bg-black font-bold shrink-0 shadow-lg px-5 py-5 rounded-xl font-sg">
                 <PlusCircle className="h-4 w-4" /> Submit Station
               </Button>
             </Link>
@@ -105,35 +105,35 @@ export default function MyStationsPage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-5xl px-4 py-8 lg:px-8">
+      <div className="mx-auto max-w-5xl px-4 py-10 lg:px-8">
 
         {/* Stats bar */}
-        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {[
-            { label: 'Total',    count: counts.all,      bg: 'bg-white',           icon: <Sun className="h-4 w-4 text-solar-green-500" />, text: 'text-gray-700' },
-            { label: 'Active',   count: counts.active,   bg: 'bg-emerald-50',       icon: <CheckCircle className="h-4 w-4 text-emerald-600" />, text: 'text-emerald-800' },
-            { label: 'Pending',  count: counts.pending,  bg: 'bg-amber-50',         icon: <Clock className="h-4 w-4 text-amber-600" />, text: 'text-amber-800' },
-            { label: 'Rejected', count: counts.rejected, bg: 'bg-red-50',           icon: <Zap className="h-4 w-4 text-red-400" />, text: 'text-red-700' },
+            { label: 'Total',    count: counts.all,      bg: 'bg-white',           icon: <Sun className="h-5 w-5 text-[#1a6b3c]" />, text: 'text-[#133c1d]' },
+            { label: 'Active',   count: counts.active,   bg: 'bg-emerald-50',       icon: <CheckCircle className="h-5 w-5 text-emerald-600" />, text: 'text-emerald-800' },
+            { label: 'Pending',  count: counts.pending,  bg: 'bg-amber-50',         icon: <Clock className="h-5 w-5 text-amber-600" />, text: 'text-amber-800' },
+            { label: 'Rejected', count: counts.rejected, bg: 'bg-red-50',           icon: <Zap className="h-5 w-5 text-red-500" />, text: 'text-red-800' },
           ].map((item) => (
-            <div key={item.label} className={cn('rounded-2xl border border-gray-100 p-4 flex items-center gap-3', item.bg)}>
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white shadow-sm shrink-0">{item.icon}</div>
+            <div key={item.label} className={cn('rounded-[20px] border border-gray-100 p-5 flex items-center gap-4 shadow-[0_4px_24px_rgba(0,0,0,0.04)]', item.bg)}>
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-sm shrink-0">{item.icon}</div>
               <div>
-                <p className={cn('text-xl font-bold', item.text)}>{item.count}</p>
-                <p className="text-xs text-gray-500">{item.label}</p>
+                <p className={cn('text-2xl font-extrabold font-sg', item.text)}>{item.count}</p>
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{item.label}</p>
               </div>
             </div>
           ))}
         </div>
 
         {/* Tabs */}
-        <div className="mb-5 flex gap-1 rounded-xl bg-white border border-gray-100 p-1 shadow-sm w-fit">
+        <div className="mb-6 flex gap-2 rounded-xl bg-white border border-gray-100 p-1.5 shadow-sm w-fit">
           {TABS.map((tab) => (
             <button key={String(tab.key)} onClick={() => { setActiveTab(tab.key); setPage(1) }}
               className={cn(
-                'rounded-lg px-4 py-1.5 text-sm font-medium transition-colors',
+                'rounded-lg px-5 py-2 text-sm font-bold transition-all',
                 (activeTab ?? undefined) === tab.key
-                  ? 'bg-solar-green-600 text-white shadow-sm'
-                  : 'text-gray-600 hover:bg-gray-50'
+                  ? 'bg-[#133c1d] text-white shadow-md'
+                  : 'text-gray-600 hover:bg-[#f5faf0] hover:text-[#1a6b3c]'
               )}>
               {tab.label}
             </button>
@@ -142,26 +142,26 @@ export default function MyStationsPage() {
 
         {/* Loading */}
         {isLoading && (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-72 rounded-2xl bg-gray-100 animate-pulse" />)}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-80 rounded-[20px] bg-white border border-gray-100 shadow-sm animate-pulse" />)}
           </div>
         )}
 
         {/* Empty */}
         {!isLoading && stations.length === 0 && (
-          <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 py-20 text-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-              <Zap className="h-8 w-8 text-gray-300" />
+          <div className="flex flex-col items-center justify-center rounded-[20px] border-2 border-dashed border-gray-200 bg-white py-24 text-center shadow-sm">
+            <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-[#f5faf0]">
+              <Zap className="h-10 w-10 text-[#1a6b3c]" />
             </div>
-            <h3 className="text-base font-semibold text-gray-600">
+            <h3 className="text-lg font-extrabold text-[#133c1d] font-sg">
               {activeTab ? `No ${activeTab} stations` : 'No stations yet'}
             </h3>
-            <p className="mt-1 text-sm text-gray-400 max-w-xs">
+            <p className="mt-2 text-sm font-medium text-gray-500 max-w-xs">
               {activeTab ? 'Try another tab to see other stations.' : 'Submit your first solar charging station to get started!'}
             </p>
             {!activeTab && (
-              <Link to="/stations/new" className="mt-4">
-                <Button className="bg-solar-green-600 hover:bg-solar-green-700 text-white">
+              <Link to="/stations/new" className="mt-6">
+                <Button className="bg-[#1a1a1a] hover:bg-black text-white font-bold px-6 py-5 rounded-xl font-sg">
                   <PlusCircle className="mr-2 h-4 w-4" /> Submit Station
                 </Button>
               </Link>
@@ -171,15 +171,15 @@ export default function MyStationsPage() {
 
         {/* Grid */}
         {!isLoading && stations.length > 0 && (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {stations.map((station) => (
               <StationCard
                 key={station._id}
                 station={station}
                 actions={
-                  <div className="flex gap-2">
-                    <Button size="sm" variant="outline" className="flex-1 gap-1" onClick={(e) => { e.preventDefault(); openEdit(station) }}>
-                      <Edit2 className="h-3.5 w-3.5" /> Edit
+                  <div className="flex gap-3">
+                    <Button size="sm" variant="outline" className="flex-1 gap-1.5 border-2 border-gray-200 hover:border-[#8cc63f] hover:text-[#133c1d] font-bold rounded-xl" onClick={(e) => { e.preventDefault(); openEdit(station) }}>
+                      <Edit2 className="h-4 w-4" /> Edit
                     </Button>
                     <DeleteConfirm station={station} isPending={deleteMutation.isPending} onConfirm={() => deleteMutation.mutate(station._id)} />
                   </div>
@@ -191,12 +191,12 @@ export default function MyStationsPage() {
 
         {/* Pagination */}
         {pagination && pagination.totalPages > 1 && (
-          <div className="mt-8 flex items-center justify-center gap-2">
-            <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="gap-1">
+          <div className="mt-10 flex items-center justify-center gap-3">
+            <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="gap-1.5 border-2 border-gray-200 hover:border-[#8cc63f] hover:text-[#133c1d] font-bold rounded-xl">
               <ChevronLeft className="h-4 w-4" /> Previous
             </Button>
-            <span className="text-sm text-gray-500">Page {page} of {pagination.totalPages}</span>
-            <Button variant="outline" size="sm" disabled={page >= pagination.totalPages} onClick={() => setPage((p) => p + 1)} className="gap-1">
+            <span className="text-sm font-bold text-gray-500">Page <span className="text-[#133c1d]">{page}</span> of <span className="text-[#133c1d]">{pagination.totalPages}</span></span>
+            <Button variant="outline" size="sm" disabled={page >= pagination.totalPages} onClick={() => setPage((p) => p + 1)} className="gap-1.5 border-2 border-gray-200 hover:border-[#8cc63f] hover:text-[#133c1d] font-bold rounded-xl">
               Next <ChevronRight className="h-4 w-4" />
             </Button>
           </div>

@@ -27,17 +27,17 @@ export default function ProfilePage() {
         description="Manage your account details and preferences"
       />
 
-      {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
+      {isLoading && <p className="text-sm font-medium text-gray-500">Loading…</p>}
 
       {user && (
         <div className="max-w-lg">
           {/* TODO (Member 4): <ProfileForm user={user} onSave={…} /> */}
-          <div className="rounded-lg border p-4 flex flex-col gap-2 text-sm">
-            <p><span className="font-medium">Name:</span> {user.displayName}</p>
-            <p><span className="font-medium">Email:</span> {user.email}</p>
-            <p><span className="font-medium">Role:</span>  {user.role}</p>
-            <p><span className="font-medium">Verified:</span> {user.isEmailVerified ? 'Yes' : 'No'}</p>
-            <p className="text-muted-foreground mt-2">Edit form — Member 4</p>
+          <div className="rounded-[20px] border border-gray-100 bg-white p-6 flex flex-col gap-3 text-sm shadow-sm">
+            <p><span className="font-bold text-[#133c1d]">Name:</span> <span className="text-gray-600">{user.displayName}</span></p>
+            <p><span className="font-bold text-[#133c1d]">Email:</span> <span className="text-gray-600">{user.email}</span></p>
+            <p><span className="font-bold text-[#133c1d]">Role:</span>  <span className="text-gray-600">{user.role}</span></p>
+            <p><span className="font-bold text-[#133c1d]">Verified:</span> <span className="text-gray-600">{user.isEmailVerified ? 'Yes' : 'No'}</span></p>
+            <p className="text-gray-400 font-medium mt-2">Edit form — Member 4</p>
           </div>
         </div>
       )}

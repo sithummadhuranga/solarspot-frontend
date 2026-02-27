@@ -87,22 +87,22 @@ export default function ModerationQueuePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc]">
+    <div className="min-h-screen bg-[#f5faf0]">
       <Navbar />
 
       {/* Hero banner */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-amber-700 via-amber-600 to-orange-500">
+      <div className="relative overflow-hidden bg-[#133c1d]">
         <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, #fde68a 0%, transparent 60%)' }}
+          style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, #8cc63f 0%, transparent 60%)' }}
         />
         <div className="relative mx-auto max-w-5xl px-4 py-8">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
-              <ClipboardList className="h-5 w-5 text-white" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-[16px] bg-[#8cc63f]/20 backdrop-blur-sm">
+              <ClipboardList className="h-5 w-5 text-[#8cc63f]" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white sm:text-3xl">Moderation Queue</h1>
-              <p className="text-amber-100 text-sm">
+              <h1 className="text-2xl font-sg font-bold text-white sm:text-3xl">Moderation Queue</h1>
+              <p className="text-[#f5faf0]/80 text-sm">
                 {pagination ? `${pagination.total} station${pagination.total !== 1 ? 's' : ''} awaiting review` : 'Loading…'}
               </p>
             </div>
@@ -113,27 +113,27 @@ export default function ModerationQueuePage() {
       <div className="mx-auto max-w-5xl px-4 py-8">
 
         {/* Table */}
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-[20px] border border-gray-200 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
           {isLoading ? (
             <div className="flex items-center justify-center py-20">
-              <Loader2 className="h-7 w-7 animate-spin text-green-600" />
+              <Loader2 className="h-7 w-7 animate-spin text-[#8cc63f]" />
             </div>
           ) : stations.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-3 py-20 text-gray-400">
-              <CheckCircle className="h-12 w-12 text-green-300" />
+              <CheckCircle className="h-12 w-12 text-[#8cc63f]/50" />
               <p className="text-base font-medium">Queue is empty — all caught up!</p>
             </div>
           ) : (
             <table className="w-full border-collapse text-sm">
               <thead>
                 <tr className="border-b bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
-                  <th className="px-4 py-3 text-left font-semibold">Station</th>
-                  <th className="px-4 py-3 text-left font-semibold">Submitted by</th>
-                  <th className="px-4 py-3 text-left font-semibold hidden sm:table-cell">City</th>
-                  <th className="px-4 py-3 text-left font-semibold hidden md:table-cell">Connectors</th>
-                  <th className="px-4 py-3 text-left font-semibold hidden md:table-cell">Solar kWp</th>
-                  <th className="px-4 py-3 text-left font-semibold hidden lg:table-cell">Submitted</th>
-                  <th className="px-4 py-3 text-right font-semibold">Actions</th>
+                  <th className="px-4 py-3 text-left font-sg font-semibold">Station</th>
+                  <th className="px-4 py-3 text-left font-sg font-semibold">Submitted by</th>
+                  <th className="px-4 py-3 text-left font-sg font-semibold hidden sm:table-cell">City</th>
+                  <th className="px-4 py-3 text-left font-sg font-semibold hidden md:table-cell">Connectors</th>
+                  <th className="px-4 py-3 text-left font-sg font-semibold hidden md:table-cell">Solar kWp</th>
+                  <th className="px-4 py-3 text-left font-sg font-semibold hidden lg:table-cell">Submitted</th>
+                  <th className="px-4 py-3 text-right font-sg font-semibold">Actions</th>
                 </tr>
               </thead>
               <tbody>

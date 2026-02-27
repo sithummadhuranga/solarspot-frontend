@@ -35,7 +35,7 @@ export function ConnectorBadge({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-full border border-solar-green-200 bg-solar-green-50 text-solar-green-800 font-medium',
+        'inline-flex items-center gap-1.5 rounded-full border border-[#8cc63f]/30 bg-[#8cc63f]/10 text-[#133c1d] font-medium',
         size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-3 py-1 text-sm',
         className
       )}

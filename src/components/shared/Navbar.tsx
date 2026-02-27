@@ -28,10 +28,10 @@ export function Navbar() {
 
         {/* Brand */}
         <Link to="/" className="flex items-center gap-1.5 shrink-0">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-solar-green-600">
-            <Sun className="h-4 w-4 text-white" />
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#8cc63f]">
+            <Sun className="h-4 w-4 text-[#133c1d]" />
           </div>
-          <span className="font-bold text-gray-900 tracking-tight">SolarSpot</span>
+          <span className="font-sg font-bold text-gray-900 tracking-tight">SolarSpot</span>
         </Link>
 
         {/* Desktop nav */}
@@ -49,14 +49,14 @@ export function Navbar() {
           {isAuthenticated ? (
             <>
               <Link to="/stations/new"
-                className="inline-flex items-center gap-1.5 rounded-lg bg-solar-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-solar-green-700 transition-colors">
+                className="inline-flex items-center gap-1.5 rounded-[12px] bg-[#8cc63f] px-3 py-1.5 text-xs font-sg font-semibold text-[#133c1d] hover:bg-[#7ab334] transition-colors">
                 <Zap className="h-3.5 w-3.5" /> Add Station
               </Link>
               <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
                 <Link to="/profile" className="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900 font-medium transition-colors">
                   {user?.avatarUrl
                     ? <img src={user.avatarUrl} alt="" className="h-6 w-6 rounded-full object-cover" />
-                    : <div className="flex h-6 w-6 items-center justify-center rounded-full bg-solar-green-100 text-[11px] font-bold text-solar-green-700">
+                    : <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#8cc63f]/20 text-[11px] font-bold text-[#133c1d]">
                         {user?.displayName?.charAt(0).toUpperCase()}
                       </div>
                   }
@@ -70,7 +70,7 @@ export function Navbar() {
           ) : (
             <>
               <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">Log in</Link>
-              <Link to="/register" className="rounded-lg bg-solar-green-600 px-3.5 py-1.5 text-sm font-semibold text-white hover:bg-solar-green-700 transition-colors">
+              <Link to="/register" className="rounded-[12px] bg-[#8cc63f] px-3.5 py-1.5 text-sm font-sg font-semibold text-[#133c1d] hover:bg-[#7ab334] transition-colors">
                 Sign up
               </Link>
             </>
@@ -101,22 +101,22 @@ export function Navbar() {
           {isAuthenticated ? (
             <div className="mt-3 border-t border-gray-100 pt-3 space-y-1">
               <Link to="/stations/new" onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-3 rounded-xl bg-solar-green-600 px-3 py-2.5 text-sm font-semibold text-white">
+                className="flex items-center gap-3 rounded-[16px] bg-[#8cc63f] px-3 py-2.5 text-sm font-sg font-semibold text-[#133c1d]">
                 <Zap className="h-4 w-4" /> Add Station
               </Link>
               <Link to="/profile" onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                className="flex items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
                 <User2 className="h-4 w-4 text-gray-400" /> {user?.displayName}
               </Link>
               <button onClick={() => { signOut(); setMobileOpen(false) }}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50">
+                className="flex w-full items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50">
                 <LogOut className="h-4 w-4" /> Sign out
               </button>
             </div>
           ) : (
             <div className="mt-3 border-t border-gray-100 pt-3 flex gap-2">
-              <Link to="/login" onClick={() => setMobileOpen(false)} className="flex-1 rounded-lg border border-gray-200 py-2 text-center text-sm font-medium text-gray-700">Log in</Link>
-              <Link to="/register" onClick={() => setMobileOpen(false)} className="flex-1 rounded-lg bg-solar-green-600 py-2 text-center text-sm font-semibold text-white">Sign up</Link>
+              <Link to="/login" onClick={() => setMobileOpen(false)} className="flex-1 rounded-[16px] border border-gray-200 py-2 text-center text-sm font-medium text-gray-700">Log in</Link>
+              <Link to="/register" onClick={() => setMobileOpen(false)} className="flex-1 rounded-[16px] bg-[#8cc63f] py-2 text-center text-sm font-sg font-semibold text-[#133c1d]">Sign up</Link>
             </div>
           )}
         </div>

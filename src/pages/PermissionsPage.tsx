@@ -26,44 +26,44 @@ export default function PermissionsPage() {
         description="Manage roles, permissions, policies, and per-user overrides"
       />
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2">
 
         {/* Roles panel */}
-        <div className="rounded-lg border p-4">
-          <h2 className="mb-2 text-sm font-semibold">Roles ({rolesLoading ? '…' : rolesData?.data.length})</h2>
+        <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-sm">
+          <h2 className="mb-3 text-base font-bold text-[#133c1d] font-sg">Roles ({rolesLoading ? '…' : rolesData?.data.length})</h2>
           {/* TODO (Member 4): <RolesTable roles={rolesData?.data} /> */}
-          <p className="text-sm text-muted-foreground">Roles manager — Member 4</p>
+          <p className="text-sm font-medium text-gray-500">Roles manager — Member 4</p>
         </div>
 
         {/* Permissions panel */}
-        <div className="rounded-lg border p-4">
-          <h2 className="mb-2 text-sm font-semibold">Permissions ({permsLoading ? '…' : permsData?.data.length})</h2>
+        <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-sm">
+          <h2 className="mb-3 text-base font-bold text-[#133c1d] font-sg">Permissions ({permsLoading ? '…' : permsData?.data.length})</h2>
           {/* TODO (Member 4): <PermissionsMatrix permissions={permsData?.data} /> */}
-          <p className="text-sm text-muted-foreground">Permission matrix — Member 4</p>
+          <p className="text-sm font-medium text-gray-500">Permission matrix — Member 4</p>
         </div>
 
         {/* Quota monitoring */}
-        <div className="rounded-lg border p-4">
-          <h2 className="mb-2 text-sm font-semibold">API Quotas</h2>
+        <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-sm">
+          <h2 className="mb-3 text-base font-bold text-[#133c1d] font-sg">API Quotas</h2>
           {quotasLoading
-            ? <p className="text-sm text-muted-foreground">Loading…</p>
+            ? <p className="text-sm font-medium text-gray-500">Loading…</p>
             : quotasData?.data.map((q) => (
-                <div key={q.service} className="flex justify-between text-sm">
+                <div key={q.service} className="flex justify-between text-sm font-medium text-gray-600 py-1">
                   <span>{q.service}</span>
-                  <span>{q.count} / {q.limit}</span>
+                  <span className="font-bold text-[#133c1d]">{q.count} / {q.limit}</span>
                 </div>
               ))
           }
         </div>
 
         {/* Audit log */}
-        <div className="rounded-lg border p-4">
-          <h2 className="mb-2 text-sm font-semibold">Audit Log</h2>
+        <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-sm">
+          <h2 className="mb-3 text-base font-bold text-[#133c1d] font-sg">Audit Log</h2>
           {auditLoading
-            ? <p className="text-sm text-muted-foreground">Loading…</p>
+            ? <p className="text-sm font-medium text-gray-500">Loading…</p>
             : auditData?.data.slice(0, 5).map((log) => (
-                <div key={log._id} className="text-xs text-muted-foreground py-0.5">
-                  [{log.action}] {log.resource} by {log.actor}
+                <div key={log._id} className="text-xs font-medium text-gray-500 py-1 border-b border-gray-50 last:border-0">
+                  <span className="font-bold text-[#1a6b3c]">[{log.action}]</span> {log.resource} by {log.actor}
                 </div>
               ))
           }

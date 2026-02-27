@@ -34,9 +34,9 @@ type Day = typeof DAYS[number]
 
 const PIN_ICON = L.divIcon({
   html: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 32 40">
-    <path d="M16 0C7.163 0 0 7.163 0 16c0 11 16 24 16 24S32 27 32 16C32 7.163 24.837 0 16 0z" fill="#1a6b3c" opacity="0.9"/>
+    <path d="M16 0C7.163 0 0 7.163 0 16c0 11 16 24 16 24S32 27 32 16C32 7.163 24.837 0 16 0z" fill="#133c1d" opacity="0.9"/>
     <circle cx="16" cy="16" r="8" fill="white"/>
-    <circle cx="16" cy="16" r="4" fill="#1a6b3c"/>
+    <circle cx="16" cy="16" r="4" fill="#8cc63f"/>
   </svg>`,
   iconSize:    [32, 40],
   iconAnchor:  [16, 40],
@@ -94,7 +94,7 @@ function MapPicker({
   onChange: (lat: number, lng: number) => void
 }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
+    <div className="overflow-hidden rounded-[20px] border border-gray-200 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
       <MapContainer
         center={lat !== null && lng !== null ? [lat, lng] : DEFAULT_MAP_CENTER}
         zoom={13}
@@ -126,15 +126,15 @@ function StepIndicator({ step, total }: { step: number; total: number }) {
           <div key={i} className="flex flex-1 flex-col items-center gap-1.5">
             <div className={cn(
               'flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold transition-all duration-300',
-              i + 1 < step   ? 'bg-solar-green-600 text-white' :
-              i + 1 === step ? 'bg-solar-green-600 text-white ring-4 ring-solar-green-100' :
+              i + 1 < step   ? 'bg-[#8cc63f] text-[#133c1d]' :
+              i + 1 === step ? 'bg-[#8cc63f] text-[#133c1d] ring-4 ring-[#8cc63f]/20' :
                                'bg-gray-100 text-gray-400'
             )}>
               {i + 1 < step ? <CheckCircle className="h-4 w-4" /> : i + 1}
             </div>
             <span className={cn(
               'hidden sm:block text-xs font-medium',
-              i + 1 <= step ? 'text-solar-green-700' : 'text-gray-400'
+              i + 1 <= step ? 'text-[#133c1d]' : 'text-gray-400'
             )}>
               {label}
             </span>
@@ -143,7 +143,7 @@ function StepIndicator({ step, total }: { step: number; total: number }) {
       </div>
       <div className="relative h-1.5 rounded-full bg-gray-100">
         <div
-          className="absolute left-0 top-0 h-full rounded-full bg-solar-green-500 transition-all duration-500"
+          className="absolute left-0 top-0 h-full rounded-full bg-[#8cc63f] transition-all duration-500"
           style={{ width: `${((step - 1) / (total - 1)) * 100}%` }}
         />
       </div>
@@ -244,31 +244,31 @@ export default function AddStationPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#f8fafc]">
+    <div className="min-h-screen bg-[#f5faf0]">
       <Navbar />
       <div className="mx-auto max-w-2xl px-4 py-8">
 
         {/* Header */}
         <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-solar-green-600 text-white">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[16px] bg-[#8cc63f] text-[#133c1d]">
             <Sun className="h-5 w-5" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Add a Charging Station</h1>
+            <h1 className="text-2xl font-sg font-bold text-[#133c1d]">Add a Charging Station</h1>
             <p className="text-sm text-gray-500">Step {step} of 4 — {stepTitles[step - 1]}</p>
           </div>
         </div>
 
         <StepIndicator step={step} total={4} />
 
-        <div className="rounded-2xl bg-white border border-gray-100 shadow-sm p-6 space-y-6">
+        <div className="rounded-[20px] bg-white border border-gray-100 shadow-[0_4px_24px_rgba(0,0,0,0.04)] p-6 space-y-6">
 
           {/* Step heading */}
           <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-solar-green-50 text-solar-green-600">
+            <div className="flex h-9 w-9 items-center justify-center rounded-[16px] bg-[#8cc63f]/10 text-[#8cc63f]">
               {stepIcons[step - 1]}
             </div>
-            <h2 className="text-lg font-semibold text-gray-900">{stepTitles[step - 1]}</h2>
+            <h2 className="text-lg font-sg font-semibold text-[#133c1d]">{stepTitles[step - 1]}</h2>
           </div>
 
           {/* ── STEP 1: Location ─────────────────────────────────────────── */}
@@ -333,7 +333,7 @@ export default function AddStationPage() {
               )}
 
               {form.connectors.map((connector, i) => (
-                <div key={i} className="rounded-xl border border-gray-100 bg-gray-50 p-4 space-y-3">
+                <div key={i} className="rounded-[16px] border border-gray-100 bg-gray-50 p-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold text-gray-700">Connector {i + 1}</span>
                     {form.connectors.length > 1 && (
@@ -351,7 +351,7 @@ export default function AddStationPage() {
                       <select
                         value={connector.type}
                         onChange={(e) => updateConnector(i, 'type', e.target.value as ConnectorType)}
-                        className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-solar-green-400 focus:outline-none"
+                        className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-[#8cc63f] focus:outline-none"
                       >
                         {CONNECTOR_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
                       </select>
@@ -380,7 +380,7 @@ export default function AddStationPage() {
 
               <button
                 onClick={addConnector}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-solar-green-200 py-3 text-sm font-medium text-solar-green-600 hover:border-solar-green-400 hover:bg-solar-green-50 transition-colors"
+                className="flex w-full items-center justify-center gap-2 rounded-[16px] border-2 border-dashed border-[#8cc63f]/30 py-3 text-sm font-medium text-[#8cc63f] hover:border-[#8cc63f] hover:bg-[#8cc63f]/10 transition-colors"
               >
                 <Plus className="h-4 w-4" /> Add Another Connector
               </button>
@@ -431,9 +431,9 @@ export default function AddStationPage() {
                         key={a}
                         onClick={() => toggleAmenity(a)}
                         className={cn(
-                          'flex flex-col items-center gap-1 rounded-xl border p-2.5 text-xs font-medium transition-all',
+                          'flex flex-col items-center gap-1 rounded-[16px] border p-2.5 text-xs font-medium transition-all',
                           selected
-                            ? 'border-solar-green-400 bg-solar-green-50 text-solar-green-700'
+                            ? 'border-[#8cc63f] bg-[#8cc63f]/10 text-[#133c1d]'
                             : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                         )}
                       >
@@ -485,9 +485,9 @@ export default function AddStationPage() {
                   <button
                     onClick={() => update('alwaysOpen', !form.alwaysOpen)}
                     className={cn(
-                      'flex w-full items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors',
+                      'flex w-full items-center gap-2 rounded-[16px] border px-4 py-2.5 text-sm font-medium transition-colors',
                       form.alwaysOpen
-                        ? 'border-solar-green-400 bg-solar-green-50 text-solar-green-700'
+                        ? 'border-[#8cc63f] bg-[#8cc63f]/10 text-[#133c1d]'
                         : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                     )}
                   >
@@ -496,14 +496,14 @@ export default function AddStationPage() {
                   </button>
 
                   {!form.alwaysOpen && (
-                    <div className="space-y-2 rounded-xl border border-gray-100 bg-gray-50 p-3">
+                    <div className="space-y-2 rounded-[16px] border border-gray-100 bg-gray-50 p-3">
                       {form.schedule.map((s, i) => (
                         <div key={s.day} className="flex items-center gap-3">
                           <button
                             onClick={() => updateSchedule(i, 'enabled', !s.enabled)}
                             className={cn(
                               'w-12 shrink-0 rounded-full py-1 text-center text-xs font-semibold transition-colors',
-                              s.enabled ? 'bg-solar-green-600 text-white' : 'bg-gray-200 text-gray-400'
+                              s.enabled ? 'bg-[#8cc63f] text-[#133c1d]' : 'bg-gray-200 text-gray-400'
                             )}
                           >
                             {s.day}
@@ -537,8 +537,8 @@ export default function AddStationPage() {
           {/* ── STEP 4: Review ───────────────────────────────────────────── */}
           {step === 4 && (
             <div className="space-y-4">
-              <div className="rounded-xl bg-solar-green-50 border border-solar-green-200 p-4">
-                <p className="text-sm font-medium text-solar-green-800">
+              <div className="rounded-[16px] bg-[#8cc63f]/10 border border-[#8cc63f]/30 p-4">
+                <p className="text-sm font-medium text-[#133c1d]">
                   Review your station details before submitting for moderation.
                 </p>
               </div>
@@ -558,7 +558,7 @@ export default function AddStationPage() {
                   <div className="flex flex-wrap gap-2">
                     {form.connectors.map((c, i) => (
                       <span key={i} className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-700">
-                        <Zap className="h-3 w-3 text-solar-green-600" />
+                        <Zap className="h-3 w-3 text-[#8cc63f]" />
                         {c.type} · {c.powerKw} kW · {c.count} port{c.count !== 1 ? 's' : ''}
                       </span>
                     ))}
@@ -572,7 +572,7 @@ export default function AddStationPage() {
                     {form.solarPanelKw} kWp solar
                     {form.alwaysOpen && (
                       <span className="ml-3">
-                        <Clock className="mr-1 inline-block h-3.5 w-3.5 text-solar-green-600" />
+                        <Clock className="mr-1 inline-block h-3.5 w-3.5 text-[#8cc63f]" />
                         Open 24/7
                       </span>
                     )}
@@ -587,7 +587,7 @@ export default function AddStationPage() {
                     <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-gray-400">Amenities</p>
                     <div className="flex flex-wrap gap-2">
                       {form.amenities.map((a) => (
-                        <span key={a} className="inline-flex items-center gap-1 rounded-full border border-solar-green-200 bg-solar-green-50 px-3 py-1 text-xs font-medium text-solar-green-700">
+                        <span key={a} className="inline-flex items-center gap-1 rounded-full border border-[#8cc63f]/30 bg-[#8cc63f]/10 px-3 py-1 text-xs font-medium text-[#133c1d]">
                           {AMENITY_LABELS[a].emoji} {AMENITY_LABELS[a].label}
                         </span>
                       ))}
@@ -619,7 +619,7 @@ export default function AddStationPage() {
         {/* Navigation */}
         <div className="mt-5 flex items-center justify-between">
           {step > 1 ? (
-            <Button variant="outline" onClick={back} className="gap-1.5">
+            <Button variant="outline" onClick={back} className="gap-1.5 rounded-[16px]">
               <ChevronLeft className="h-4 w-4" /> Back
             </Button>
           ) : (
@@ -629,7 +629,7 @@ export default function AddStationPage() {
           {step < 4 ? (
             <Button
               onClick={next}
-              className="gap-1.5 bg-solar-green-600 text-white hover:bg-solar-green-700"
+              className="gap-1.5 rounded-[16px] bg-[#8cc63f] text-[#133c1d] hover:bg-[#7ab334] font-sg font-semibold"
             >
               Continue <ChevronRight className="h-4 w-4" />
             </Button>
@@ -637,7 +637,7 @@ export default function AddStationPage() {
             <Button
               onClick={submit}
               disabled={createStation.isPending}
-              className="gap-1.5 bg-solar-green-600 px-6 text-white hover:bg-solar-green-700"
+              className="gap-1.5 rounded-[16px] bg-[#8cc63f] px-6 text-[#133c1d] hover:bg-[#7ab334] font-sg font-semibold"
             >
               {createStation.isPending ? (
                 <><Loader2 className="h-4 w-4 animate-spin" /> Submitting…</>

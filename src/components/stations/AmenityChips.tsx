@@ -37,7 +37,7 @@ export function AmenityChips({ amenities, compact = false, className }: AmenityC
           <span
             key={key}
             title={config.label}
-            className="inline-flex items-center gap-1 rounded-full border border-solar-green-100 bg-solar-green-50 px-2.5 py-0.5 text-xs text-solar-green-700"
+            className="inline-flex items-center gap-1 rounded-full border border-[#8cc63f]/20 bg-[#8cc63f]/10 px-2.5 py-0.5 text-xs text-[#133c1d]"
           >
             <Icon className="h-3 w-3" />
             {!compact && <span>{config.label}</span>}

@@ -162,9 +162,9 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) handleClose() }}>
-      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto sm:rounded-[20px]">
         <DialogHeader>
-          <DialogTitle>{isEdit ? 'Edit Station' : 'Submit a Station'}</DialogTitle>
+          <DialogTitle className="font-sg font-bold text-[#133c1d]">{isEdit ? 'Edit Station' : 'Submit a Station'}</DialogTitle>
         </DialogHeader>
 
         {/* Progress bar */}
@@ -173,7 +173,7 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
             {STEP_LABELS.map((label, i) => (
               <span
                 key={label}
-                className={`text-xs font-medium ${i <= step ? 'text-green-600' : 'text-gray-400'}`}
+                className={`text-xs font-medium ${i <= step ? 'text-[#8cc63f]' : 'text-gray-400'}`}
               >
                 {label}
               </span>
@@ -181,7 +181,7 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
           </div>
           <div className="h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
             <div
-              className="h-full rounded-full bg-green-500 transition-all duration-300"
+              className="h-full rounded-full bg-[#8cc63f] transition-all duration-300"
               style={{ width: `${((step + 1) / TOTAL_STEPS) * 100}%` }}
             />
           </div>
@@ -220,9 +220,9 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
                         <button
                           type="button"
                           onClick={() => field.onChange('string')}
-                          className={`flex-1 rounded-md border py-1.5 text-sm font-medium transition-colors ${
+                          className={`flex-1 rounded-[12px] border py-1.5 text-sm font-medium transition-colors ${
                             field.value === 'string'
-                              ? 'border-green-500 bg-green-50 text-green-700'
+                              ? 'border-[#8cc63f] bg-[#8cc63f]/10 text-[#133c1d]'
                               : 'border-gray-300 text-gray-600 hover:bg-gray-50'
                           }`}
                         >
@@ -231,9 +231,9 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
                         <button
                           type="button"
                           onClick={() => field.onChange('coordinates')}
-                          className={`flex-1 rounded-md border py-1.5 text-sm font-medium transition-colors ${
+                          className={`flex-1 rounded-[12px] border py-1.5 text-sm font-medium transition-colors ${
                             field.value === 'coordinates'
-                              ? 'border-green-500 bg-green-50 text-green-700'
+                              ? 'border-[#8cc63f] bg-[#8cc63f]/10 text-[#133c1d]'
                               : 'border-gray-300 text-gray-600 hover:bg-gray-50'
                           }`}
                         >
@@ -292,7 +292,7 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
                 )}
                 <div className="space-y-2">
                   {connectorFields.map((cField, idx) => (
-                    <div key={cField.id} className="flex gap-2 items-start rounded-lg border border-gray-200 p-3">
+                    <div key={cField.id} className="flex gap-2 items-start rounded-[16px] border border-gray-200 p-3">
                       <div className="flex-1 grid grid-cols-3 gap-2">
                         <Controller
                           name={`connectors.${idx}.type`}
@@ -352,7 +352,7 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
                         type="checkbox"
                         checked={field.value}
                         onChange={field.onChange}
-                        className="h-4 w-4 rounded accent-green-600"
+                        className="h-4 w-4 rounded accent-[#8cc63f]"
                       />
                     )}
                   />
@@ -360,7 +360,7 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
                 </label>
 
                 {!alwaysOpen && (
-                  <div className="space-y-2 rounded-lg border border-gray-200 p-3">
+                  <div className="space-y-2 rounded-[16px] border border-gray-100 bg-gray-50 p-3">
                     <div className="flex items-center justify-between">
                       <p className="text-xs text-gray-500">Weekly schedule</p>
                       <Button
@@ -426,9 +426,9 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
                         return (
                           <label
                             key={amenity}
-                            className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors ${
+                            className={`flex cursor-pointer items-center gap-2 rounded-[12px] border px-3 py-2 text-sm transition-colors ${
                               selected
-                                ? 'border-green-500 bg-green-50 text-green-700'
+                                ? 'border-[#8cc63f] bg-[#8cc63f]/10 text-[#133c1d]'
                                 : 'border-gray-200 text-gray-600 hover:bg-gray-50'
                             }`}
                           >
@@ -473,7 +473,7 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
               </div>
 
               {/* Review summary */}
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-1 text-sm">
+              <div className="rounded-[16px] border border-gray-200 bg-gray-50 p-4 space-y-1 text-sm">
                 <p className="font-medium text-gray-800">Ready to submit</p>
                 <p className="text-gray-500">
                   Your station will be reviewed by a moderator before going live.
