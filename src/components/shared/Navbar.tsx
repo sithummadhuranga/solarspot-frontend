@@ -5,11 +5,12 @@ import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
 
 export function Navbar() {
-  const { user, isAuthenticated, signOut } = useAuth()
+  const { user, isAuthenticated, signOut, roleLevel, roleName } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const isMod   = user?.role === 'moderator' || user?.role === 'admin'
-  const isAdmin = user?.role === 'admin'
+  // roleLevel >= 3 = review_moderator / weather_analyst / permission_auditor / moderator / admin
+  const isMod   = roleLevel >= 3
+  const isAdmin = roleName === 'admin'
 
   const navLink = (to: string, label: string) => (
     <NavLink
@@ -39,9 +40,9 @@ export function Navbar() {
           {navLink('/stations', 'Stations')}
           {navLink('/map', 'Map')}
           {isAuthenticated && navLink('/my-stations', 'My Stations')}
-          {isMod && navLink('/admin/stations/pending', 'Moderation')}
+          {isMod && navLink('/moderator/dashboard', 'Moderation')}
           {navLink('/weather', 'Weather')}
-          {isAdmin && navLink('/admin/permissions', 'Admin')}
+          {isAdmin && navLink('/admin/dashboard', 'Admin')}
         </div>
 
         {/* Desktop right */}
@@ -90,7 +91,7 @@ export function Navbar() {
             { to: '/stations',  label: 'Stations', icon: <LayoutGrid className="h-4 w-4" /> },
             { to: '/map',       label: 'Map',      icon: <MapPin className="h-4 w-4" /> },
             ...(isAuthenticated ? [{ to: '/my-stations', label: 'My Stations', icon: <Zap className="h-4 w-4" /> }] : []),
-            ...(isMod ? [{ to: '/admin/stations/pending', label: 'Moderation', icon: <ShieldCheck className="h-4 w-4" /> }] : []),
+            ...(isMod ? [{ to: '/moderator/dashboard', label: 'Moderation', icon: <ShieldCheck className="h-4 w-4" /> }] : []),
           ].map((item) => (
             <Link key={item.to} to={item.to} onClick={() => setMobileOpen(false)}
               className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
@@ -108,7 +109,7 @@ export function Navbar() {
                 className="flex items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
                 <User2 className="h-4 w-4 text-gray-400" /> {user?.displayName}
               </Link>
-              <button onClick={() => { signOut(); setMobileOpen(false) }}
+              <button onClick={() => { void signOut(); setMobileOpen(false) }}
                 className="flex w-full items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50">
                 <LogOut className="h-4 w-4" /> Sign out
               </button>

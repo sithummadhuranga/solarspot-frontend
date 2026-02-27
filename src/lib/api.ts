@@ -5,8 +5,7 @@ import {
   type FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react'
 import type { RootState } from '@/app/store'
-import { clearCredentials, setCredentials, setRefreshing } from '@/features/auth/authSlice'
-import type { User } from '@/types/user.types'
+import { clearCredentials, setToken, setRefreshing } from '@/features/auth/authSlice'
 import { API_BASE_URL } from './constants'
 
 // ─── Raw base query ────────────────────────────────────────────────────────────
@@ -23,8 +22,10 @@ const rawBaseQuery = fetchBaseQuery({
 })
 
 // ─── Refresh response shape ────────────────────────────────────────────────────
-interface RefreshResponse {
-  data: { user: User; token: string }
+// POST /api/auth/refresh → { success: true, data: { accessToken: string } }
+interface RefreshApiResponse {
+  success: boolean
+  data: { accessToken: string }
 }
 
 // ─── Base query with automatic token refresh ──────────────────────────────────
@@ -58,10 +59,12 @@ export const baseQueryWithReauth: BaseQueryFn<
       api.dispatch(setRefreshing(false))
 
       if (refreshResult.data) {
-        const { user, token } = (refreshResult as RefreshResponse).data
-        api.dispatch(setCredentials({ user, token }))
+        const newToken = (refreshResult.data as RefreshApiResponse).data.accessToken
+        api.dispatch(setToken(newToken))
+        // Retry the original request with the refreshed token
         result = await rawBaseQuery(args, api, extraOptions)
       } else {
+        // Refresh also failed — session is expired
         api.dispatch(clearCredentials())
       }
     }

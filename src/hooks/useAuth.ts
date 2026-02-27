@@ -1,38 +1,57 @@
 import { useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import {
   selectCurrentUser,
+  selectToken,
+  selectIsAuthenticated,
+  selectUserRoleName,
+  selectUserRoleLevel,
   clearCredentials,
   setCredentials,
 } from '@/features/auth/authSlice'
+import { authApi } from '@/features/auth/authApi'
 import type { User } from '@/types/user.types'
 
 /**
  * useAuth — convenience hook for auth state and actions.
  *
- * Returns the current user, a typed isAuthenticated flag, and action helpers.
- * Always use this hook instead of selecting auth state directly.
- *
- * TODO (Member 4): wire loginFn / logoutFn to authApi mutations once implemented.
+ * Provides the current user, token, auth status, role info,
+ * and signIn / signOut helpers.
  */
 export function useAuth() {
-  const dispatch = useAppDispatch()
-  const user     = useAppSelector(selectCurrentUser)
+  const dispatch  = useAppDispatch()
+  const navigate  = useNavigate()
+  const user      = useAppSelector(selectCurrentUser)
+  const token     = useAppSelector(selectToken)
+  const roleName  = useAppSelector(selectUserRoleName)
+  const roleLevel = useAppSelector(selectUserRoleLevel)
+  const [logoutMutation] = authApi.endpoints.logout.useMutation()
 
-  const signIn = useCallback((token: string, profile: User) => {
-    dispatch(setCredentials({ token, user: profile }))
+  const signIn = useCallback((newToken: string, profile: User) => {
+    dispatch(setCredentials({ token: newToken, user: profile }))
   }, [dispatch])
 
-  const signOut = useCallback(() => {
-    dispatch(clearCredentials())
-    // TODO (Member 4): call authApi.logout mutation to invalidate server-side token
-  }, [dispatch])
+  const signOut = useCallback(async () => {
+    try {
+      await logoutMutation().unwrap()
+    } catch {
+      // Proceed with local logout even if the server call fails
+    } finally {
+      dispatch(clearCredentials())
+      navigate('/login', { replace: true })
+    }
+  }, [dispatch, logoutMutation, navigate])
 
   return {
     user,
-    isAuthenticated: user !== null,
+    token,
+    isAuthenticated: useAppSelector(selectIsAuthenticated),
     isEmailVerified: user?.isEmailVerified ?? false,
-    role:            user?.role ?? null,
+    roleName,
+    roleLevel,
+    /** @deprecated use roleName */
+    role: roleName,
     signIn,
     signOut,
   }

@@ -6,7 +6,7 @@
  */
 import { baseApi } from '@/app/baseApi'
 import type { ApiResponse, PaginatedResponse } from '@/types/api.types'
-import type { User, UpdateProfileDto as UpdateProfileInput, AdminChangeRoleDto as AdminUpdateUserInput } from '@/types/user.types'
+import type { User, UpdateProfileDto as UpdateProfileInput, AdminUpdateUserDto } from '@/types/user.types'
 
 // ─── API slice ─────────────────────────────────────────────────────────────────
 export const usersApi = baseApi.injectEndpoints({
@@ -42,8 +42,8 @@ export const usersApi = baseApi.injectEndpoints({
       providesTags: ['User'],
     }),
 
-    /** PUT /api/users/:id — admin: update any user */
-    adminUpdateUser: builder.mutation<ApiResponse<User>, { id: string } & AdminUpdateUserInput>({
+    /** PUT /api/users/:id — admin: update user role / ban / active status */
+    adminUpdateUser: builder.mutation<ApiResponse<User>, { id: string } & AdminUpdateUserDto>({
       query:          ({ id, ...body }) => ({ url: `/users/${id}`, method: 'PUT', body }),
       invalidatesTags: (_res, _err, { id }) => [{ type: 'User', id }],
     }),
@@ -54,6 +54,7 @@ export const usersApi = baseApi.injectEndpoints({
 
 export const {
   useGetMeQuery,
+  useLazyGetMeQuery,
   useUpdateMeMutation,
   useDeleteMeMutation,
   useGetUserByIdQuery,

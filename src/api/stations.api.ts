@@ -15,7 +15,7 @@ export async function getStations(
   params: StationQueryParams = {}
 ): Promise<PaginatedResponse<Station>> {
   const { data } = await axiosClient.get<PaginatedResponse<Station>>(
-    '/api/stations',
+    '/stations',
     { params }
   )
   return data
@@ -26,7 +26,7 @@ export async function getNearbyStations(
   params: NearbyQueryParams
 ): Promise<ApiResponse<NearbyStation[]>> {
   const { data } = await axiosClient.get<ApiResponse<NearbyStation[]>>(
-    '/api/stations/nearby',
+    '/stations/nearby',
     { params }
   )
   return data
@@ -35,7 +35,7 @@ export async function getNearbyStations(
 // ─── Moderation queue ─────────────────────────────────────────────────────────
 export async function getPendingStations(): Promise<PaginatedResponse<Station>> {
   const { data } = await axiosClient.get<PaginatedResponse<Station>>(
-    '/api/stations/pending'
+    '/stations/pending'
   )
   return data
 }
@@ -43,7 +43,7 @@ export async function getPendingStations(): Promise<PaginatedResponse<Station>> 
 // ─── Single station ───────────────────────────────────────────────────────────
 export async function getStation(id: string): Promise<ApiResponse<Station>> {
   const { data } = await axiosClient.get<ApiResponse<Station>>(
-    `/api/stations/${id}`
+    `/stations/${id}`
   )
   return data
 }
@@ -53,7 +53,7 @@ export async function createStation(
   dto: CreateStationDto
 ): Promise<ApiResponse<Station>> {
   const { data } = await axiosClient.post<ApiResponse<Station>>(
-    '/api/stations',
+    '/stations',
     dto
   )
   return data
@@ -65,7 +65,7 @@ export async function updateStation(
   dto: UpdateStationDto
 ): Promise<ApiResponse<Station>> {
   const { data } = await axiosClient.put<ApiResponse<Station>>(
-    `/api/stations/${id}`,
+    `/stations/${id}`,
     dto
   )
   return data
@@ -74,7 +74,7 @@ export async function updateStation(
 // ─── Approve station ──────────────────────────────────────────────────────────
 export async function approveStation(id: string): Promise<ApiResponse<Station>> {
   const { data } = await axiosClient.patch<ApiResponse<Station>>(
-    `/api/stations/${id}/approve`
+    `/stations/${id}/approve`
   )
   return data
 }
@@ -85,7 +85,7 @@ export async function rejectStation(
   dto: RejectStationDto
 ): Promise<ApiResponse<Station>> {
   const { data } = await axiosClient.patch<ApiResponse<Station>>(
-    `/api/stations/${id}/reject`,
+    `/stations/${id}/reject`,
     dto
   )
   return data
@@ -94,7 +94,7 @@ export async function rejectStation(
 // ─── Delete station (admin soft-delete) ───────────────────────────────────────
 export async function deleteStation(id: string): Promise<ApiResponse<null>> {
   const { data } = await axiosClient.delete<ApiResponse<null>>(
-    `/api/stations/${id}`
+    `/stations/${id}`
   )
   return data
 }

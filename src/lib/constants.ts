@@ -1,22 +1,41 @@
 // ─── API base URL ─────────────────────────────────────────────────────────────
+// Relative '/api' in dev → Vite proxy forwards to localhost:5000 (no CORS).
+// Set VITE_API_BASE_URL to the full backend URL in production.
 export const API_BASE_URL =
   (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '/api'
 
 // ─── Roles ────────────────────────────────────────────────────────────────────
 export const ROLES = {
-  USER:      'user',
-  MODERATOR: 'moderator',
-  ADMIN:     'admin',
+  GUEST:                'guest',
+  USER:                 'user',
+  STATION_OWNER:        'station_owner',
+  FEATURED_CONTRIBUTOR: 'featured_contributor',
+  TRUSTED_REVIEWER:     'trusted_reviewer',
+  REVIEW_MODERATOR:     'review_moderator',
+  WEATHER_ANALYST:      'weather_analyst',
+  PERMISSION_AUDITOR:   'permission_auditor',
+  MODERATOR:            'moderator',
+  ADMIN:                'admin',
 } as const
 
 export type Role = (typeof ROLES)[keyof typeof ROLES]
 
-/** Numeric hierarchy — higher = more permissions (0 = unauthenticated guest) */
+/**
+ * Numeric privilege hierarchy (mirrors backend roleLevel).
+ * 0=guest  1=user  2=station_owner/featured_contributor/trusted_reviewer
+ * 3=review_moderator/weather_analyst/permission_auditor/moderator  4=admin
+ */
 export const ROLE_LEVEL: Record<string, number> = {
-  guest:     0,
-  user:      1,
-  moderator: 2,
-  admin:     3,
+  guest:                0,
+  user:                 1,
+  station_owner:        2,
+  featured_contributor: 2,
+  trusted_reviewer:     2,
+  review_moderator:     3,
+  weather_analyst:      3,
+  permission_auditor:   3,
+  moderator:            3,
+  admin:                4,
 }
 
 // ─── Station options ──────────────────────────────────────────────────────────

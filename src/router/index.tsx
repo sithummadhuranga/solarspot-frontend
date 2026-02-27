@@ -3,21 +3,39 @@ import { Routes, Route } from 'react-router-dom'
 import { ProtectedRoute } from '@/guards/ProtectedRoute'
 import { RoleGuard } from '@/guards/RoleGuard'
 
-const HomePage             = lazy(() => import('@/pages/HomePage'))
-const LoginPage            = lazy(() => import('@/pages/LoginPage'))
-const RegisterPage         = lazy(() => import('@/pages/RegisterPage'))
-const DashboardPage        = lazy(() => import('@/pages/DashboardPage'))
-const StationsPage         = lazy(() => import('@/pages/StationsPage'))
-const StationDetailPage    = lazy(() => import('@/pages/StationDetailPage'))
-const StationMapPage       = lazy(() => import('@/pages/StationMapPage'))
-const AddStationPage       = lazy(() => import('@/pages/AddStationPage'))
-const MyStationsPage       = lazy(() => import('@/pages/MyStationsPage'))
-const ModerationQueuePage  = lazy(() => import('@/pages/ModerationQueuePage'))
-const WeatherPage          = lazy(() => import('@/pages/WeatherPage'))
-const ReviewsPage          = lazy(() => import('@/pages/ReviewsPage'))
-const PermissionsPage      = lazy(() => import('@/pages/PermissionsPage'))
-const ProfilePage          = lazy(() => import('@/pages/ProfilePage'))
-const NotFoundPage         = lazy(() => import('@/pages/NotFoundPage'))
+// ── Public pages ────────────────────────────────────────────────────────────────
+const HomePage           = lazy(() => import('@/pages/HomePage'))
+const LoginPage          = lazy(() => import('@/pages/LoginPage'))
+const RegisterPage       = lazy(() => import('@/pages/RegisterPage'))
+const ForgotPasswordPage = lazy(() => import('@/pages/ForgotPasswordPage'))
+const ResetPasswordPage  = lazy(() => import('@/pages/ResetPasswordPage'))
+const VerifyEmailPage    = lazy(() => import('@/pages/VerifyEmailPage'))
+const StationsPage       = lazy(() => import('@/pages/StationsPage'))
+const StationDetailPage  = lazy(() => import('@/pages/StationDetailPage'))
+const StationMapPage     = lazy(() => import('@/pages/StationMapPage'))
+const NotFoundPage       = lazy(() => import('@/pages/NotFoundPage'))
+const UnauthorizedPage   = lazy(() => import('@/pages/UnauthorizedPage'))
+
+// ── Authenticated pages ─────────────────────────────────────────────────────────
+const DashboardPage  = lazy(() => import('@/pages/DashboardPage'))
+const ProfilePage    = lazy(() => import('@/pages/ProfilePage'))
+const AddStationPage = lazy(() => import('@/pages/AddStationPage'))
+const MyStationsPage = lazy(() => import('@/pages/MyStationsPage'))
+const WeatherPage    = lazy(() => import('@/pages/WeatherPage'))
+
+// ── Moderator pages ─────────────────────────────────────────────────────────────
+const ModeratorDashboardPage = lazy(() => import('@/pages/ModeratorDashboardPage'))
+const ModerationQueuePage    = lazy(() => import('@/pages/ModerationQueuePage'))
+const ReviewsPage            = lazy(() => import('@/pages/ReviewsPage'))
+
+// ── Admin pages ─────────────────────────────────────────────────────────────────
+const AdminDashboardPage   = lazy(() => import('@/pages/admin/AdminDashboardPage'))
+const AdminUsersPage       = lazy(() => import('@/pages/admin/AdminUsersPage'))
+const AdminUserDetailPage  = lazy(() => import('@/pages/admin/AdminUserDetailPage'))
+const AdminPermissionsPage = lazy(() => import('@/pages/admin/AdminPermissionsPage'))
+const AdminRolesPage       = lazy(() => import('@/pages/admin/AdminRolesPage'))
+const AdminAuditLogsPage   = lazy(() => import('@/pages/admin/AdminAuditLogsPage'))
+const AdminQuotaPage       = lazy(() => import('@/pages/admin/AdminQuotaPage'))
 
 function PageSkeleton() {
   return (
@@ -35,48 +53,106 @@ export function AppRouter() {
     <Suspense fallback={<PageSkeleton />}>
       <Routes>
 
-        {/* ── Public ──────────────────────────────────────────────────── */}
-        <Route path="/"             element={<HomePage />} />
-        <Route path="/login"        element={<LoginPage />} />
-        <Route path="/register"     element={<RegisterPage />} />
-        <Route path="/stations"     element={<StationsPage />} />
-        <Route path="/stations/:id" element={<StationDetailPage />} />
-        <Route path="/map"          element={<StationMapPage />} />
+        {/* ── Public ──────────────────────────────────────────────────────── */}
+        <Route path="/"                      element={<HomePage />} />
+        <Route path="/login"                 element={<LoginPage />} />
+        <Route path="/register"              element={<RegisterPage />} />
+        <Route path="/forgot-password"       element={<ForgotPasswordPage />} />
+        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+        <Route path="/verify-email/:token"   element={<VerifyEmailPage />} />
+        <Route path="/stations"              element={<StationsPage />} />
+        <Route path="/stations/:id"          element={<StationDetailPage />} />
+        <Route path="/map"                   element={<StationMapPage />} />
+        <Route path="/unauthorized"          element={<UnauthorizedPage />} />
 
-        {/* ── Authenticated ───────────────────────────────────────────── */}
+        {/* ── Authenticated ───────────────────────────────────────────────── */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard"      element={<DashboardPage />} />
-          <Route path="/profile"        element={<ProfilePage />} />
-          <Route path="/stations/new"   element={<AddStationPage />} />
-          <Route path="/my-stations"    element={<MyStationsPage />} />
-          <Route path="/weather"        element={<WeatherPage />} />
+          <Route path="/dashboard"    element={<DashboardPage />} />
+          <Route path="/profile"      element={<ProfilePage />} />
+          <Route path="/stations/new" element={<AddStationPage />} />
+          <Route path="/my-stations"  element={<MyStationsPage />} />
+          <Route path="/weather"      element={<WeatherPage />} />
 
-          {/* Moderation queue */}
+          {/* ── Moderator (roleLevel >= 3) ─────────────────────────────────── */}
+          <Route
+            path="/moderator/dashboard"
+            element={
+              <RoleGuard minRoleLevel={3}>
+                <ModeratorDashboardPage />
+              </RoleGuard>
+            }
+          />
           <Route
             path="/admin/stations/pending"
             element={
-              <RoleGuard allowedRoles={['moderator', 'admin']}>
+              <RoleGuard minRoleLevel={3}>
                 <ModerationQueuePage />
               </RoleGuard>
             }
           />
-
-          {/* Reviews moderation */}
           <Route
             path="/admin/reviews"
             element={
-              <RoleGuard allowedRoles={['moderator', 'admin']}>
+              <RoleGuard minRoleLevel={3}>
                 <ReviewsPage />
               </RoleGuard>
             }
           />
 
-          {/* RBAC admin */}
+          {/* ── Admin only (role.name === 'admin') ─────────────────────────── */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <RoleGuard allowedRoles={['admin']}>
+                <AdminDashboardPage />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <RoleGuard allowedRoles={['admin']}>
+                <AdminUsersPage />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/users/:id"
+            element={
+              <RoleGuard allowedRoles={['admin']}>
+                <AdminUserDetailPage />
+              </RoleGuard>
+            }
+          />
           <Route
             path="/admin/permissions"
             element={
               <RoleGuard allowedRoles={['admin']}>
-                <PermissionsPage />
+                <AdminPermissionsPage />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/roles"
+            element={
+              <RoleGuard allowedRoles={['admin']}>
+                <AdminRolesPage />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/audit-logs"
+            element={
+              <RoleGuard allowedRoles={['admin']}>
+                <AdminAuditLogsPage />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/quota"
+            element={
+              <RoleGuard allowedRoles={['admin']}>
+                <AdminQuotaPage />
               </RoleGuard>
             }
           />
