@@ -13,6 +13,7 @@ import '@/features/auth/authApi'
 import '@/features/stations/stationsApi'
 import '@/features/reviews/reviewsApi'
 import '@/features/weather/weatherApi'
+import '@/features/weather/solarApi'
 import '@/features/users/usersApi'
 import '@/features/permissions/permissionsApi'
 // ──────────────────────────────────────────────────────────────────────────────

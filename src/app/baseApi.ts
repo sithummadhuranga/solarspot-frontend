@@ -18,6 +18,8 @@ export const baseApi = createApi({
     'Station',
     'Review',
     'Weather',
+    'SolarReport',
+    'SolarAnalytics',
     'User',
     'Permission',
     'Role',
