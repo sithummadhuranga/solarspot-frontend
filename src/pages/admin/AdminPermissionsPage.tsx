@@ -87,7 +87,7 @@ function RolePermissions({ role }: { role: RoleObject }) {
               <button
                 key={perm._id}
                 onClick={() => handleAssign(perm)}
-                className="inline-flex items-center gap-1 rounded-full border border-dashed border-gray-300 px-2.5 py-0.5 text-xs text-gray-600 hover:border-solar-green-500 hover:text-solar-green-700 transition-colors"
+                className="inline-flex items-center gap-1 rounded-full border border-dashed border-gray-300 px-2.5 py-0.5 text-xs text-gray-600 hover:border-[#8cc63f] hover:text-[#7ab32e] transition-colors"
               >
                 <Plus className="h-3 w-3" /> {perm.action}
               </button>

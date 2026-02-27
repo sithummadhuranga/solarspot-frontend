@@ -57,7 +57,7 @@ export default function AdminUsersPage() {
       <div className="mb-4 relative max-w-sm">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
         <Input
-          className="pl-9"
+          className="pl-9 rounded-xl h-11"
           placeholder="Search by name or email…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -118,7 +118,7 @@ export default function AdminUsersPage() {
                   <td className="px-4 py-3 text-right">
                     <Link
                       to={`/admin/users/${user._id}`}
-                      className="text-xs font-medium text-solar-green-700 hover:underline"
+                      className="text-xs font-medium text-[#8cc63f] hover:text-[#7ab32e] hover:underline"
                     >
                       Manage →
                     </Link>
@@ -140,6 +140,7 @@ export default function AdminUsersPage() {
             <Button
               variant="outline"
               size="sm"
+              className="rounded-xl"
               disabled={!pagination.hasPrev}
               onClick={() => setPage((p) => p - 1)}
             >
@@ -148,6 +149,7 @@ export default function AdminUsersPage() {
             <Button
               variant="outline"
               size="sm"
+              className="rounded-xl"
               disabled={!pagination.hasNext}
               onClick={() => setPage((p) => p + 1)}
             >

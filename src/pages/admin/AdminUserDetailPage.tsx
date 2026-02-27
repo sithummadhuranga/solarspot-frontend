@@ -124,7 +124,7 @@ export default function AdminUserDetailPage() {
                   role="switch"
                   aria-checked={isActive}
                   onClick={() => setIsActiveEdit(!isActive)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isActive ? 'bg-solar-green-600' : 'bg-gray-200'}`}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isActive ? 'bg-[#8cc63f]' : 'bg-gray-200'}`}
                 >
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${isActive ? 'translate-x-6' : 'translate-x-1'}`} />
                 </button>
@@ -146,7 +146,7 @@ export default function AdminUserDetailPage() {
                 </button>
               </div>
 
-              <Button onClick={handleSave} disabled={isSaving} className="w-full">
+              <Button onClick={handleSave} disabled={isSaving} className="w-full rounded-xl bg-[#8cc63f] hover:bg-[#7ab32e] text-[#133c1d] font-medium">
                 {isSaving ? 'Saving…' : 'Save changes'}
               </Button>
             </div>

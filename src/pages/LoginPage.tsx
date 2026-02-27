@@ -77,92 +77,100 @@ export default function LoginPage() {
 
   return (
     <Layout>
-      <div className="mx-auto max-w-sm py-16">
-        <h1 className="text-2xl font-bold">Sign in</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Welcome back to SolarSpot</p>
-
-        <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
-          {/* Global error */}
-          {error && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {error}
-            </div>
-          )}
-
-          {/* Email-not-verified banner */}
-          {needsVerification && !resendSent && (
-            <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 space-y-2">
-              <p className="font-medium">Please verify your email address before signing in.</p>
-              <p>Didn't receive the email?{' '}
-                <button
-                  type="button"
-                  onClick={handleResend}
-                  disabled={isResending || !email}
-                  className="underline font-semibold disabled:opacity-50"
-                >
-                  {isResending ? 'Sending…' : 'Resend verification email'}
-                </button>
-                {!email && <span className="text-amber-600"> (enter your email above first)</span>}
-              </p>
-            </div>
-          )}
-          {needsVerification && resendSent && (
-            <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-              Verification email sent — check your inbox (and spam folder).
-            </div>
-          )}
-
-          {/* Field validation errors */}
-          {fieldErrors.length > 0 && (
-            <ul className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 list-disc list-inside space-y-1">
-              {fieldErrors.map((fe, i) => <li key={i}>{fe}</li>)}
-            </ul>
-          )}
-
-          <div className="space-y-1.5">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-            />
+      <div className="mx-auto max-w-md py-16 px-4 sm:px-6">
+        <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-bold font-sg text-[#133c1d]">Sign in</h1>
+            <p className="mt-2 text-sm text-muted-foreground">Welcome back to SolarSpot</p>
           </div>
 
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
-              <Link to="/forgot-password" className="text-xs text-muted-foreground underline">
-                Forgot password?
-              </Link>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            {/* Global error */}
+            {error && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {error}
+              </div>
+            )}
+
+            {/* Email-not-verified banner */}
+            {needsVerification && !resendSent && (
+              <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 space-y-2">
+                <p className="font-medium">Please verify your email address before signing in.</p>
+                <p>Didn't receive the email?{' '}
+                  <button
+                    type="button"
+                    onClick={handleResend}
+                    disabled={isResending || !email}
+                    className="underline font-semibold disabled:opacity-50"
+                  >
+                    {isResending ? 'Sending…' : 'Resend verification email'}
+                  </button>
+                  {!email && <span className="text-amber-600"> (enter your email above first)</span>}
+                </p>
+              </div>
+            )}
+            {needsVerification && resendSent && (
+              <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+                Verification email sent — check your inbox (and spam folder).
+              </div>
+            )}
+
+            {/* Field validation errors */}
+            {fieldErrors.length > 0 && (
+              <ul className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 list-disc list-inside space-y-1">
+                {fieldErrors.map((fe, i) => <li key={i}>{fe}</li>)}
+              </ul>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-gray-700 font-medium">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="h-11"
+              />
             </div>
-            <Input
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-            />
-          </div>
 
-          <Button
-            type="submit"
-            disabled={isLoading || isRateLimited}
-            className="w-full"
-          >
-            {isLoading ? 'Signing in…' : isRateLimited ? 'Too many attempts — wait 15 min' : 'Sign in'}
-          </Button>
-        </form>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
+                <Link to="/forgot-password" className="text-sm text-solar-green-700 hover:text-solar-green-800 font-medium">
+                  Forgot password?
+                </Link>
+              </div>
+              <Input
+                id="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="h-11"
+              />
+            </div>
 
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-          No account?{' '}
-          <Link to="/register" className="underline">Register</Link>
-        </p>
+            <Button
+              type="submit"
+              disabled={isLoading || isRateLimited}
+              className="mt-2 h-11 w-full text-base font-medium bg-[#8cc63f] hover:bg-[#7ab32e] text-[#133c1d]"
+            >
+              {isLoading ? 'Signing in…' : isRateLimited ? 'Too many attempts — wait 15 min' : 'Sign in'}
+            </Button>
+          </form>
+
+          <p className="mt-8 text-center text-sm text-muted-foreground">
+            Don't have an account?{' '}
+            <Link to="/register" className="font-medium text-solar-green-700 hover:text-solar-green-800">
+              Create one
+            </Link>
+          </p>
+        </div>
       </div>
     </Layout>
   )

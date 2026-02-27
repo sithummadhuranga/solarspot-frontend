@@ -12,10 +12,10 @@ import { cn } from '@/lib/utils'
 import type { Station } from '@/types/station.types'
 
 const TABS = [
-  { key: undefined,    label: 'All' },
-  { key: 'active',     label: 'Active' },
-  { key: 'pending',    label: 'Pending' },
-  { key: 'rejected',   label: 'Rejected' },
+  { key: undefined,              label: 'All' },
+  { key: 'active'   as const,    label: 'Active' },
+  { key: 'pending'  as const,    label: 'Pending' },
+  { key: 'rejected' as const,    label: 'Rejected' },
 ] as const
 
 function DeleteConfirm({ station, onConfirm, isPending }: { station: Station; onConfirm: () => void; isPending: boolean }) {
@@ -52,29 +52,34 @@ export default function MyStationsPage() {
   const [editTarget, setEditTarget]   = useState<Station | null>(null)
   const [formOpen,   setFormOpen]     = useState(false)
   const [page,       setPage]         = useState(1)
-  const [activeTab,  setActiveTab]    = useState<string | undefined>(undefined)
+  const [activeTab,  setActiveTab]    = useState<'active' | 'pending' | 'rejected' | undefined>(undefined)
   const deleteMutation                = useDeleteStation()
 
-  const { data, isLoading } = useStationsList({
-    submittedBy: user?._id,
-    page,
-    limit:  12,
-    sortBy: 'newest',
-  })
+  const baseParams = { submittedBy: user?._id, limit: 12, sortBy: 'newest' as const }
 
-  const allStations = data?.data ?? []
-  const pagination  = data?.pagination
-
-  const stations = activeTab
-    ? allStations.filter((s) => s.status === activeTab)
-    : allStations
+  // Three separate queries — one per status — so pending/rejected are always fetched
+  const activeQ   = useStationsList({ ...baseParams, status: 'active',   page: activeTab === 'active'   ? page : 1 })
+  const pendingQ  = useStationsList({ ...baseParams, status: 'pending',  page: activeTab === 'pending'  ? page : 1 })
+  const rejectedQ = useStationsList({ ...baseParams, status: 'rejected', page: activeTab === 'rejected' ? page : 1 })
 
   const counts = {
-    all:      allStations.length,
-    active:   allStations.filter((s) => s.status === 'active').length,
-    pending:  allStations.filter((s) => s.status === 'pending').length,
-    rejected: allStations.filter((s) => s.status === 'rejected').length,
+    active:   activeQ.data?.pagination?.total   ?? 0,
+    pending:  pendingQ.data?.pagination?.total  ?? 0,
+    rejected: rejectedQ.data?.pagination?.total ?? 0,
   }
+
+  // Active tab drives the visible grid; "All" merges all three queries (no pagination)
+  const currentQ = activeTab === 'active'   ? activeQ
+                 : activeTab === 'pending'  ? pendingQ
+                 : activeTab === 'rejected' ? rejectedQ
+                 : null
+
+  const stations = currentQ
+    ? (currentQ.data?.data ?? [])
+    : [...(activeQ.data?.data ?? []), ...(pendingQ.data?.data ?? []), ...(rejectedQ.data?.data ?? [])]
+
+  const pagination = activeTab ? currentQ?.data?.pagination : null
+  const isLoading  = activeQ.isLoading || pendingQ.isLoading || rejectedQ.isLoading
 
   function openEdit(station: Station) { setEditTarget(station); setFormOpen(true) }
   function closeForm() { setFormOpen(false); setEditTarget(null) }
@@ -93,11 +98,11 @@ export default function MyStationsPage() {
             <div>
               <h1 className="text-3xl font-extrabold text-[#133c1d] sm:text-4xl font-sg">My Stations</h1>
               <p className="mt-2 text-[#133c1d]/80 text-sm font-medium">
-                {pagination?.total ?? 0} station{(pagination?.total ?? 0) !== 1 ? 's' : ''} submitted by you
+                {counts.active + counts.pending + counts.rejected} station{(counts.active + counts.pending + counts.rejected) !== 1 ? 's' : ''} submitted by you
               </p>
             </div>
             <Link to="/stations/new">
-              <Button className="gap-2 bg-[#1a1a1a] text-white hover:bg-black font-bold shrink-0 shadow-lg px-5 py-5 rounded-xl font-sg">
+              <Button className="gap-2 bg-[#8cc63f] text-[#133c1d] hover:bg-[#7ab32e] font-bold shrink-0 shadow-sm px-5 py-5 rounded-xl font-sg">
                 <PlusCircle className="h-4 w-4" /> Submit Station
               </Button>
             </Link>
@@ -110,12 +115,12 @@ export default function MyStationsPage() {
         {/* Stats bar */}
         <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {[
-            { label: 'Total',    count: counts.all,      bg: 'bg-white',           icon: <Sun className="h-5 w-5 text-[#1a6b3c]" />, text: 'text-[#133c1d]' },
+            { label: 'Total',    count: counts.active + counts.pending + counts.rejected, bg: 'bg-white',     icon: <Sun className="h-5 w-5 text-[#1a6b3c]" />,             text: 'text-[#133c1d]' },
             { label: 'Active',   count: counts.active,   bg: 'bg-emerald-50',       icon: <CheckCircle className="h-5 w-5 text-emerald-600" />, text: 'text-emerald-800' },
             { label: 'Pending',  count: counts.pending,  bg: 'bg-amber-50',         icon: <Clock className="h-5 w-5 text-amber-600" />, text: 'text-amber-800' },
             { label: 'Rejected', count: counts.rejected, bg: 'bg-red-50',           icon: <Zap className="h-5 w-5 text-red-500" />, text: 'text-red-800' },
           ].map((item) => (
-            <div key={item.label} className={cn('rounded-[20px] border border-gray-100 p-5 flex items-center gap-4 shadow-[0_4px_24px_rgba(0,0,0,0.04)]', item.bg)}>
+            <div key={item.label} className={cn('rounded-[20px] border border-gray-100 p-5 flex items-center gap-4 shadow-sm', item.bg)}>
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-sm shrink-0">{item.icon}</div>
               <div>
                 <p className={cn('text-2xl font-extrabold font-sg', item.text)}>{item.count}</p>
@@ -161,7 +166,7 @@ export default function MyStationsPage() {
             </p>
             {!activeTab && (
               <Link to="/stations/new" className="mt-6">
-                <Button className="bg-[#1a1a1a] hover:bg-black text-white font-bold px-6 py-5 rounded-xl font-sg">
+                <Button className="bg-[#8cc63f] hover:bg-[#7ab32e] text-[#133c1d] font-bold px-6 py-5 rounded-xl font-sg">
                   <PlusCircle className="mr-2 h-4 w-4" /> Submit Station
                 </Button>
               </Link>

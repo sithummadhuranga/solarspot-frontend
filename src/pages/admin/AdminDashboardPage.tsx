@@ -2,9 +2,16 @@ import { Link } from 'react-router-dom'
 import { Layout } from '@/components/shared/Layout'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { useAuth } from '@/hooks/useAuth'
-import { Users, ShieldCheck, ClipboardList, BarChart3, KeyRound } from 'lucide-react'
+import { Users, ShieldCheck, ClipboardList, BarChart3, KeyRound, ClipboardCheck } from 'lucide-react'
 
 const adminCards = [
+  {
+    to:          '/admin/stations/pending',
+    icon:        <ClipboardCheck className="h-6 w-6" />,
+    title:       'Moderation Queue',
+    description: 'Review and approve or reject pending station submissions.',
+    color:       'bg-amber-50 text-amber-700',
+  },
   {
     to:          '/admin/users',
     icon:        <Users className="h-6 w-6" />,
@@ -62,7 +69,7 @@ export default function AdminDashboardPage() {
             <div className={`inline-flex rounded-xl p-3 ${card.color}`}>
               {card.icon}
             </div>
-            <h2 className="mt-4 text-base font-semibold text-gray-900 group-hover:text-solar-green-700 transition-colors">
+            <h2 className="mt-4 text-base font-semibold text-gray-900 group-hover:text-[#8cc63f] transition-colors">
               {card.title}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">{card.description}</p>

@@ -57,19 +57,21 @@ export default function ResetPasswordPage() {
   if (success) {
     return (
       <Layout>
-        <div className="mx-auto max-w-sm py-16 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-100">
-            <svg className="h-7 w-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
+        <div className="mx-auto max-w-md py-16 px-4 sm:px-6">
+          <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm text-center">
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+              <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h1 className="text-2xl font-bold font-sg text-[#133c1d]">Password changed</h1>
+            <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+              Your password has been updated. All existing sessions have been signed out.
+            </p>
+            <Button className="mt-8 h-11 w-full rounded-xl text-base font-medium bg-[#8cc63f] hover:bg-[#7ab32e] text-[#133c1d]" onClick={() => navigate('/login', { replace: true })}>
+              Sign in
+            </Button>
           </div>
-          <h1 className="text-xl font-bold">Password changed</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Your password has been updated. All existing sessions have been signed out.
-          </p>
-          <Button className="mt-6 w-full" onClick={() => navigate('/login', { replace: true })}>
-            Sign in
-          </Button>
         </div>
       </Layout>
     )
@@ -77,59 +79,65 @@ export default function ResetPasswordPage() {
 
   return (
     <Layout>
-      <div className="mx-auto max-w-sm py-16">
-        <h1 className="text-2xl font-bold">Reset password</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Choose a new password for your account. Must be 8–72 characters.
-        </p>
+      <div className="mx-auto max-w-md py-16 px-4 sm:px-6">
+        <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-bold font-sg text-[#133c1d]">Reset password</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Choose a new password for your account. Must be 8–72 characters.
+            </p>
+          </div>
 
-        <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
-          {error && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {error}{' '}
-              {error.includes('invalid or has expired') && (
-                <Link to="/forgot-password" className="underline font-medium">Request new link</Link>
-              )}
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            {error && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {error}{' '}
+                {error.includes('invalid or has expired') && (
+                  <Link to="/forgot-password" className="underline font-medium">Request new link</Link>
+                )}
+              </div>
+            )}
+            {fieldErrors.length > 0 && (
+              <ul className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 list-disc list-inside space-y-1">
+                {fieldErrors.map((fe, i) => <li key={i}>{fe}</li>)}
+              </ul>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-gray-700 font-medium">New password</Label>
+              <Input
+                id="password"
+                type="password"
+                autoComplete="new-password"
+                required
+                minLength={8}
+                maxLength={72}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="At least 8 characters"
+                className="h-11 rounded-xl"
+              />
             </div>
-          )}
-          {fieldErrors.length > 0 && (
-            <ul className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 list-disc list-inside space-y-1">
-              {fieldErrors.map((fe, i) => <li key={i}>{fe}</li>)}
-            </ul>
-          )}
 
-          <div className="space-y-1.5">
-            <Label htmlFor="password">New password</Label>
-            <Input
-              id="password"
-              type="password"
-              autoComplete="new-password"
-              required
-              minLength={8}
-              maxLength={72}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 8 characters"
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword" className="text-gray-700 font-medium">Confirm new password</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                autoComplete="new-password"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Repeat your new password"
+                className="h-11 rounded-xl"
+              />
+            </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="confirmPassword">Confirm new password</Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              autoComplete="new-password"
-              required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Repeat your new password"
-            />
-          </div>
-
-          <Button type="submit" disabled={isLoading} className="w-full">
-            {isLoading ? 'Saving…' : 'Set new password'}
-          </Button>
-        </form>
+            <Button type="submit" disabled={isLoading} className="mt-2 h-11 w-full rounded-xl text-base font-medium bg-[#8cc63f] hover:bg-[#7ab32e] text-[#133c1d]">
+              {isLoading ? 'Saving…' : 'Set new password'}
+            </Button>
+          </form>
+        </div>
       </div>
     </Layout>
   )

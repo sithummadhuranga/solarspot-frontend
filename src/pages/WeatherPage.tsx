@@ -25,27 +25,27 @@ export default function WeatherPage() {
           <>
             <PermissionGuard action="weather.bulk-refresh">
               {/* TODO (Member 3): <BulkRefreshButton /> */}
-              <button className="rounded border px-3 py-1.5 text-sm">Refresh all</button>
+              <button className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">Refresh all</button>
             </PermissionGuard>
             <PermissionGuard action="weather.export">
               {/* TODO (Member 3): <ExportButton /> */}
-              <button className="rounded border px-3 py-1.5 text-sm">Export CSV</button>
+              <button className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">Export CSV</button>
             </PermissionGuard>
           </>
         }
       />
 
       {/* TODO (Member 3): replace with Leaflet heatmap layer */}
-      <div className="h-80 rounded-lg border flex items-center justify-center text-sm text-muted-foreground">
+      <div className="h-80 rounded-[20px] border border-gray-100 bg-white shadow-sm flex items-center justify-center text-sm text-muted-foreground">
         {isLoading ? 'Loading heatmap…' : `Heatmap: ${heatmapData?.data.length ?? 0} data points`}
         {' — Leaflet map — Member 3 (you)'}
       </div>
 
       <div className="mt-4 grid gap-4 md:grid-cols-2">
         {/* TODO (Member 3): <StationForecastPanel /> */}
-        <div className="rounded-lg border p-4 text-sm text-muted-foreground">Station forecast — Member 3</div>
+        <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-sm text-sm text-muted-foreground">Station forecast — Member 3</div>
         {/* TODO (Member 3): <BestTimePanel /> */}
-        <div className="rounded-lg border p-4 text-sm text-muted-foreground">Best charging time — Member 3</div>
+        <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-sm text-sm text-muted-foreground">Best charging time — Member 3</div>
       </div>
     </Layout>
   )

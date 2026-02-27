@@ -31,7 +31,7 @@ export default function ReviewsPage() {
             <p className="mt-1 text-sm font-medium text-gray-600 line-clamp-2">{review.body}</p>
             <div className="mt-4 flex gap-2">
               {/* TODO (Member 2): wire these to useModerateReviewMutation */}
-              <button className="rounded-xl bg-[#8cc63f] px-4 py-2 text-xs font-bold text-[#133c1d] hover:bg-[#97cf42] transition-colors">Approve</button>
+              <button className="rounded-xl bg-[#8cc63f] px-4 py-2 text-xs font-bold text-[#133c1d] hover:bg-[#7ab32e] transition-colors">Approve</button>
               <button className="rounded-xl bg-red-500 px-4 py-2 text-xs font-bold text-white hover:bg-red-600 transition-colors">Remove</button>
             </div>
           </div>

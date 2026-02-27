@@ -7,7 +7,7 @@ function QuotaBar({ percentage }: { percentage: number }) {
   const color =
     pct >= 90 ? 'bg-red-500'    :
     pct >= 70 ? 'bg-amber-500'  :
-    'bg-solar-green-500'
+    'bg-[#8cc63f]'
 
   return (
     <div className="h-2 w-full rounded-full bg-gray-100">

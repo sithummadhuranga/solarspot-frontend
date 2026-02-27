@@ -33,9 +33,11 @@ export async function getNearbyStations(
 }
 
 // ─── Moderation queue ─────────────────────────────────────────────────────────
-export async function getPendingStations(): Promise<PaginatedResponse<Station>> {
+interface PendingParams { page?: number; limit?: number }
+export async function getPendingStations(params: PendingParams = {}): Promise<PaginatedResponse<Station>> {
   const { data } = await axiosClient.get<PaginatedResponse<Station>>(
-    '/stations/pending'
+    '/stations/pending',
+    { params }
   )
   return data
 }

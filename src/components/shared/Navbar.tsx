@@ -16,7 +16,7 @@ export function Navbar() {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        cn('text-sm font-medium transition-colors', isActive ? 'text-solar-green-700' : 'text-gray-600 hover:text-gray-900')
+        cn('text-sm font-medium transition-colors', isActive ? 'text-[#8cc63f]' : 'text-gray-600 hover:text-gray-900')
       }
     >
       {label}

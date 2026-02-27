@@ -41,7 +41,7 @@ export default function ModeratorDashboardPage() {
             <div className={`inline-flex rounded-xl p-3 ${card.color}`}>
               {card.icon}
             </div>
-            <h2 className="mt-4 text-base font-semibold text-gray-900 group-hover:text-solar-green-700 transition-colors">
+            <h2 className="mt-4 text-base font-semibold text-gray-900 group-hover:text-[#8cc63f] transition-colors">
               {card.title}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">{card.description}</p>

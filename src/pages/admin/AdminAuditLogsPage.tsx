@@ -79,6 +79,7 @@ export default function AdminAuditLogsPage() {
             <Button
               variant="outline"
               size="sm"
+              className="rounded-xl"
               disabled={!pagination.hasPrev}
               onClick={() => setPage((p) => p - 1)}
             >
@@ -87,6 +88,7 @@ export default function AdminAuditLogsPage() {
             <Button
               variant="outline"
               size="sm"
+              className="rounded-xl"
               disabled={!pagination.hasNext}
               onClick={() => setPage((p) => p + 1)}
             >

@@ -94,7 +94,7 @@ function MapPicker({
   onChange: (lat: number, lng: number) => void
 }) {
   return (
-    <div className="overflow-hidden rounded-[20px] border border-gray-200 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+    <div className="overflow-hidden rounded-[20px] border border-gray-100 shadow-sm">
       <MapContainer
         center={lat !== null && lng !== null ? [lat, lng] : DEFAULT_MAP_CENTER}
         zoom={13}
@@ -261,7 +261,7 @@ export default function AddStationPage() {
 
         <StepIndicator step={step} total={4} />
 
-        <div className="rounded-[20px] bg-white border border-gray-100 shadow-[0_4px_24px_rgba(0,0,0,0.04)] p-6 space-y-6">
+        <div className="rounded-[20px] bg-white border border-gray-100 shadow-sm p-6 space-y-6">
 
           {/* Step heading */}
           <div className="flex items-center gap-3 pb-4 border-b border-gray-100">

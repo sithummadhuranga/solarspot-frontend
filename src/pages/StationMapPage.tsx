@@ -49,7 +49,7 @@ function SidebarStationRow({ station }: { station: NearbyStation }) {
   return (
     <Link
       to={`/stations/${station._id}`}
-      className="group flex items-start gap-3 rounded-[16px] border border-gray-100 bg-white p-3 shadow-[0_4px_24px_rgba(0,0,0,0.04)] hover:border-[#8cc63f]/30 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] transition-all duration-200"
+      className="group flex items-start gap-3 rounded-[16px] border border-gray-100 bg-white p-3 shadow-sm hover:border-[#8cc63f]/30 hover:shadow-md transition-all duration-200"
     >
       <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-[#8cc63f]/10 to-[#8cc63f]/20">
         {station.images.length > 0 ? (
@@ -134,7 +134,7 @@ function PopupCard({ station }: { station: NearbyStation }) {
         <p className="text-xs font-semibold text-[#133c1d]">{station.distanceKm.toFixed(1)} km away</p>
         <Link
           to={`/stations/${station._id}`}
-          className="flex w-full items-center justify-center rounded-lg bg-[#8cc63f] py-2 text-xs font-sg font-semibold text-[#133c1d] hover:bg-[#7ab334] transition-colors"
+          className="flex w-full items-center justify-center rounded-lg bg-[#8cc63f] py-2 text-xs font-sg font-semibold text-[#133c1d] hover:bg-[#7ab32e] transition-colors"
         >
           View Details →
         </Link>
@@ -203,7 +203,7 @@ export default function StationMapPage() {
     <div className="relative flex h-screen w-full flex-col overflow-hidden">
 
       {/* ── Top bar ─────────────────────────────────────────────────── */}
-      <div className="relative z-[1001] flex h-14 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+      <div className="relative z-[1001] flex h-14 shrink-0 items-center justify-between border-b border-gray-100 bg-white px-4 shadow-sm">
         <Link to="/" className="flex items-center gap-1.5">
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#8cc63f]">
             <Sun className="h-4 w-4 text-[#133c1d]" />
@@ -213,12 +213,12 @@ export default function StationMapPage() {
         </Link>
         <div className="flex items-center gap-2">
           <Link to="/stations"
-            className="hidden sm:flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors">
+            className="hidden sm:flex items-center gap-1.5 rounded-lg border border-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors">
             <Layers className="h-3.5 w-3.5" /> List View
           </Link>
           {isAuthenticated && (
             <Link to="/stations/new"
-              className="flex items-center gap-1.5 rounded-lg bg-[#8cc63f] px-3 py-1.5 text-xs font-sg font-semibold text-[#133c1d] hover:bg-[#7ab334] transition-colors">
+              className="flex items-center gap-1.5 rounded-lg bg-[#8cc63f] px-3 py-1.5 text-xs font-sg font-semibold text-[#133c1d] hover:bg-[#7ab32e] transition-colors">
               <Plus className="h-3.5 w-3.5" /> Add Station
             </Link>
           )}
@@ -272,7 +272,7 @@ export default function StationMapPage() {
               onClick={() => setFiltersOpen((v) => !v)}
               className={cn(
                 'flex w-full items-center gap-1.5 rounded-[12px] px-3 py-1.5 text-xs font-medium transition-colors',
-                filtersOpen ? 'bg-[#8cc63f] text-[#133c1d]' : 'bg-white border border-gray-200 text-gray-600 hover:border-[#8cc63f]/50'
+                filtersOpen ? 'bg-[#8cc63f] text-[#133c1d]' : 'bg-white border border-gray-100 text-gray-600 hover:border-[#8cc63f]/50'
               )}>
               <SlidersHorizontal className="h-3.5 w-3.5" />
               Filters
@@ -285,21 +285,21 @@ export default function StationMapPage() {
             </button>
 
             {filtersOpen && (
-              <div className="mt-2 space-y-3 rounded-[16px] border border-gray-100 bg-white p-3 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+              <div className="mt-2 space-y-3 rounded-[16px] border border-gray-100 bg-white p-3 shadow-sm">
                 {/* Connector */}
                 <div>
                   <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Connector</p>
                   <div className="flex flex-wrap gap-1">
                     <button onClick={() => { setConnectorFilter(undefined); setPage(1) }}
                       className={cn('rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-colors',
-                        !connectorFilter ? 'bg-[#8cc63f] border-[#8cc63f] text-[#133c1d]' : 'border-gray-200 text-gray-500 hover:border-[#8cc63f]/50')}>
+                        !connectorFilter ? 'bg-[#8cc63f] border-[#8cc63f] text-[#133c1d]' : 'border-gray-100 text-gray-500 hover:border-[#8cc63f]/50')}>
                       All
                     </button>
                     {CONNECTOR_TYPES.map((t) => (
                       <button key={t}
                         onClick={() => { setConnectorFilter(t === connectorFilter ? undefined : t as ConnectorType); setPage(1) }}
                         className={cn('rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-colors',
-                          connectorFilter === t ? 'bg-[#8cc63f] border-[#8cc63f] text-[#133c1d]' : 'border-gray-200 text-gray-500 hover:border-[#8cc63f]/50')}>
+                          connectorFilter === t ? 'bg-[#8cc63f] border-[#8cc63f] text-[#133c1d]' : 'border-gray-100 text-gray-500 hover:border-[#8cc63f]/50')}>
                         {t}
                       </button>
                     ))}
@@ -325,7 +325,7 @@ export default function StationMapPage() {
                         <button key={val}
                           onClick={() => { setSortBy(val as StationQueryParams['sortBy']); setPage(1) }}
                           className={cn('rounded-full border px-2 py-0.5 text-[10px] font-medium',
-                            sortBy === val ? 'bg-[#8cc63f] border-[#8cc63f] text-[#133c1d]' : 'border-gray-200 text-gray-500')}>
+                            sortBy === val ? 'bg-[#8cc63f] border-[#8cc63f] text-[#133c1d]' : 'border-gray-100 text-gray-500')}>
                           {label}
                         </button>
                       ))}
@@ -384,12 +384,12 @@ export default function StationMapPage() {
             {pagination && pagination.totalPages > 1 && (
               <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3">
                 <button disabled={!pagination.hasPrev} onClick={() => setPage((p) => p - 1)}
-                  className="flex items-center gap-1 rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-medium text-gray-600 disabled:opacity-40 hover:border-[#8cc63f]/50 transition-colors">
+                  className="flex items-center gap-1 rounded-lg border border-gray-100 px-2.5 py-1.5 text-xs font-medium text-gray-600 disabled:opacity-40 hover:border-[#8cc63f]/50 transition-colors">
                   <ChevronLeft className="h-3.5 w-3.5" /> Prev
                 </button>
                 <span className="text-xs text-gray-400">{page} / {pagination.totalPages}</span>
                 <button disabled={!pagination.hasNext} onClick={() => setPage((p) => p + 1)}
-                  className="flex items-center gap-1 rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-medium text-gray-600 disabled:opacity-40 hover:border-[#8cc63f]/50 transition-colors">
+                  className="flex items-center gap-1 rounded-lg border border-gray-100 px-2.5 py-1.5 text-xs font-medium text-gray-600 disabled:opacity-40 hover:border-[#8cc63f]/50 transition-colors">
                   Next <ChevronRight className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -401,7 +401,7 @@ export default function StationMapPage() {
         <div className="relative flex-1">
           {!sidebarOpen && (
             <button onClick={() => setSidebarOpen(true)}
-              className="absolute left-4 top-4 z-[1000] flex items-center gap-2 rounded-[16px] border border-gray-200 bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 shadow-[0_12px_48px_rgba(0,0,0,0.12)] hover:border-[#8cc63f]/50 transition-all">
+              className="absolute left-4 top-4 z-[1000] flex items-center gap-2 rounded-[16px] border border-gray-100 bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 shadow-sm hover:border-[#8cc63f]/50 transition-all">
               <SlidersHorizontal className="h-4 w-4 text-[#8cc63f]" />
               Stations
               {pagination && (
@@ -417,7 +417,7 @@ export default function StationMapPage() {
             onClick={() => navigator.geolocation?.getCurrentPosition(
               ({ coords }) => setMapCenter({ lat: coords.latitude, lng: coords.longitude })
             )}
-            className="absolute bottom-24 right-4 z-[1000] flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-[#8cc63f] shadow-[0_12px_48px_rgba(0,0,0,0.12)] hover:border-[#8cc63f]/50 hover:shadow-[0_16px_64px_rgba(0,0,0,0.16)] transition-all"
+            className="absolute bottom-24 right-4 z-[1000] flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white text-[#8cc63f] shadow-sm hover:border-[#8cc63f]/50 hover:shadow-md transition-all"
             title="My location">
             <Navigation2 className="h-4 w-4" />
           </button>
@@ -425,7 +425,7 @@ export default function StationMapPage() {
           {/* Add station FAB */}
           {isAuthenticated && (
             <Link to="/stations/new"
-              className="absolute bottom-8 right-4 z-[1000] flex items-center gap-2 rounded-[20px] bg-[#8cc63f] px-4 py-3 text-sm font-sg font-semibold text-[#133c1d] shadow-[0_12px_48px_rgba(0,0,0,0.12)] hover:bg-[#7ab334] hover:shadow-[0_16px_64px_rgba(0,0,0,0.16)] transition-all">
+              className="absolute bottom-8 right-4 z-[1000] flex items-center gap-2 rounded-[20px] bg-[#8cc63f] px-4 py-3 text-sm font-sg font-semibold text-[#133c1d] shadow-sm hover:bg-[#7ab32e] hover:shadow-md transition-all">
               <Plus className="h-4 w-4" /> Add Station
             </Link>
           )}

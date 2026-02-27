@@ -44,10 +44,10 @@ export function useNearbyStations(params: NearbyQueryParams | null) {
   })
 }
 
-export function usePendingStations(page = 1) {
+export function usePendingStations(page = 1, limit = 20) {
   return useQuery({
-    queryKey: [...stationKeys.pending(), { page }],
-    queryFn:  () => getPendingStations(),
+    queryKey: [...stationKeys.pending(), { page, limit }],
+    queryFn:  () => getPendingStations({ page, limit }),
     staleTime: 0,
   })
 }

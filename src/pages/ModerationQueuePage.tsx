@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Loader2, CheckCircle, XCircle, Eye, ClipboardList } from 'lucide-react'
+import { Loader2, CheckCircle, XCircle, Eye} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Navbar } from '@/components/shared/Navbar'
+import { Layout } from '@/components/shared/Layout'
+import { PageHeader } from '@/components/shared/PageHeader'
 import { RejectionReasonModal } from '@/components/stations/RejectionReasonModal'
 import { usePendingStations, useApproveStation, useRejectStation } from '@/hooks/useStations'
 import { formatDate } from '@/lib/utils'
@@ -87,31 +88,13 @@ export default function ModerationQueuePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5faf0]">
-      <Navbar />
+    <Layout showSidebar>
+      <PageHeader
+        title="Moderation Queue"
+        description={pagination ? `${pagination.total} station${pagination.total !== 1 ? 's' : ''} awaiting review` : 'Loading…'}
+      />
 
-      {/* Hero banner */}
-      <div className="relative overflow-hidden bg-[#133c1d]">
-        <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, #8cc63f 0%, transparent 60%)' }}
-        />
-        <div className="relative mx-auto max-w-5xl px-4 py-8">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-[16px] bg-[#8cc63f]/20 backdrop-blur-sm">
-              <ClipboardList className="h-5 w-5 text-[#8cc63f]" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-sg font-bold text-white sm:text-3xl">Moderation Queue</h1>
-              <p className="text-[#f5faf0]/80 text-sm">
-                {pagination ? `${pagination.total} station${pagination.total !== 1 ? 's' : ''} awaiting review` : 'Loading…'}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-5xl px-4 py-8">
-
+      <div className="mt-6">
         {/* Table */}
         <div className="overflow-hidden rounded-[20px] border border-gray-200 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
           {isLoading ? (
@@ -230,6 +213,6 @@ export default function ModerationQueuePage() {
         onClose={() => setRejectTarget(null)}
         onSubmit={handleRejectSubmit}
       />
-    </div>
+    </Layout>
   )
 }

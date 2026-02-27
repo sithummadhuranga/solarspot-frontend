@@ -49,20 +49,22 @@ export default function RegisterPage() {
   if (success) {
     return (
       <Layout>
-        <div className="mx-auto max-w-sm py-16 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-100">
-            <svg className="h-7 w-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
+        <div className="mx-auto max-w-md py-16 px-4 sm:px-6">
+          <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm text-center">
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+              <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h1 className="text-2xl font-bold font-sg text-[#133c1d]">Check your email</h1>
+            <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+              We've sent a verification link to <strong className="text-gray-900">{email}</strong>.
+              Click the link to activate your account before signing in.
+            </p>
+            <Button className="mt-8 h-11 w-full rounded-xl text-base font-medium bg-[#8cc63f] hover:bg-[#7ab32e] text-[#133c1d]" onClick={() => navigate('/login')}>
+              Go to Sign in
+            </Button>
           </div>
-          <h1 className="text-xl font-bold">Check your email</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            We've sent a verification link to <strong>{email}</strong>.
-            Click the link to activate your account before signing in.
-          </p>
-          <Button className="mt-6 w-full" onClick={() => navigate('/login')}>
-            Go to Sign in
-          </Button>
         </div>
       </Layout>
     )
@@ -70,79 +72,88 @@ export default function RegisterPage() {
 
   return (
     <Layout>
-      <div className="mx-auto max-w-sm py-16">
-        <h1 className="text-2xl font-bold">Create account</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Join SolarSpot and start sharing stations
-        </p>
+      <div className="mx-auto max-w-md py-16 px-4 sm:px-6">
+        <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-bold font-sg text-[#133c1d]">Create account</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Join SolarSpot and start sharing stations
+            </p>
+          </div>
 
-        <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
-          {error && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {error}
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            {error && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {error}
+              </div>
+            )}
+            {fieldErrors.length > 0 && (
+              <ul className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 list-disc list-inside space-y-1">
+                {fieldErrors.map((fe, i) => <li key={i}>{fe}</li>)}
+              </ul>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="displayName" className="text-gray-700 font-medium">Display name</Label>
+              <Input
+                id="displayName"
+                type="text"
+                required
+                minLength={2}
+                maxLength={80}
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="Your name"
+                className="h-11 rounded-xl"
+              />
             </div>
-          )}
-          {fieldErrors.length > 0 && (
-            <ul className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 list-disc list-inside space-y-1">
-              {fieldErrors.map((fe, i) => <li key={i}>{fe}</li>)}
-            </ul>
-          )}
 
-          <div className="space-y-1.5">
-            <Label htmlFor="displayName">Display name</Label>
-            <Input
-              id="displayName"
-              type="text"
-              required
-              minLength={2}
-              maxLength={80}
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              placeholder="Your name"
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-gray-700 font-medium">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="h-11 rounded-xl"
+              />
+            </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                autoComplete="new-password"
+                required
+                minLength={8}
+                maxLength={72}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="At least 8 characters"
+                className="h-11 rounded-xl"
+              />
+            </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              autoComplete="new-password"
-              required
-              minLength={8}
-              maxLength={72}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 8 characters"
-            />
-          </div>
+            <Button
+              type="submit"
+              disabled={isLoading || isRateLimited}
+              className="mt-2 h-11 w-full rounded-xl text-base font-medium bg-[#8cc63f] hover:bg-[#7ab32e] text-[#133c1d]"
+            >
+              {isLoading ? 'Creating account…' : isRateLimited ? 'Too many attempts — wait 15 min' : 'Create account'}
+            </Button>
+          </form>
 
-          <Button
-            type="submit"
-            disabled={isLoading || isRateLimited}
-            className="w-full"
-          >
-            {isLoading ? 'Creating account…' : isRateLimited ? 'Too many attempts — wait 15 min' : 'Create account'}
-          </Button>
-        </form>
-
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-          Already have an account?{' '}
-          <Link to="/login" className="underline">Sign in</Link>
-        </p>
+          <p className="mt-8 text-center text-sm text-muted-foreground">
+            Already have an account?{' '}
+            <Link to="/login" className="font-medium text-[#8cc63f] hover:text-[#7ab32e]">
+              Sign in
+            </Link>
+          </p>
+        </div>
       </div>
     </Layout>
   )

@@ -48,7 +48,7 @@ const STATION_PIN = L.divIcon({
 function StatCard({ icon, label, value, sub }: { icon: React.ReactNode; label: string; value: string; sub?: string }) {
   return (
     <div className="flex items-start gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-solar-green-50">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#8cc63f]/10">
         {icon}
       </div>
       <div>
@@ -95,7 +95,7 @@ export default function StationDetailPage() {
         <Navbar />
         <div className="flex h-96 items-center justify-center">
           <div className="text-center space-y-3">
-            <Loader2 className="h-10 w-10 animate-spin text-[#1a6b3c] mx-auto" />
+            <Loader2 className="h-10 w-10 animate-spin text-[#8cc63f] mx-auto" />
             <p className="text-sm font-bold text-gray-500 font-sg">Loading station…</p>
           </div>
         </div>
@@ -241,19 +241,19 @@ export default function StationDetailPage() {
                 sub={station.reviewCount > 0 ? `${station.reviewCount} reviews` : 'No reviews'}
               />
               <StatCard
-                icon={<Sun className="h-6 w-6 text-[#1a6b3c]" />}
+                icon={<Sun className="h-6 w-6 text-[#8cc63f]" />}
                 label="Solar"
                 value={station.solarPanelKw > 0 ? `${station.solarPanelKw} kWp` : '—'}
                 sub="Installed panels"
               />
               <StatCard
-                icon={<Zap className="h-6 w-6 text-[#1a6b3c]" />}
+                icon={<Zap className="h-6 w-6 text-[#8cc63f]" />}
                 label="Connectors"
                 value={`${station.connectors.length} type${station.connectors.length !== 1 ? 's' : ''}`}
                 sub={`${station.connectors.reduce((a, c) => a + c.count, 0)} total ports`}
               />
               <StatCard
-                icon={<MapPin className="h-6 w-6 text-[#1a6b3c]" />}
+                icon={<MapPin className="h-6 w-6 text-[#8cc63f]" />}
                 label="Amenities"
                 value={`${station.amenities.length}`}
                 sub="Available"
@@ -262,8 +262,8 @@ export default function StationDetailPage() {
 
             {/* Description */}
             {station.description && (
-              <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-                <h2 className="mb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
+              <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-sm">
+                <h2 className="mb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-[#133c1d] font-sg">
                   About this station
                 </h2>
                 <p className="text-[0.95rem] leading-relaxed text-gray-700 font-medium">{station.description}</p>
@@ -272,16 +272,16 @@ export default function StationDetailPage() {
 
             {/* Connectors */}
             {station.connectors.length > 0 && (
-              <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-                <h2 className="mb-5 text-sm font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
+              <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-sm">
+                <h2 className="mb-5 text-sm font-bold uppercase tracking-widest text-[#133c1d] font-sg">
                   Charging Connectors
                 </h2>
                 <div className="divide-y divide-gray-100">
                   {station.connectors.map((c, i) => (
                     <div key={i} className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
                       <div className="flex items-center gap-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#f5faf0]">
-                          <Zap className="h-6 w-6 text-[#1a6b3c]" />
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#8cc63f]/10">
+                          <Zap className="h-6 w-6 text-[#8cc63f]" />
                         </div>
                         <div>
                           <p className="text-[0.95rem] font-bold text-[#133c1d]">{c.type}</p>
@@ -305,15 +305,15 @@ export default function StationDetailPage() {
 
             {/* Amenities */}
             {station.amenities.length > 0 && (
-              <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-                <h2 className="mb-5 text-sm font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
+              <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-sm">
+                <h2 className="mb-5 text-sm font-bold uppercase tracking-widest text-[#133c1d] font-sg">
                   Amenities
                 </h2>
                 <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
                   {station.amenities.map((a) => {
                     const info = AMENITY_INFO[a]
                     return (
-                      <div key={a} className="flex flex-col items-center gap-2 rounded-2xl border border-[#dcfce7] bg-[#f5faf0] px-4 py-4 text-center transition-transform hover:-translate-y-1">
+                      <div key={a} className="flex flex-col items-center gap-2 rounded-2xl border border-[#8cc63f]/30 bg-[#8cc63f]/5 px-4 py-4 text-center transition-transform hover:-translate-y-1">
                         <span className="text-3xl">{info.emoji}</span>
                         <span className="text-xs font-bold text-[#133c1d]">{info.label}</span>
                       </div>
@@ -324,8 +324,8 @@ export default function StationDetailPage() {
             )}
 
             {/* Operating Hours */}
-            <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-              <h2 className="mb-5 flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
+            <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-sm">
+              <h2 className="mb-5 flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-[#133c1d] font-sg">
                 <Clock className="h-5 w-5" /> Operating Hours
               </h2>
               {station.operatingHours?.alwaysOpen ? (
@@ -366,7 +366,7 @@ export default function StationDetailPage() {
           <div className="space-y-6">
 
             {/* Action buttons */}
-            <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] space-y-3">
+            <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-sm space-y-3">
               {/* Edit own station */}
               {isOwner && station.status !== 'active' && (
                 <Link to={`/my-stations`}
@@ -377,7 +377,7 @@ export default function StationDetailPage() {
               )}
 
               <Link to="/map"
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1a1a1a] py-3 text-sm font-bold text-white hover:bg-black transition-colors shadow-md font-sg"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#8cc63f] py-3 text-sm font-bold text-[#133c1d] hover:bg-[#7ab32e] transition-colors shadow-sm font-sg"
               >
                 <MapPin className="h-4 w-4" /> View on Map
               </Link>
@@ -385,7 +385,7 @@ export default function StationDetailPage() {
 
             {/* Moderation panel */}
             {isMod && station.status === 'pending' && (
-              <div className="rounded-[20px] border border-amber-200 bg-amber-50 p-6 space-y-4 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+              <div className="rounded-[20px] border border-amber-200 bg-amber-50 p-6 space-y-4 shadow-sm">
                 <div className="flex items-center gap-2">
                   <Shield className="h-5 w-5 text-amber-600" />
                   <p className="text-sm font-bold text-amber-800 font-sg">Moderation Required</p>
@@ -433,15 +433,15 @@ export default function StationDetailPage() {
 
             {/* Rejection reason */}
             {station.status === 'rejected' && station.rejectionReason && (
-              <div className="rounded-[20px] border border-red-200 bg-red-50 p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+              <div className="rounded-[20px] border border-red-200 bg-red-50 p-5 shadow-sm">
                 <p className="text-xs font-bold text-red-700 mb-1.5 font-sg">Rejection Reason</p>
                 <p className="text-sm font-medium text-red-600 italic">"{station.rejectionReason}"</p>
               </div>
             )}
 
             {/* Meta info */}
-            <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">Station Info</h3>
+            <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-sm space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-[#8cc63f] font-sg">Station Info</h3>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
                   <User className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
@@ -461,7 +461,7 @@ export default function StationDetailPage() {
                 </div>
                 {station.isVerified && station.verifiedAt && (
                   <div className="flex items-start gap-3">
-                    <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                    <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#8cc63f]" />
                     <div>
                       <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Verified on</p>
                       <p className="text-sm font-bold text-[#133c1d]">
@@ -475,7 +475,7 @@ export default function StationDetailPage() {
 
             {/* Mini map */}
             {hasMap && (
-              <div className="overflow-hidden rounded-[20px] border border-gray-100 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+              <div className="overflow-hidden rounded-[20px] border border-gray-100 shadow-sm">
                 <MapContainer
                   center={[coords[1], coords[0]]}
                   zoom={14}
@@ -490,10 +490,10 @@ export default function StationDetailPage() {
                   />
                   <Marker position={[coords[1], coords[0]]} icon={STATION_PIN} />
                 </MapContainer>
-                <div className="border-t border-gray-100 bg-[#f5faf0] px-4 py-3">
+                <div className="border-t border-gray-100 bg-[#8cc63f]/5 px-4 py-3">
                   <Link
                     to="/map"
-                    className="text-xs font-bold text-[#1a6b3c] hover:text-[#133c1d] transition-colors flex items-center gap-1"
+                    className="text-xs font-bold text-[#8cc63f] hover:text-[#7ab32e] transition-colors flex items-center gap-1"
                   >
                     Open in Map View <span className="text-lg leading-none">›</span>
                   </Link>

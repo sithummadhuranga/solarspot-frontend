@@ -30,56 +30,58 @@ export default function VerifyEmailPage() {
 
   return (
     <Layout>
-      <div className="mx-auto max-w-sm py-16 text-center">
-        {/* Loading */}
-        {isLoading && (
-          <>
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center">
-              <div className="h-8 w-8 rounded-full border-4 border-gray-200 border-t-solar-green-600 animate-spin" />
-            </div>
-            <h1 className="text-xl font-bold">Verifying your email…</h1>
-            <p className="mt-2 text-sm text-muted-foreground">Please wait a moment.</p>
-          </>
-        )}
+      <div className="mx-auto max-w-md py-16 px-4 sm:px-6">
+        <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm text-center">
+          {/* Loading */}
+          {isLoading && (
+            <>
+              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center">
+                <div className="h-8 w-8 rounded-full border-4 border-gray-200 border-t-solar-green-600 animate-spin" />
+              </div>
+              <h1 className="text-2xl font-bold font-sg text-[#133c1d]">Verifying your email…</h1>
+              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">Please wait a moment.</p>
+            </>
+          )}
 
-        {/* Success */}
-        {isSuccess && (
-          <>
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-100">
-              <svg className="h-7 w-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <h1 className="text-xl font-bold">Email verified!</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Your email address has been confirmed. You can now sign in.
-            </p>
-            <Link to="/login">
-              <Button className="mt-6 w-full">Sign in</Button>
-            </Link>
-          </>
-        )}
-
-        {/* Error */}
-        {isError && (
-          <>
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
-              <svg className="h-7 w-7 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </div>
-            <h1 className="text-xl font-bold">Verification failed</h1>
-            <p className="mt-2 text-sm text-muted-foreground">{errorMessage}</p>
-            <div className="mt-6 flex flex-col gap-2">
-              <Link to="/register">
-                <Button className="w-full" variant="outline">Register again</Button>
-              </Link>
+          {/* Success */}
+          {isSuccess && (
+            <>
+              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h1 className="text-2xl font-bold font-sg text-[#133c1d]">Email verified!</h1>
+              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+                Your email address has been confirmed. You can now sign in.
+              </p>
               <Link to="/login">
-                <Button className="w-full" variant="ghost">Back to Sign in</Button>
+                <Button className="mt-8 h-11 w-full text-base font-medium bg-[#8cc63f] hover:bg-[#7ab32e] text-[#133c1d]">Sign in</Button>
               </Link>
-            </div>
-          </>
-        )}
+            </>
+          )}
+
+          {/* Error */}
+          {isError && (
+            <>
+              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+                <svg className="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+              <h1 className="text-2xl font-bold font-sg text-[#133c1d]">Verification failed</h1>
+              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{errorMessage}</p>
+              <div className="mt-8 flex flex-col gap-3">
+                <Link to="/register">
+                  <Button className="h-11 w-full text-base font-medium" variant="outline">Register again</Button>
+                </Link>
+                <Link to="/login">
+                  <Button className="h-11 w-full text-base font-medium" variant="ghost">Back to Sign in</Button>
+                </Link>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </Layout>
   )
