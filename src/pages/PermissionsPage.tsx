@@ -1,6 +1,6 @@
 import { Layout } from '@/components/shared/Layout'
 import { PageHeader } from '@/components/shared/PageHeader'
-import { useListRolesQuery, useListPermissionsQuery, useListAuditLogsQuery, useGetQuotaStatsQuery } from '@/features/permissions/permissionsApi'
+import { useListAdminRolesQuery, useListAllPermissionsQuery, useListAuditLogsQuery, useGetQuotaStatsQuery } from '@/features/permissions/permissionsApi'
 
 /**
  * PermissionsPage — admin RBAC management dashboard (Member 4's page).
@@ -14,8 +14,8 @@ import { useListRolesQuery, useListPermissionsQuery, useListAuditLogsQuery, useG
  *  - Add policy attachment UI
  */
 export default function PermissionsPage() {
-  const { data: rolesData,   isLoading: rolesLoading   } = useListRolesQuery()
-  const { data: permsData,   isLoading: permsLoading   } = useListPermissionsQuery()
+  const { data: rolesData,   isLoading: rolesLoading   } = useListAdminRolesQuery()
+  const { data: permsData,   isLoading: permsLoading   } = useListAllPermissionsQuery()
   const { data: auditData,   isLoading: auditLoading   } = useListAuditLogsQuery({})
   const { data: quotasData,  isLoading: quotasLoading  } = useGetQuotaStatsQuery()
 
@@ -63,7 +63,7 @@ export default function PermissionsPage() {
             ? <p className="text-sm font-medium text-gray-500">Loading…</p>
             : auditData?.data.slice(0, 5).map((log) => (
                 <div key={log._id} className="text-xs font-medium text-gray-500 py-1 border-b border-gray-50 last:border-0">
-                  <span className="font-bold text-[#1a6b3c]">[{log.action}]</span> {log.resource} by {log.actor}
+                  <span className="font-bold text-[#1a6b3c]">[{log.action}]</span> {log.target} by {log.actor.displayName}
                 </div>
               ))
           }

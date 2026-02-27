@@ -35,7 +35,7 @@ export default function ProfilePage() {
           <div className="rounded-[20px] border border-gray-100 bg-white p-6 flex flex-col gap-3 text-sm shadow-sm">
             <p><span className="font-bold text-[#133c1d]">Name:</span> <span className="text-gray-600">{user.displayName}</span></p>
             <p><span className="font-bold text-[#133c1d]">Email:</span> <span className="text-gray-600">{user.email}</span></p>
-            <p><span className="font-bold text-[#133c1d]">Role:</span>  <span className="text-gray-600">{user.role}</span></p>
+            <p><span className="font-bold text-[#133c1d]">Role:</span>  <span className="text-gray-600">{user.role.displayName}</span></p>
             <p><span className="font-bold text-[#133c1d]">Verified:</span> <span className="text-gray-600">{user.isEmailVerified ? 'Yes' : 'No'}</span></p>
             <p className="text-gray-400 font-medium mt-2">Edit form — Member 4</p>
           </div>

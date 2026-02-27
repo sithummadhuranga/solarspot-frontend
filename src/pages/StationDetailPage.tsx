@@ -73,7 +73,7 @@ export default function StationDetailPage() {
   const rejectMutation             = useRejectStation()
 
   const station  = data?.data
-  const isMod    = user?.role === 'moderator' || user?.role === 'admin'
+  const isMod    = user?.role.name === 'moderator' || user?.role.name === 'admin'
   const isOwner  = user?._id === station?.submittedBy?._id
 
   function handleApprove() {

@@ -66,7 +66,7 @@ export function usePermission() {
   const hasPermission = useCallback((action: string): boolean => {
     if (!user) return ROLE_PERMISSIONS.guest?.includes(action) ?? false
 
-    const rolePerms = ROLE_PERMISSIONS[user.role] ?? []
+    const rolePerms = ROLE_PERMISSIONS[user.role.name] ?? []
     return rolePerms.includes(action)
   }, [user])
 
