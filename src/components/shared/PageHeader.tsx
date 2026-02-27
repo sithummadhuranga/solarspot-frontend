@@ -21,9 +21,9 @@ export function PageHeader({ title, description, actions }: PageHeaderProps) {
   return (
     <div className="mb-6 flex items-start justify-between gap-4">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+        <h1 className="text-3xl font-sg font-bold tracking-tight text-[#133c1d]">{title}</h1>
         {description && (
-          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+          <p className="mt-2 text-sm text-gray-600">{description}</p>
         )}
       </div>
       {actions && (

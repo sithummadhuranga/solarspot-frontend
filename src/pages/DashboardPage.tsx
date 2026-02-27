@@ -20,17 +20,17 @@ export default function DashboardPage() {
         description="Here's an overview of your activity on SolarSpot."
       />
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-3">
         {/* TODO (Member 1): <StationsSummaryCard /> */}
         {/* TODO (Member 2): <ReviewsSummaryCard /> */}
         {/* TODO (Member 3): <SolarIndexCard /> */}
-        <div className="rounded-lg border p-6 text-sm text-muted-foreground">
+        <div className="rounded-[20px] border border-gray-100 bg-white p-6 text-sm font-medium text-gray-500 shadow-sm">
           Stations placeholder — Member 1
         </div>
-        <div className="rounded-lg border p-6 text-sm text-muted-foreground">
+        <div className="rounded-[20px] border border-gray-100 bg-white p-6 text-sm font-medium text-gray-500 shadow-sm">
           Reviews placeholder — Member 2
         </div>
-        <div className="rounded-lg border p-6 text-sm text-muted-foreground">
+        <div className="rounded-[20px] border border-gray-100 bg-white p-6 text-sm font-medium text-gray-500 shadow-sm">
           Solar index placeholder — Member 3 (you)
         </div>
       </div>

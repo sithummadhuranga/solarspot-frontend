@@ -16,7 +16,7 @@ interface LayoutProps {
  */
 export function Layout({ children, showSidebar = false }: LayoutProps) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#f5faf0]">
       <Navbar />
       <div className="flex">
         {showSidebar && <Sidebar />}

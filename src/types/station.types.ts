@@ -1,6 +1,7 @@
 // ─── Sub-types ────────────────────────────────────────────────────────────────
 export type StationStatus = 'pending' | 'active' | 'inactive' | 'rejected'
 export type ConnectorType = 'USB-C' | 'Type-2' | 'CCS' | 'CHAdeMO' | 'Tesla-NACS' | 'AC-Socket'
+export type Day = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun'
 export type Amenity =
   | 'wifi' | 'cafe' | 'restroom' | 'parking' | 'security'
   | 'shade' | 'water' | 'repair_shop' | 'ev_parking'
@@ -12,11 +13,11 @@ export interface Connector {
 }
 
 export interface Address {
-  street?:          string
-  city?:            string
-  district?:        string
-  country?:         string
-  postalCode?:      string
+  street?:           string
+  city?:             string
+  district?:         string
+  country?:          string
+  postalCode?:       string
   formattedAddress?: string
 }
 
@@ -26,7 +27,7 @@ export interface GeoLocation {
 }
 
 export interface DaySchedule {
-  day:       'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun'
+  day:       Day
   openTime:  string
   closeTime: string
 }
@@ -36,6 +37,12 @@ export interface OperatingHours {
   schedule:   DaySchedule[]
 }
 
+export interface StationSubmittedBy {
+  _id:         string
+  displayName: string
+  avatar?:     string | null
+}
+
 // ─── Full station document ────────────────────────────────────────────────────
 export interface Station {
   _id:             string
@@ -43,7 +50,7 @@ export interface Station {
   description:     string | null
   location:        GeoLocation
   address:         Address
-  submittedBy:     string
+  submittedBy:     StationSubmittedBy
   connectors:      Connector[]
   solarPanelKw:    number
   amenities:       Amenity[]
@@ -65,20 +72,34 @@ export interface Station {
 }
 
 // ─── DTOs ─────────────────────────────────────────────────────────────────────
+export interface ConnectorInput {
+  type:    ConnectorType
+  powerKw: number
+  count:   number
+}
+
 export interface CreateStationDto {
-  name:           string
-  description?:   string
-  address:        string
-  solarPanelKw:   number
-  connectors:     Omit<Connector, 'count'>[]
-  amenities?:     Amenity[]
-  operatingHours?: Pick<OperatingHours, 'alwaysOpen'>
+  name:            string
+  description?:    string
+  addressString?:  string
+  lat?:            number
+  lng?:            number
+  solarPanelKw:    number
+  connectors:      ConnectorInput[]
+  amenities?:      Amenity[]
+  images?:         string[]
+  operatingHours?: OperatingHours
 }
 
 export type UpdateStationDto = Partial<CreateStationDto>
 
 export interface RejectStationDto {
-  reason: string
+  rejectionReason: string
+}
+
+// ─── Nearby station (has extra distanceKm field) ──────────────────────────────
+export interface NearbyStation extends Station {
+  distanceKm: number
 }
 
 // ─── Query params ─────────────────────────────────────────────────────────────
@@ -91,6 +112,22 @@ export interface StationQueryParams {
   radius?:        number
   connectorType?: ConnectorType
   minRating?:     number
-  amenities?:     string
-  sortBy?:        'rating' | 'newest' | 'distance'
+  isVerified?:    boolean
+  amenities?:     string        // comma-separated
+  sortBy?:        'newest' | 'rating' | 'distance' | 'featured'
+  submittedBy?:   string
+}
+
+export interface NearbyQueryParams {
+  lat:     number
+  lng:     number
+  radius?: number   // km, default 10
+  limit?:  number   // default 20
+}
+
+export interface NearbyQueryParams {
+  lat:     number
+  lng:     number
+  radius?: number
+  limit?:  number
 }
