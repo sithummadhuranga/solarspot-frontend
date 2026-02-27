@@ -22,16 +22,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error,    setError]    = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<string[]>([])
-  /** Timestamp (ms) when the rate-limit window ends — null if not rate-limited. */
-  const [rateLimitUntil, setRateLimitUntil] = useState<number | null>(null)
+  /** True while the 429 rate-limit window is active. Cleared by setTimeout. */
+  const [isRateLimited, setIsRateLimited] = useState(false)
   /** True when the 403 is specifically "email not verified" */
   const [needsVerification, setNeedsVerification] = useState(false)
   const [resendSent, setResendSent] = useState(false)
 
   const [login, { isLoading }] = useLoginMutation()
   const [resendVerification, { isLoading: isResending }] = useResendVerificationMutation()
-
-  const isRateLimited = rateLimitUntil != null && Date.now() < rateLimitUntil
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -50,7 +48,8 @@ export default function LoginPage() {
       const e = err as { status?: number; data?: { message?: string; errors?: string[] } }
       if (e.status === 429) {
         setError(e.data?.message ?? 'Too many attempts. Try again in 15 minutes.')
-        setRateLimitUntil(Date.now() + 15 * 60 * 1000)
+        setIsRateLimited(true)
+        setTimeout(() => setIsRateLimited(false), 15 * 60 * 1000)
       } else if (e.status === 403) {
         const msg = e.data?.message ?? ''
         if (msg.toLowerCase().includes('verify')) {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import { Layout } from '@/components/shared/Layout'
@@ -35,18 +35,15 @@ export default function AdminUserDetailPage() {
 
   const user = data?.data
 
-  const [role,     setRole]     = useState('')
-  const [isActive, setIsActive] = useState(true)
-  const [isBanned, setIsBanned] = useState(false)
+  // Pending edits — null means "no local edit yet, use server value"
+  const [roleEdit,     setRoleEdit]     = useState<string | null>(null)
+  const [isActiveEdit, setIsActiveEdit] = useState<boolean | null>(null)
+  const [isBannedEdit, setIsBannedEdit] = useState<boolean | null>(null)
 
-  // Sync form state when user data loads
-  useEffect(() => {
-    if (user) {
-      setRole(user.role.name)
-      setIsActive(user.isActive)
-      setIsBanned(user.isBanned)
-    }
-  }, [user])
+  // Effective values: local edit takes priority, falling back to server data
+  const role     = roleEdit     ?? user?.role.name  ?? ''
+  const isActive = isActiveEdit ?? user?.isActive   ?? true
+  const isBanned = isBannedEdit ?? user?.isBanned   ?? false
 
   async function handleSave() {
     if (!id) return
@@ -105,7 +102,7 @@ export default function AdminUserDetailPage() {
 
               <div className="space-y-1.5">
                 <Label>Role</Label>
-                <Select value={role} onValueChange={setRole}>
+                <Select value={role} onValueChange={setRoleEdit}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select role" />
                   </SelectTrigger>
@@ -126,7 +123,7 @@ export default function AdminUserDetailPage() {
                   type="button"
                   role="switch"
                   aria-checked={isActive}
-                  onClick={() => setIsActive((v) => !v)}
+                  onClick={() => setIsActiveEdit(!isActive)}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isActive ? 'bg-solar-green-600' : 'bg-gray-200'}`}
                 >
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${isActive ? 'translate-x-6' : 'translate-x-1'}`} />
@@ -142,7 +139,7 @@ export default function AdminUserDetailPage() {
                   type="button"
                   role="switch"
                   aria-checked={isBanned}
-                  onClick={() => setIsBanned((v) => !v)}
+                  onClick={() => setIsBannedEdit(!isBanned)}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isBanned ? 'bg-red-500' : 'bg-gray-200'}`}
                 >
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${isBanned ? 'translate-x-6' : 'translate-x-1'}`} />

@@ -16,11 +16,10 @@ export default function ForgotPasswordPage() {
   const [email,       setEmail]       = useState('')
   const [submitted,   setSubmitted]   = useState(false)
   const [error,       setError]       = useState<string | null>(null)
-  const [rateLimitUntil, setRateLimitUntil] = useState<number | null>(null)
+  /** True while the 429 rate-limit window is active. Cleared by setTimeout. */
+  const [isRateLimited, setIsRateLimited] = useState(false)
 
   const [forgotPassword, { isLoading }] = useForgotPasswordMutation()
-
-  const isRateLimited = rateLimitUntil != null && Date.now() < rateLimitUntil
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -34,7 +33,8 @@ export default function ForgotPasswordPage() {
       const e = err as { status?: number; data?: { message?: string } }
       if (e.status === 429) {
         setError(e.data?.message ?? 'Too many attempts. Try again in 15 minutes.')
-        setRateLimitUntil(Date.now() + 15 * 60 * 1000)
+        setIsRateLimited(true)
+        setTimeout(() => setIsRateLimited(false), 15 * 60 * 1000)
       } else {
         // On any other error still show generic success to prevent enumeration
         setSubmitted(true)

@@ -15,11 +15,10 @@ export default function RegisterPage() {
   const [error,       setError]       = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<string[]>([])
   const [success,     setSuccess]     = useState(false)
-  const [rateLimitUntil, setRateLimitUntil] = useState<number | null>(null)
+  /** True while the 429 rate-limit window is active. Cleared by setTimeout. */
+  const [isRateLimited, setIsRateLimited] = useState(false)
 
   const [register, { isLoading }] = useRegisterMutation()
-
-  const isRateLimited = rateLimitUntil != null && Date.now() < rateLimitUntil
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -34,7 +33,8 @@ export default function RegisterPage() {
       const e = err as { status?: number; data?: { message?: string; errors?: string[] } }
       if (e.status === 429) {
         setError(e.data?.message ?? 'Too many attempts. Try again in 15 minutes.')
-        setRateLimitUntil(Date.now() + 15 * 60 * 1000)
+        setIsRateLimited(true)
+        setTimeout(() => setIsRateLimited(false), 15 * 60 * 1000)
       } else if (e.status === 409) {
         setError('An account with that email already exists.')
       } else if (e.status === 422 && e.data?.errors?.length) {
