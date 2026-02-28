@@ -2,13 +2,14 @@ import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
 import { store } from '@/app/store'
 import { clearCredentials, setCredentials, setRefreshing } from '@/features/auth/authSlice'
 import type { User } from '@/types/user.types'
+import { API_BASE_URL } from '@/lib/constants'
 
-// Empty-string base so all axios requests are relative (/api/…).
-// Vite dev-server proxy (vite.config.ts) forwards /api/* → backend container.
-// For local runs outside Docker, VITE_API_URL can be set; it is intentionally
-// left unset in docker-compose so the empty fallback takes effect.
-const BASE_URL =
-  (import.meta.env.VITE_API_URL as string | undefined) ?? ''
+// axiosClient base URL is derived from the same VITE_API_BASE_URL that RTK Query
+// uses — defaults to '/api' so all requests are relative to the current origin.
+// On Vercel: keep VITE_API_BASE_URL unset (or '/api'); the vercel.json rewrite
+// forwards /api/* → Render server-side — no browser CORS needed.
+// On Docker / local: Vite proxy handles /api/* → backend:5000.
+const BASE_URL = API_BASE_URL
 
 // ─── Axios instance ────────────────────────────────────────────────────────────
 export const axiosClient = axios.create({
@@ -70,7 +71,7 @@ axiosClient.interceptors.response.use(
 
       try {
         const res = await axios.post<{ data: { accessToken: string; user: User } }>(
-          '/api/auth/refresh',
+          `${API_BASE_URL}/auth/refresh`,
           {},
           { withCredentials: true }
         )

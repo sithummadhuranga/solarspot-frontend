@@ -4,6 +4,7 @@ import { AppRouter } from '@/router'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { setCredentials, setInitialized, selectIsInitializing } from '@/features/auth/authSlice'
 import type { User } from '@/types/user.types'
+import { API_BASE_URL } from '@/lib/constants'
 
 /**
  * Module-level guard — survives React StrictMode's double-mount.
@@ -44,7 +45,7 @@ function App() {
 
     axios
       .post<{ data: { accessToken: string; user: User } }>(
-        '/api/auth/refresh',
+        `${API_BASE_URL}/auth/refresh`,
         {},
         { withCredentials: true }
       )
