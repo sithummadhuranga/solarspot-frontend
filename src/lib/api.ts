@@ -23,8 +23,9 @@ const rawBaseQuery = fetchBaseQuery({
 })
 
 // ─── Refresh response shape ────────────────────────────────────────────────────
+// Backend POST /api/auth/refresh returns { success, data: { accessToken, user } }
 interface RefreshResponse {
-  data: { user: User; token: string }
+  data: { accessToken: string; user: User }
 }
 
 // ─── Base query with automatic token refresh ──────────────────────────────────
@@ -58,8 +59,8 @@ export const baseQueryWithReauth: BaseQueryFn<
       api.dispatch(setRefreshing(false))
 
       if (refreshResult.data) {
-        const { user, token } = (refreshResult as RefreshResponse).data
-        api.dispatch(setCredentials({ user, token }))
+        const { user, accessToken } = (refreshResult as RefreshResponse).data
+        api.dispatch(setCredentials({ user, token: accessToken }))
         result = await rawBaseQuery(args, api, extraOptions)
       } else {
         api.dispatch(clearCredentials())

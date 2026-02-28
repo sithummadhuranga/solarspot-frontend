@@ -17,6 +17,7 @@ const WeatherPage          = lazy(() => import('@/pages/WeatherPage'))
 const ReviewsPage          = lazy(() => import('@/pages/ReviewsPage'))
 const PermissionsPage      = lazy(() => import('@/pages/PermissionsPage'))
 const ProfilePage          = lazy(() => import('@/pages/ProfilePage'))
+const VerifyEmailPage      = lazy(() => import('@/pages/VerifyEmailPage'))
 const NotFoundPage         = lazy(() => import('@/pages/NotFoundPage'))
 
 function PageSkeleton() {
@@ -39,6 +40,7 @@ export function AppRouter() {
         <Route path="/"             element={<HomePage />} />
         <Route path="/login"        element={<LoginPage />} />
         <Route path="/register"     element={<RegisterPage />} />
+        <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
         <Route path="/stations"     element={<StationsPage />} />
         <Route path="/stations/:id" element={<StationDetailPage />} />
         <Route path="/map"          element={<StationMapPage />} />

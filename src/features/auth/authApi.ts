@@ -13,7 +13,8 @@ interface LoginRequest      { email: string; password: string }
 interface RegisterRequest   { email: string; password: string; displayName: string }
 interface ForgotPwdRequest  { email: string }
 interface ResetPwdRequest   { token: string; password: string }
-interface LoginResponse     { token: string; user: User }
+// Backend returns { accessToken, user } — not "token"
+interface LoginResponse     { accessToken: string; user: User }
 interface RefreshResponse   { token: string }
 
 // ─── API slice ─────────────────────────────────────────────────────────────────
@@ -29,7 +30,6 @@ export const authApi = baseApi.injectEndpoints({
     /** POST /api/auth/login */
     login: builder.mutation<ApiResponse<LoginResponse>, LoginRequest>({
       query: (body) => ({ url: '/auth/login', method: 'POST', body }),
-      // TODO (Member 4): on success dispatch setCredentials + store accessToken
     }),
 
     /** POST /api/auth/logout */
@@ -72,6 +72,7 @@ export const {
   useLogoutMutation,
   useRefreshMutation,
   useVerifyEmailQuery,
+  useLazyVerifyEmailQuery,
   useForgotPasswordMutation,
   useResetPasswordMutation,
 } = authApi

@@ -12,6 +12,10 @@ import { Button } from '@/components/ui/button'
 import { Navbar } from '@/components/shared/Navbar'
 import { ConnectorBadge } from '@/components/stations/ConnectorBadge'
 import { RejectionReasonModal } from '@/components/stations/RejectionReasonModal'
+import { SolarWidget } from '@/features/weather/SolarWidget'
+import { ForecastChart } from '@/features/weather/ForecastChart'
+import { SolarReportList } from '@/features/weather/SolarReportList'
+import { StationAnalyticsPanel } from '@/features/weather/StationAnalyticsPanel'
 import { useStation, useApproveStation, useRejectStation } from '@/hooks/useStations'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
@@ -354,12 +358,24 @@ export default function StationDetailPage() {
               <p className="text-xs font-medium text-gray-400 mt-1">Member 2 — Reviews section will appear here</p>
             </div>
 
-            {/* ── Placeholder: Weather (Member 3) ─────────────────────── */}
-            <div className="rounded-[20px] border-2 border-dashed border-blue-200 bg-blue-50/50 p-8 text-center">
-              <CloudSun className="mx-auto h-10 w-10 text-blue-300 mb-3" />
-              <p className="text-sm font-bold text-blue-600 font-sg">Weather & Best Charging Time</p>
-              <p className="text-xs font-medium text-blue-400 mt-1">Member 3 — Weather widget will appear here</p>
-            </div>
+            {/* ── Solar Intelligence (Member 3) ─────────────────────── */}
+            {id && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <CloudSun className="h-5 w-5 text-blue-500" />
+                  <h3 className="text-base font-bold text-gray-900">Solar Intelligence</h3>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <SolarWidget stationId={id} />
+                  <ForecastChart stationId={id} />
+                </div>
+                <StationAnalyticsPanel stationId={id} />
+                <div className="pt-2">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Community Reports</h4>
+                  <SolarReportList stationId={id} />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* ── Right / Sidebar ────────────────────────────────────────────── */}

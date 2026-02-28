@@ -3,8 +3,12 @@ import { store } from '@/app/store'
 import { clearCredentials, setCredentials, setRefreshing } from '@/features/auth/authSlice'
 import type { User } from '@/types/user.types'
 
+// Empty-string base so all axios requests are relative (/api/…).
+// Vite dev-server proxy (vite.config.ts) forwards /api/* → backend container.
+// For local runs outside Docker, VITE_API_URL can be set; it is intentionally
+// left unset in docker-compose so the empty fallback takes effect.
 const BASE_URL =
-  (import.meta.env.VITE_API_URL as string | undefined) ?? 'http://localhost:5001'
+  (import.meta.env.VITE_API_URL as string | undefined) ?? ''
 
 // ─── Axios instance ────────────────────────────────────────────────────────────
 export const axiosClient = axios.create({
@@ -43,6 +47,13 @@ axiosClient.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
 
+      // Do NOT attempt a token refresh while the startup silent-refresh is
+      // still in-flight. The App.tsx initialization gate should prevent any
+      // requests reaching here, but this is a belt-and-suspenders guard.
+      if (store.getState().auth.isInitializing) {
+        return Promise.reject(error)
+      }
+
       if (isRefreshing) {
         // Queue the request until refresh completes
         return new Promise((resolve, reject) => {
@@ -58,15 +69,15 @@ axiosClient.interceptors.response.use(
       store.dispatch(setRefreshing(true))
 
       try {
-        const res = await axios.post<{ data: { user: User; token: string } }>(
-          `${BASE_URL}/auth/refresh`,
+        const res = await axios.post<{ data: { accessToken: string; user: User } }>(
+          '/api/auth/refresh',
           {},
           { withCredentials: true }
         )
-        const { user, token } = res.data.data
-        store.dispatch(setCredentials({ user, token }))
-        onRefreshDone(token)
-        originalRequest.headers.Authorization = `Bearer ${token}`
+        const { accessToken, user } = res.data.data
+        store.dispatch(setCredentials({ user, token: accessToken }))
+        onRefreshDone(accessToken)
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`
         return axiosClient(originalRequest)
       } catch {
         store.dispatch(clearCredentials())
