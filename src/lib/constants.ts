@@ -1,6 +1,15 @@
 // ─── API base URL ─────────────────────────────────────────────────────────────
-export const API_BASE_URL =
-  (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '/api'
+// ARCHITECTURE: Always '/api' in production.
+//   - Vercel:  vercel.json rewrites /api/* → Render server-side (no browser CORS).
+//   - Docker:  vite.config.ts proxy forwards /api/* → backend container.
+//   - Dev:     same Vite proxy; VITE_API_BASE_URL can override for special setups.
+//
+// import.meta.env.PROD is set by Vite at build time and CANNOT be overridden
+// by any dashboard env var — this prevents VITE_API_BASE_URL from accidentally
+// baking an absolute Render URL into the production bundle and breaking CORS.
+export const API_BASE_URL: string = import.meta.env.PROD
+  ? '/api'
+  : (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '/api'
 
 // ─── Roles ────────────────────────────────────────────────────────────────────
 export const ROLES = {
