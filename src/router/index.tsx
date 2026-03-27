@@ -3,22 +3,24 @@ import { Routes, Route } from 'react-router-dom'
 import { ProtectedRoute } from '@/guards/ProtectedRoute'
 import { RoleGuard } from '@/guards/RoleGuard'
 
-const HomePage             = lazy(() => import('@/pages/HomePage'))
-const LoginPage            = lazy(() => import('@/pages/LoginPage'))
-const RegisterPage         = lazy(() => import('@/pages/RegisterPage'))
-const DashboardPage        = lazy(() => import('@/pages/DashboardPage'))
-const StationsPage         = lazy(() => import('@/pages/StationsPage'))
-const StationDetailPage    = lazy(() => import('@/pages/StationDetailPage'))
-const StationMapPage       = lazy(() => import('@/pages/StationMapPage'))
-const AddStationPage       = lazy(() => import('@/pages/AddStationPage'))
-const MyStationsPage       = lazy(() => import('@/pages/MyStationsPage'))
-const ModerationQueuePage  = lazy(() => import('@/pages/ModerationQueuePage'))
-const WeatherPage          = lazy(() => import('@/pages/WeatherPage'))
-const ReviewsPage          = lazy(() => import('@/pages/ReviewsPage'))
-const PermissionsPage      = lazy(() => import('@/pages/PermissionsPage'))
-const ProfilePage          = lazy(() => import('@/pages/ProfilePage'))
-const VerifyEmailPage      = lazy(() => import('@/pages/VerifyEmailPage'))
-const NotFoundPage         = lazy(() => import('@/pages/NotFoundPage'))
+const HomePage               = lazy(() => import('@/pages/HomePage'))
+const LoginPage              = lazy(() => import('@/pages/LoginPage'))
+const RegisterPage           = lazy(() => import('@/pages/RegisterPage'))
+const DashboardPage          = lazy(() => import('@/pages/DashboardPage'))
+const StationsPage           = lazy(() => import('@/pages/StationsPage'))
+const StationDetailPage      = lazy(() => import('@/pages/StationDetailPage'))
+const StationMapPage         = lazy(() => import('@/pages/StationMapPage'))
+const AddStationPage         = lazy(() => import('@/pages/AddStationPage'))
+const MyStationsPage         = lazy(() => import('@/pages/MyStationsPage'))
+const ModerationQueuePage    = lazy(() => import('@/pages/ModerationQueuePage'))
+const WeatherPage            = lazy(() => import('@/pages/WeatherPage'))
+const ReviewsPage            = lazy(() => import('@/pages/ReviewsPage'))
+const PermissionsPage        = lazy(() => import('@/pages/PermissionsPage'))
+const ProfilePage            = lazy(() => import('@/pages/ProfilePage'))
+const VerifyEmailPage        = lazy(() => import('@/pages/VerifyEmailPage'))
+const NotFoundPage           = lazy(() => import('@/pages/NotFoundPage'))
+const MySolarReportsPage     = lazy(() => import('@/pages/MySolarReportsPage'))
+const AdminSolarReportsPage  = lazy(() => import('@/pages/AdminSolarReportsPage'))
 
 function PageSkeleton() {
   return (
@@ -53,6 +55,9 @@ export function AppRouter() {
           <Route path="/my-stations"    element={<MyStationsPage />} />
           <Route path="/weather"        element={<WeatherPage />} />
 
+          {/* Solar Intelligence — user's own reports */}
+          <Route path="/solar/reports/mine" element={<MySolarReportsPage />} />
+
           {/* Moderation queue */}
           <Route
             path="/admin/stations/pending"
@@ -69,6 +74,16 @@ export function AppRouter() {
             element={
               <RoleGuard allowedRoles={['moderator', 'admin']}>
                 <ReviewsPage />
+              </RoleGuard>
+            }
+          />
+
+          {/* Solar reports admin — moderator + admin only */}
+          <Route
+            path="/admin/solar/reports"
+            element={
+              <RoleGuard allowedRoles={['moderator', 'admin']}>
+                <AdminSolarReportsPage />
               </RoleGuard>
             }
           />
@@ -90,3 +105,4 @@ export function AppRouter() {
     </Suspense>
   )
 }
+

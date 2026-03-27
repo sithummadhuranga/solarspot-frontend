@@ -10,7 +10,8 @@
 import { useState } from 'react'
 import { useCreateSolarReportMutation } from './solarApi'
 import type { CreateReportDto } from '@/types/solar.types'
-import { useAppSelector } from '@/app/hooks'
+import { Link } from 'react-router-dom'
+import { useAuth } from '@/hooks/useAuth'
 
 interface Props {
   stationId:    string
@@ -18,8 +19,7 @@ interface Props {
 }
 
 export function AddReportForm({ stationId, onSuccess }: Props) {
-  const user    = useAppSelector((s) => s.auth?.user)
-  const isAuthed = Boolean(user)
+  const { isAuthenticated } = useAuth()
 
   const [actualOutputKw, setActualOutputKw] = useState('')
   const [notes,          setNotes]          = useState('')
@@ -41,6 +41,7 @@ export function AddReportForm({ stationId, onSuccess }: Props) {
       await createReport(dto).unwrap()
       setActualOutputKw('')
       setNotes('')
+      setIsPublic(true)
       onSuccess?.()
     } catch (err: unknown) {
       const msg = (err as { data?: { message?: string } })?.data?.message
@@ -48,10 +49,17 @@ export function AddReportForm({ stationId, onSuccess }: Props) {
     }
   }
 
-  if (!isAuthed) {
+  if (!isAuthenticated) {
     return (
-      <div className="rounded-xl border border-slate-700 bg-slate-800/60 p-5 text-sm text-slate-400">
-        Sign in to submit a solar observation report.
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 text-sm text-slate-600 shadow-sm">
+        <p className="font-semibold text-slate-900">Sign in to submit a solar observation report.</p>
+        <p className="mt-1">
+          Private and public report submission is available for authenticated users only.
+          {' '}
+          <Link to="/login" className="font-semibold text-[#1a6b3c] underline">
+            Go to login
+          </Link>
+        </p>
       </div>
     )
   }
@@ -59,66 +67,78 @@ export function AddReportForm({ stationId, onSuccess }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-xl border border-slate-700 bg-slate-800/60 p-5 space-y-4"
+      className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
     >
-      <p className="text-xs uppercase tracking-widest text-slate-400">Add Solar Report</p>
-      <p className="text-sm text-slate-300">
-        Live weather will be captured automatically. Optionally provide your actual panel reading.
-      </p>
+      <div className="space-y-1">
+        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Add Solar Report</p>
+        <p className="text-sm text-slate-600">
+          SolarSpot captures live weather automatically. You only need to add your measured output and any useful field notes.
+        </p>
+        <p className="text-xs text-slate-500">One report per station per day is allowed.</p>
+      </div>
 
       {formError && (
-        <div className="rounded-lg border border-red-800/60 bg-red-900/20 px-3 py-2 text-sm text-red-400">
+        <div className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
           {formError}
         </div>
       )}
 
-      <div>
-        <label className="block text-xs text-slate-400 mb-1" htmlFor="actualOutputKw">
-          Actual Output (kW) <span className="text-slate-600">— optional</span>
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px]">
+        <div>
+          <label className="mb-1 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500" htmlFor="actualOutputKw">
+            Actual Output (kW)
+          </label>
+          <input
+            id="actualOutputKw"
+            type="number"
+            step="0.01"
+            min="0"
+            value={actualOutputKw}
+            onChange={(e) => setActualOutputKw(e.target.value)}
+            placeholder="e.g. 3.80"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#8cc63f] focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/25"
+          />
+          <p className="mt-1 text-xs text-slate-500">Leave blank if you only want to contribute the weather snapshot.</p>
+        </div>
+
+        <label className="flex items-start gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-slate-700">
+          <input
+            id="isPublic"
+            type="checkbox"
+            checked={isPublic}
+            onChange={(e) => setIsPublic(e.target.checked)}
+            className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-[#1a6b3c]"
+          />
+          <span>
+            <span className="block font-semibold text-slate-900">Share publicly</span>
+            <span className="text-xs text-slate-500">Public reports appear in community analytics and report feeds.</span>
+          </span>
         </label>
-        <input
-          id="actualOutputKw"
-          type="number"
-          step="0.01"
-          min="0"
-          value={actualOutputKw}
-          onChange={(e) => setActualOutputKw(e.target.value)}
-          placeholder="e.g. 3.80"
-          className="w-full rounded-lg border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-        />
       </div>
 
       <div>
-        <label className="block text-xs text-slate-400 mb-1" htmlFor="notes">
-          Notes <span className="text-slate-600">— optional</span>
+        <label className="mb-1 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500" htmlFor="notes">
+          Notes
         </label>
         <textarea
           id="notes"
           rows={3}
+          maxLength={500}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Anything unusual? Shade, dust, panel maintenance…"
-          className="w-full rounded-lg border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none"
+          className="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#8cc63f] focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/25"
         />
-      </div>
-
-      <div className="flex items-center gap-2">
-        <input
-          id="isPublic"
-          type="checkbox"
-          checked={isPublic}
-          onChange={(e) => setIsPublic(e.target.checked)}
-          className="h-4 w-4 rounded border-slate-600 bg-slate-700 accent-emerald-500"
-        />
-        <label htmlFor="isPublic" className="text-sm text-slate-300">
-          Share publicly with the SolarSpot community
-        </label>
+        <div className="mt-1 flex items-center justify-between text-xs text-slate-500">
+          <span>Optional context helps moderators and other drivers understand unusual output readings.</span>
+          <span>{notes.length}/500</span>
+        </div>
       </div>
 
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full rounded-xl bg-[#1a6b3c] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#15552f] disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isLoading ? 'Submitting…' : 'Submit Report'}
       </button>

@@ -29,14 +29,14 @@ export const solarApi = baseApi.injectEndpoints({
     getLiveWeather: builder.query<ApiResponse<LiveWeatherResponse>, string>({
       query:        (stationId) => `/solar/stations/${stationId}/live-weather`,
       providesTags: (_res, _err, stationId) => [{ type: 'Weather', id: `solar:${stationId}` }],
-      keepUnusedDataFor: 1800,   // matches OWM cache TTL
+      keepUnusedDataFor: 900,
     }),
 
     /** GET /api/solar/stations/:stationId/forecast */
     getSolarForecast: builder.query<ApiResponse<ForecastWithSolarResponse>, string>({
       query:        (stationId) => `/solar/stations/${stationId}/forecast`,
       providesTags: (_res, _err, stationId) => [{ type: 'Weather', id: `solar:forecast:${stationId}` }],
-      keepUnusedDataFor: 1800,
+      keepUnusedDataFor: 3600,
     }),
 
     /** GET /api/solar/stations/:stationId/analytics */
@@ -70,9 +70,9 @@ export const solarApi = baseApi.injectEndpoints({
     /** POST /api/solar/reports */
     createSolarReport: builder.mutation<ApiResponse<SolarReport>, CreateReportDto>({
       query:           (body) => ({ url: '/solar/reports', method: 'POST', body }),
-      invalidatesTags: [
+      invalidatesTags: (_res, _err, body) => [
         { type: 'SolarReport', id: 'LIST' },
-        // Analytics cache is now stale
+        { type: 'SolarAnalytics', id: body.stationId },
         'SolarAnalytics',
       ],
     }),
@@ -110,6 +110,16 @@ export const solarApi = baseApi.injectEndpoints({
       ],
     }),
 
+    /** PATCH /api/solar/reports/:id/archive — admin/moderator only */
+    archiveSolarReport: builder.mutation<ApiResponse<SolarReport>, string>({
+      query:           (id) => ({ url: `/solar/reports/${id}/archive`, method: 'PATCH' }),
+      invalidatesTags: (_res, _err, id) => [
+        { type: 'SolarReport', id },
+        { type: 'SolarReport', id: 'LIST' },
+        'SolarAnalytics',
+      ],
+    }),
+
   }),
   overrideExisting: false,
 })
@@ -124,4 +134,5 @@ export const {
   useUpdateSolarReportMutation,
   useDeleteSolarReportMutation,
   usePublishSolarReportMutation,
+  useArchiveSolarReportMutation,
 } = solarApi

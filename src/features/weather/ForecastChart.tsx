@@ -29,6 +29,10 @@ function formatDt(iso: string) {
   try { return format(new Date(iso), 'dd MMM HH:mm') } catch { return iso }
 }
 
+function formatTick(iso: string) {
+  try { return format(new Date(iso), 'dd HH:mm') } catch { return iso }
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null
@@ -49,56 +53,65 @@ export function ForecastChart({ stationId }: Props) {
 
   if (isLoading) {
     return (
-      <div className="rounded-xl border border-slate-700 bg-slate-800/60 p-5 animate-pulse">
-        <div className="h-5 w-48 rounded bg-slate-700 mb-4" />
-        <div className="h-48 w-full rounded bg-slate-700" />
+      <div className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm animate-pulse">
+        <div className="mb-4 h-5 w-48 rounded bg-emerald-100" />
+        <div className="h-56 w-full rounded-2xl bg-slate-50" />
       </div>
     )
   }
 
   if (isError || !data?.data) {
     return (
-      <div className="rounded-xl border border-red-800/60 bg-red-900/20 p-4 text-sm text-red-400">
-        ⚠ Forecast data temporarily unavailable.
+      <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700 shadow-sm">
+        Forecast data is temporarily unavailable.
       </div>
     )
   }
 
-  const { forecast, bestWindows, stationName } = data.data
+  const { forecast, bestWindows, station, generatedAt } = data.data
 
-  const chartData = forecast
-    .filter((s: ForecastSlot) => (s.solarScore ?? 0) > 0)  // daytime only
-    .map((s: ForecastSlot) => ({
-      dt:     formatDt(s.dt),
-      score:  s.solarScore ?? 0,
-      kw:     s.estimatedOutputKw ?? 0,
-    }))
+  const chartData = forecast.map((slot: ForecastSlot) => ({
+    dt: formatTick(slot.dt),
+    fullLabel: formatDt(slot.dt),
+    score: slot.solarScore ?? 0,
+    kw: slot.estimatedOutputKw ?? 0,
+    weatherMain: slot.weatherMain,
+  }))
 
-  const bestDts = new Set(bestWindows.map((w) => formatDt(w.dt)))
+  const bestDts = new Set(bestWindows.map((window) => formatTick(window.dt)))
 
   return (
-    <div className="rounded-xl border border-slate-700 bg-slate-800/60 p-5 space-y-3">
+    <div className="space-y-4 rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
       <div>
-        <p className="text-xs uppercase tracking-widest text-slate-400">5-Day Solar Forecast</p>
-        <p className="text-base font-semibold text-white">{stationName}</p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Solar Forecast</p>
+            <p className="text-base font-bold text-slate-900">{station.name}</p>
+            <p className="text-xs text-slate-500">{station.solarPanelKw} kW array · Generated {format(new Date(generatedAt), 'dd MMM HH:mm')}</p>
+          </div>
+          <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+            {forecast.length} forecast slots
+          </span>
+        </div>
       </div>
 
-      {chartData.length === 0 ? (
-        <p className="text-sm text-slate-400 py-6 text-center">No daytime slots in forecast window.</p>
+      {forecast.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 py-8 text-center text-sm text-slate-500">
+          No forecast slots are available right now.
+        </p>
       ) : (
-        <ResponsiveContainer width="100%" height={220}>
+        <ResponsiveContainer width="100%" height={260}>
           <LineChart data={chartData} margin={{ top: 4, right: 8, left: -8, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#dbe4ea" />
             <XAxis
               dataKey="dt"
-              tick={{ fontSize: 10, fill: '#94a3b8' }}
+              tick={{ fontSize: 10, fill: '#64748b' }}
               interval="preserveStartEnd"
             />
-            <YAxis yAxisId="score" domain={[0, 10]}  tick={{ fontSize: 10, fill: '#94a3b8' }} />
-            <YAxis yAxisId="kw"    orientation="right" tick={{ fontSize: 10, fill: '#94a3b8' }} />
+            <YAxis yAxisId="score" domain={[0, 100]} tick={{ fontSize: 10, fill: '#64748b' }} />
+            <YAxis yAxisId="kw" orientation="right" tick={{ fontSize: 10, fill: '#64748b' }} />
             <Tooltip content={<CustomTooltip />} />
-            <Legend wrapperStyle={{ fontSize: 12, color: '#94a3b8' }} />
-            {/* Highlight best windows */}
+            <Legend wrapperStyle={{ fontSize: 12, color: '#64748b' }} />
             {chartData
               .filter((d) => bestDts.has(d.dt))
               .map((d) => (
@@ -115,8 +128,8 @@ export function ForecastChart({ stationId }: Props) {
               yAxisId="score"
               type="monotone"
               dataKey="score"
-              name="Solar Score (0–10)"
-              stroke="#34d399"
+              name="Solar Score (0-100)"
+              stroke="#1a6b3c"
               strokeWidth={2}
               dot={false}
             />
@@ -124,7 +137,7 @@ export function ForecastChart({ stationId }: Props) {
               yAxisId="kw"
               type="monotone"
               dataKey="kw"
-              name="Est. Output (kW)"
+              name="Estimated Output (kW)"
               stroke="#60a5fa"
               strokeWidth={1.5}
               dot={false}
@@ -139,9 +152,9 @@ export function ForecastChart({ stationId }: Props) {
           {bestWindows.map((w, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1 rounded-full bg-yellow-900/40 border border-yellow-700 px-2.5 py-0.5 text-xs text-yellow-300"
+              className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800"
             >
-              ★ {w.label} · {formatDt(w.dt)} · {w.estimatedOutputKw} kW
+              ★ {w.label} · {formatDt(w.dt)} · {w.estimatedOutputKw} kW · {w.solarScore}/100
             </span>
           ))}
         </div>
