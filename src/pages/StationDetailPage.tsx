@@ -144,7 +144,7 @@ export default function StationDetailPage() {
               alt={station.name}
               className="absolute inset-0 h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0b2614]/90 via-[#0b2614]/40 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-[#0b2614]/90 via-[#0b2614]/40 to-transparent" />
             {/* Image dots */}
             {station.images.length > 1 && (
               <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-2">
@@ -317,7 +317,7 @@ export default function StationDetailPage() {
                   {station.amenities.map((a) => {
                     const info = AMENITY_INFO[a]
                     return (
-                      <div key={a} className="flex flex-col items-center gap-2 rounded-2xl border border-[#dcfce7] bg-[#f5faf0] px-4 py-4 text-center transition-transform hover:-translate-y-1">
+                      <div key={a} className="flex flex-col items-center gap-2 rounded-2xl border border-solar-green-100 bg-[#f5faf0] px-4 py-4 text-center transition-transform hover:-translate-y-1">
                         <span className="text-3xl">{info.emoji}</span>
                         <span className="text-xs font-bold text-[#133c1d]">{info.label}</span>
                       </div>
