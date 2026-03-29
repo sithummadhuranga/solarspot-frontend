@@ -2,13 +2,14 @@ import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { Menu, X, Sun, MapPin, Zap, LayoutGrid, User2, LogOut, ShieldCheck } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
-import { getRoleSlug } from '@/lib/auth'
+import { getRoleSlug, getSafeText } from '@/lib/auth'
 import { cn } from '@/lib/utils'
 
 export function Navbar() {
   const { user, isAuthenticated, signOut } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
   const role = getRoleSlug(user?.role)
+  const userDisplayName = getSafeText(user?.displayName) || 'User'
 
   const isMod   = role === 'moderator' || role === 'admin'
   const isAdmin = role === 'admin'
@@ -59,10 +60,10 @@ export function Navbar() {
                   {user?.avatarUrl
                     ? <img src={user.avatarUrl} alt="" className="h-6 w-6 rounded-full object-cover" />
                     : <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#8cc63f]/20 text-[11px] font-bold text-[#133c1d]">
-                        {user?.displayName?.charAt(0).toUpperCase()}
+                          {userDisplayName.charAt(0).toUpperCase()}
                       </div>
                   }
-                  <span className="max-w-[100px] truncate">{user?.displayName}</span>
+                  <span className="max-w-[100px] truncate">{userDisplayName}</span>
                 </Link>
                 <button onClick={signOut} className="text-gray-400 hover:text-red-500 transition-colors" title="Sign out">
                   <LogOut className="h-4 w-4" />
@@ -108,7 +109,7 @@ export function Navbar() {
               </Link>
               <Link to="/profile" onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
-                <User2 className="h-4 w-4 text-gray-400" /> {user?.displayName}
+                <User2 className="h-4 w-4 text-gray-400" /> {userDisplayName}
               </Link>
               <button onClick={() => { signOut(); setMobileOpen(false) }}
                 className="flex w-full items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50">

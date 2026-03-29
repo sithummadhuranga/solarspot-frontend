@@ -24,6 +24,7 @@ App runs at `http://localhost:3000`.
 | Name | Required | Default | Description |
 |------|----------|---------|-------------|
 | `VITE_API_BASE_URL` | Yes | `/api` | Backend API base URL |
+| `VITE_ENABLE_ADMIN_APIS` | No | `false` | Enables permissions/quota admin API calls (set to `true` only when backend RBAC/admin endpoints are implemented) |
 
 ## Scripts
 

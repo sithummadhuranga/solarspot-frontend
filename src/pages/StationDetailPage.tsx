@@ -67,7 +67,7 @@ function StatCard({ icon, label, value, sub }: { icon: React.ReactNode; label: s
 export default function StationDetailPage() {
   const { id }       = useParams<{ id: string }>()
   const navigate     = useNavigate()
-  const { user }     = useAuth()
+  const { user, role } = useAuth()
   const [imgIndex, setImgIndex]         = useState(0)
   const [rejectOpen, setRejectOpen]     = useState(false)
   const [approveConf, setApproveConf]   = useState(false)
@@ -77,7 +77,7 @@ export default function StationDetailPage() {
   const rejectMutation             = useRejectStation()
 
   const station  = data?.data
-  const isMod    = user?.role === 'moderator' || user?.role === 'admin'
+  const isMod    = role === 'moderator' || role === 'admin'
   const isOwner  = user?._id === station?.submittedBy?._id
   const canOwnerEditStation = station ? ['pending', 'active'].includes(station.status) : false
 

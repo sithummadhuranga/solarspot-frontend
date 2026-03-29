@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
+import axios from 'axios'
 import { toast } from 'sonner'
 import {
   getStations,
@@ -11,6 +12,7 @@ import {
   rejectStation,
   deleteStation,
 } from '@/api/stations.api'
+import { extractApiErrorMessage } from '@/lib/apiError'
 import type { StationQueryParams, NearbyQueryParams, CreateStationDto, UpdateStationDto, RejectStationDto } from '@/types/station.types'
 
 // ─── Query key factory (convention from project spec) ─────────────────────────
@@ -32,6 +34,13 @@ export function useStationsList(params: StationQueryParams = {}) {
     queryFn:     () => getStations(params),
     placeholderData: keepPreviousData,
     staleTime:   30_000,
+    refetchOnWindowFocus: false,
+    retry: (failureCount, error) => {
+      if (axios.isAxiosError(error) && error.response?.status === 429) {
+        return false
+      }
+      return failureCount < 1
+    },
   })
 }
 
@@ -72,8 +81,8 @@ export function useCreateStation() {
       void queryClient.invalidateQueries({ queryKey: stationKeys.lists() })
       toast.success('Station submitted for review!')
     },
-    onError: (err: Error) => {
-      toast.error(err.message ?? 'Failed to submit station')
+    onError: (err: unknown) => {
+      toast.error(extractApiErrorMessage(err, 'Failed to submit station'))
     },
   })
 }
@@ -88,8 +97,8 @@ export function useUpdateStation(id: string) {
       void queryClient.invalidateQueries({ queryKey: stationKeys.lists() })
       toast.success('Station updated successfully')
     },
-    onError: (err: Error) => {
-      toast.error(err.message ?? 'Failed to update station')
+    onError: (err: unknown) => {
+      toast.error(extractApiErrorMessage(err, 'Failed to update station'))
     },
   })
 }
@@ -105,8 +114,8 @@ export function useApproveStation() {
       void queryClient.invalidateQueries({ queryKey: stationKeys.lists() })
       toast.success('Station approved')
     },
-    onError: (err: Error) => {
-      toast.error(err.message ?? 'Failed to approve station')
+    onError: (err: unknown) => {
+      toast.error(extractApiErrorMessage(err, 'Failed to approve station'))
     },
   })
 }
@@ -123,8 +132,8 @@ export function useRejectStation() {
       void queryClient.invalidateQueries({ queryKey: stationKeys.lists() })
       toast.success('Station rejected')
     },
-    onError: (err: Error) => {
-      toast.error(err.message ?? 'Failed to reject station')
+    onError: (err: unknown) => {
+      toast.error(extractApiErrorMessage(err, 'Failed to reject station'))
     },
   })
 }
@@ -139,8 +148,8 @@ export function useDeleteStation() {
       void queryClient.invalidateQueries({ queryKey: stationKeys.pending() })
       toast.success('Station deleted')
     },
-    onError: (err: Error) => {
-      toast.error(err.message ?? 'Failed to delete station')
+    onError: (err: unknown) => {
+      toast.error(extractApiErrorMessage(err, 'Failed to delete station'))
     },
   })
 }

@@ -95,6 +95,7 @@ export type UpdateStationDto = Partial<CreateStationDto>
 
 export interface RejectStationDto {
   rejectionReason: string
+  reason?: string
 }
 
 // ─── Nearby station (has extra distanceKm field) ──────────────────────────────

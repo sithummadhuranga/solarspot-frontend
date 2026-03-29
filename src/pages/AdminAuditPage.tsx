@@ -7,12 +7,16 @@ import { useListAuditLogsQuery } from '@/features/permissions/permissionsApi'
 import { getSafeText } from '@/lib/auth'
 
 const PAGE_SIZE = 20
+const ENABLE_ADMIN_APIS = import.meta.env.VITE_ENABLE_ADMIN_APIS === 'true'
 
 export default function AdminAuditPage() {
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
 
-  const { data, isLoading, isFetching, refetch } = useListAuditLogsQuery({ page, limit: PAGE_SIZE })
+  const { data, isLoading, isFetching, refetch } = useListAuditLogsQuery(
+    { page, limit: PAGE_SIZE },
+    { skip: !ENABLE_ADMIN_APIS }
+  )
 
   const logs = data?.data ?? []
   const pagination = data?.pagination
@@ -37,12 +41,18 @@ export default function AdminAuditPage() {
             variant="outline"
             className="border-gray-200"
             onClick={() => void refetch()}
-            disabled={isFetching}
+            disabled={isFetching || !ENABLE_ADMIN_APIS}
           >
             <RefreshCcw className="h-4 w-4" /> Refresh
           </Button>
         )}
       />
+
+      {!ENABLE_ADMIN_APIS && (
+        <div className="mb-4 rounded-[14px] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          Audit APIs are disabled. Set <span className="font-semibold">VITE_ENABLE_ADMIN_APIS=true</span> after backend routes are available.
+        </div>
+      )}
 
       <section className="rounded-[20px] border border-gray-100 bg-white p-5 shadow-sm">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">

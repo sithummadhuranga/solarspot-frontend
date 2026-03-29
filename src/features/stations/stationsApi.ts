@@ -67,7 +67,14 @@ export const stationsApi = baseApi.injectEndpoints({
 
     /** PATCH /api/stations/:id/reject */
     rejectStation: builder.mutation<ApiResponse<Station>, { id: string; reason: string }>({
-      query: ({ id, ...body }) => ({ url: `/stations/${id}/reject`, method: 'PATCH', body }),
+      query: ({ id, reason }) => ({
+        url: `/stations/${id}/reject`,
+        method: 'PATCH',
+        body: {
+          reason,
+          rejectionReason: reason,
+        },
+      }),
       invalidatesTags: (_res, _err, { id }) => [{ type: 'Station', id }],
     }),
 

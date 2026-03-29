@@ -5,6 +5,7 @@
  * TODO (Member 4): replace placeholder types, add file upload support for avatar.
  */
 import { baseApi } from '@/app/baseApi'
+import { normalizePaginatedUsersResponse, normalizeUserApiResponse } from '@/lib/user-normalize'
 import type { ApiResponse, PaginatedResponse } from '@/types/api.types'
 import type { User, UpdateProfileDto as UpdateProfileInput, AdminChangeRoleDto as AdminUpdateUserInput } from '@/types/user.types'
 
@@ -15,12 +16,14 @@ export const usersApi = baseApi.injectEndpoints({
     /** GET /api/users/me — own profile */
     getMe: builder.query<ApiResponse<User>, void>({
       query:       () => '/users/me',
+      transformResponse: normalizeUserApiResponse,
       providesTags: ['User'],
     }),
 
     /** PUT /api/users/me — update own profile */
     updateMe: builder.mutation<ApiResponse<User>, UpdateProfileInput>({
       query:          (body) => ({ url: '/users/me', method: 'PUT', body }),
+      transformResponse: normalizeUserApiResponse,
       invalidatesTags: ['User'],
     }),
 
@@ -33,18 +36,21 @@ export const usersApi = baseApi.injectEndpoints({
     /** GET /api/users/:id — public profile */
     getUserById: builder.query<ApiResponse<User>, string>({
       query:       (id) => `/users/${id}`,
+      transformResponse: normalizeUserApiResponse,
       providesTags: (_res, _err, id) => [{ type: 'User', id }],
     }),
 
     /** GET /api/users — admin: paginated user list */
     listUsers: builder.query<PaginatedResponse<User>, { page?: number; limit?: number; role?: string }>({
       query:       (params) => ({ url: '/users', params }),
+      transformResponse: normalizePaginatedUsersResponse,
       providesTags: ['User'],
     }),
 
     /** PUT /api/users/:id — admin: update any user */
     adminUpdateUser: builder.mutation<ApiResponse<User>, { id: string } & AdminUpdateUserInput>({
       query:          ({ id, ...body }) => ({ url: `/users/${id}`, method: 'PUT', body }),
+      transformResponse: normalizeUserApiResponse,
       invalidatesTags: (_res, _err, { id }) => [{ type: 'User', id }],
     }),
 

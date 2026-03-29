@@ -4,13 +4,17 @@ import { PageHeader } from '@/components/shared/PageHeader'
 import { Button } from '@/components/ui/button'
 import { useGetQuotaStatsQuery } from '@/features/permissions/permissionsApi'
 
+const ENABLE_ADMIN_APIS = import.meta.env.VITE_ENABLE_ADMIN_APIS === 'true'
+
 function pct(count: number, limit: number) {
   if (limit <= 0) return 0
   return Math.min(100, Math.round((count / limit) * 100))
 }
 
 export default function AdminQuotasPage() {
-  const { data, isLoading, isFetching, refetch } = useGetQuotaStatsQuery()
+  const { data, isLoading, isFetching, refetch } = useGetQuotaStatsQuery(undefined, {
+    skip: !ENABLE_ADMIN_APIS,
+  })
   const quotas = data?.data ?? []
 
   return (
@@ -23,12 +27,18 @@ export default function AdminQuotasPage() {
             variant="outline"
             className="border-gray-200"
             onClick={() => void refetch()}
-            disabled={isFetching}
+            disabled={isFetching || !ENABLE_ADMIN_APIS}
           >
             <RefreshCcw className="h-4 w-4" /> Refresh
           </Button>
         )}
       />
+
+      {!ENABLE_ADMIN_APIS && (
+        <div className="mb-4 rounded-[14px] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          Quota APIs are disabled. Set <span className="font-semibold">VITE_ENABLE_ADMIN_APIS=true</span> after backend routes are available.
+        </div>
+      )}
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {isLoading && Array.from({ length: 6 }).map((_, i) => (

@@ -2,6 +2,8 @@ import { Layout } from '@/components/shared/Layout'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { useListRolesQuery, useListPermissionsQuery, useListAuditLogsQuery, useGetQuotaStatsQuery } from '@/features/permissions/permissionsApi'
 
+const ENABLE_ADMIN_APIS = import.meta.env.VITE_ENABLE_ADMIN_APIS === 'true'
+
 /**
  * PermissionsPage — admin RBAC management dashboard (Member 4's page).
  *
@@ -14,10 +16,10 @@ import { useListRolesQuery, useListPermissionsQuery, useListAuditLogsQuery, useG
  *  - Add policy attachment UI
  */
 export default function PermissionsPage() {
-  const { data: rolesData,   isLoading: rolesLoading   } = useListRolesQuery()
-  const { data: permsData,   isLoading: permsLoading   } = useListPermissionsQuery()
-  const { data: auditData,   isLoading: auditLoading   } = useListAuditLogsQuery({})
-  const { data: quotasData,  isLoading: quotasLoading  } = useGetQuotaStatsQuery()
+  const { data: rolesData,   isLoading: rolesLoading   } = useListRolesQuery(undefined, { skip: !ENABLE_ADMIN_APIS })
+  const { data: permsData,   isLoading: permsLoading   } = useListPermissionsQuery(undefined, { skip: !ENABLE_ADMIN_APIS })
+  const { data: auditData,   isLoading: auditLoading   } = useListAuditLogsQuery({}, { skip: !ENABLE_ADMIN_APIS })
+  const { data: quotasData,  isLoading: quotasLoading  } = useGetQuotaStatsQuery(undefined, { skip: !ENABLE_ADMIN_APIS })
 
   return (
     <Layout showSidebar>
@@ -25,6 +27,12 @@ export default function PermissionsPage() {
         title="Permissions & RBAC"
         description="Manage roles, permissions, policies, and per-user overrides"
       />
+
+      {!ENABLE_ADMIN_APIS && (
+        <div className="mb-4 rounded-[14px] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          Permissions APIs are disabled. Set <span className="font-semibold">VITE_ENABLE_ADMIN_APIS=true</span> after backend routes are available.
+        </div>
+      )}
 
       <div className="grid gap-6 md:grid-cols-2">
 

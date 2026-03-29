@@ -5,6 +5,7 @@
  * TODO (Member 4): replace placeholder types with real request/response shapes.
  */
 import { baseApi } from '@/app/baseApi'
+import { normalizeUser, normalizeUserApiResponse } from '@/lib/user-normalize'
 import type { ApiResponse } from '@/types/api.types'
 import type { User } from '@/types/user.types'
 
@@ -24,12 +25,20 @@ export const authApi = baseApi.injectEndpoints({
     /** POST /api/auth/register */
     register: builder.mutation<ApiResponse<User>, RegisterRequest>({
       query: (body) => ({ url: '/auth/register', method: 'POST', body }),
+      transformResponse: normalizeUserApiResponse,
       // TODO (Member 4): on success dispatch setCredentials
     }),
 
     /** POST /api/auth/login */
     login: builder.mutation<ApiResponse<LoginResponse>, LoginRequest>({
       query: (body) => ({ url: '/auth/login', method: 'POST', body }),
+      transformResponse: (response: ApiResponse<LoginResponse>): ApiResponse<LoginResponse> => ({
+        ...response,
+        data: {
+          ...response.data,
+          user: normalizeUser(response.data.user),
+        },
+      }),
     }),
 
     /** POST /api/auth/logout */

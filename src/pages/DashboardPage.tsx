@@ -13,6 +13,7 @@ import {
 import { Layout } from '@/components/shared/Layout'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { useAuth } from '@/hooks/useAuth'
+import { getSafeText } from '@/lib/auth'
 import { useListStationsQuery } from '@/features/stations/stationsApi'
 import {
   useGetLiveWeatherQuery,
@@ -84,6 +85,7 @@ function StatCard({
 
 export default function DashboardPage() {
   const { user, role, isEmailVerified } = useAuth()
+  const userDisplayName = getSafeText(user?.displayName) || 'Explorer'
 
   const { data: stationResponse, isLoading: stationsLoading } = useListStationsQuery(
     {
@@ -133,7 +135,7 @@ export default function DashboardPage() {
   return (
     <Layout showSidebar>
       <PageHeader
-        title={`Welcome back, ${user?.displayName ?? 'Explorer'}`}
+        title={`Welcome back, ${userDisplayName}`}
         description="Track your submitted stations, solar reporting activity, and the latest generation outlook from one place."
         actions={
           <>
