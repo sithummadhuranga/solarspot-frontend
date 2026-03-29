@@ -27,7 +27,7 @@ function StationPickerCard({
       onClick={onClick}
       className={`w-full text-left rounded-xl border p-4 transition-all hover:shadow-md ${
         selected
-          ? 'border-[#8cc63f] bg-[#f0fdf4] shadow-md'
+          ? 'border-[#8cc63f] bg-solar-green-50 shadow-md'
           : 'border-gray-200 bg-white hover:border-gray-300'
       }`}
     >
@@ -169,8 +169,8 @@ export default function WeatherPage() {
         <div>
           {!selectedStation ? (
             /* Empty state */
-            <div className="flex h-full min-h-[400px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 bg-white p-12 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f0fdf4] mb-4">
+            <div className="flex h-full min-h-100 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 bg-white p-12 text-center">
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-solar-green-50">
                 <Sun className="h-8 w-8 text-[#8cc63f]" />
               </div>
               <h3 className="text-base font-semibold text-gray-900">Select a station</h3>

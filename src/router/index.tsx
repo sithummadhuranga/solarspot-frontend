@@ -22,6 +22,8 @@ const AdminAuditPage       = lazy(() => import('@/pages/AdminAuditPage'))
 const ProfilePage          = lazy(() => import('@/pages/ProfilePage'))
 const VerifyEmailPage      = lazy(() => import('@/pages/VerifyEmailPage'))
 const NotFoundPage         = lazy(() => import('@/pages/NotFoundPage'))
+const MySolarReportsPage     = lazy(() => import('@/pages/MySolarReportsPage'))
+const AdminSolarReportsPage  = lazy(() => import('@/pages/AdminSolarReportsPage'))
 
 function PageSkeleton() {
   return (
@@ -56,6 +58,9 @@ export function AppRouter() {
           <Route path="/my-stations"    element={<MyStationsPage />} />
           <Route path="/weather"        element={<WeatherPage />} />
 
+          {/* Solar Intelligence — user's own reports */}
+          <Route path="/solar/reports/mine" element={<MySolarReportsPage />} />
+
           {/* Moderation queue */}
           <Route
             path="/admin/stations/pending"
@@ -72,6 +77,16 @@ export function AppRouter() {
             element={
               <RoleGuard allowedRoles={['moderator', 'admin']}>
                 <ReviewsPage />
+              </RoleGuard>
+            }
+          />
+
+          {/* Solar reports admin — moderator + admin only */}
+          <Route
+            path="/admin/solar/reports"
+            element={
+              <RoleGuard allowedRoles={['moderator', 'admin']}>
+                <AdminSolarReportsPage />
               </RoleGuard>
             }
           />
@@ -120,3 +135,4 @@ export function AppRouter() {
     </Suspense>
   )
 }
+
