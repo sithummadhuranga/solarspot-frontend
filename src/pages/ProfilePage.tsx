@@ -95,6 +95,8 @@ export default function ProfilePage() {
     return formatDate(parsed)
   }
 
+  // Hydrate editable form fields when user data arrives from API/auth cache.
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (user) {
       const nextRadius = Number(user.preferences?.defaultRadius)
@@ -114,6 +116,7 @@ export default function ProfilePage() {
       setInitialForm(nextForm)
     }
   }, [user])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const hasProfileChanges =
     displayName.trim() !== initialForm.displayName.trim()
@@ -199,7 +202,7 @@ export default function ProfilePage() {
       toast.success('Account deleted successfully')
       dispatch(clearCredentials())
       navigate('/login')
-    } catch (err) {
+    } catch {
       toast.error('Failed to delete account')
     }
   }

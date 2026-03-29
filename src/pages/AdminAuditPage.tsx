@@ -18,10 +18,10 @@ export default function AdminAuditPage() {
     { skip: !ENABLE_ADMIN_APIS }
   )
 
-  const logs = data?.data ?? []
   const pagination = data?.pagination
 
   const visibleLogs = useMemo(() => {
+    const logs = data?.data ?? []
     if (!search.trim()) return logs
     const q = search.trim().toLowerCase()
     return logs.filter((log) => (
@@ -29,7 +29,7 @@ export default function AdminAuditPage() {
       || getSafeText(log.resource).toLowerCase().includes(q)
       || getSafeText(log.actor).toLowerCase().includes(q)
     ))
-  }, [logs, search])
+  }, [data?.data, search])
 
   return (
     <Layout showSidebar>
