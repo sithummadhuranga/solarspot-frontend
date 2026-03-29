@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 import { useAppSelector } from '@/app/hooks'
 import { selectCurrentUser } from '@/features/auth/authSlice'
+import { getRoleSlug } from '@/lib/auth'
 
 /**
  * Role-to-permissions lookup table derived from PROJECT_OVERVIEW.md.
@@ -66,7 +67,7 @@ export function usePermission() {
   const hasPermission = useCallback((action: string): boolean => {
     if (!user) return ROLE_PERMISSIONS.guest?.includes(action) ?? false
 
-    const rolePerms = ROLE_PERMISSIONS[user.role] ?? []
+    const rolePerms = ROLE_PERMISSIONS[getRoleSlug(user.role)] ?? []
     return rolePerms.includes(action)
   }, [user])
 

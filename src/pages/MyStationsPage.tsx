@@ -178,9 +178,11 @@ export default function MyStationsPage() {
                 station={station}
                 actions={
                   <div className="flex gap-3">
-                    <Button size="sm" variant="outline" className="flex-1 gap-1.5 border-2 border-gray-200 hover:border-[#8cc63f] hover:text-[#133c1d] font-bold rounded-xl" onClick={(e) => { e.preventDefault(); openEdit(station) }}>
-                      <Edit2 className="h-4 w-4" /> Edit
-                    </Button>
+                    {['pending', 'active'].includes(station.status) && (
+                      <Button size="sm" variant="outline" className="flex-1 gap-1.5 border-2 border-gray-200 hover:border-[#8cc63f] hover:text-[#133c1d] font-bold rounded-xl" onClick={(e) => { e.preventDefault(); openEdit(station) }}>
+                        <Edit2 className="h-4 w-4" /> Edit
+                      </Button>
+                    )}
                     <DeleteConfirm station={station} isPending={deleteMutation.isPending} onConfirm={() => deleteMutation.mutate(station._id)} />
                   </div>
                 }

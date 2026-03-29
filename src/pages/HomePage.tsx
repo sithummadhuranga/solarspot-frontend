@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
+import { useStationsList } from '@/hooks/useStations'
+import { StationCard } from '@/components/stations/StationCard'
 
 import carSvg from '@/assets/images/car.svg'
 import chargingStationSvg from '@/assets/images/charging station.svg'
@@ -149,6 +151,11 @@ const RESPONSIVE_CSS = `
 
 export default function HomePage() {
   const { isAuthenticated } = useAuth()
+  const {
+    data: featuredData,
+    isLoading: featuredLoading,
+  } = useStationsList({ sortBy: 'featured', limit: 6, page: 1, isVerified: true })
+  const featuredStations = featuredData?.data ?? []
 
   return (
     <div style={{ fontFamily: IN, background: '#8cc63f', overflowX: 'hidden' }}>
@@ -408,6 +415,43 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── Featured Stations ── */}
+      <section style={{ background: '#f5faf0', padding: 'clamp(3.5rem, 7vw, 5rem) 0' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: '1rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+            <div>
+              <span style={{ fontFamily: SG, fontWeight: 700, fontSize: '0.75rem', color: '#1a6b3c', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '0.45rem' }}>
+                ● Featured Stations
+              </span>
+              <h2 style={{ fontFamily: SG, fontWeight: 800, fontSize: 'clamp(1.4rem, 3.2vw, 2rem)', color: '#0f172a', margin: 0 }}>
+                Top Solar Charging Spots
+              </h2>
+            </div>
+            <Link to="/stations" style={{ fontFamily: SG, fontWeight: 700, color: '#1a6b3c', textDecoration: 'none' }}>
+              View all stations →
+            </Link>
+          </div>
+
+          {featuredLoading ? (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} style={{ height: '280px', borderRadius: '20px', background: '#eaf6df' }} />
+              ))}
+            </div>
+          ) : featuredStations.length > 0 ? (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+              {featuredStations.map((station) => (
+                <StationCard key={station._id} station={station} />
+              ))}
+            </div>
+          ) : (
+            <div style={{ border: '1px solid #dcfce7', background: '#ffffff', borderRadius: '16px', padding: '1rem 1.25rem', color: '#64748b', fontFamily: IN }}>
+              Featured stations will appear here once they are approved and marked as featured.
+            </div>
+          )}
         </div>
       </section>
 

@@ -16,6 +16,9 @@ const ModerationQueuePage  = lazy(() => import('@/pages/ModerationQueuePage'))
 const WeatherPage          = lazy(() => import('@/pages/WeatherPage'))
 const ReviewsPage          = lazy(() => import('@/pages/ReviewsPage'))
 const PermissionsPage      = lazy(() => import('@/pages/PermissionsPage'))
+const AdminUsersPage       = lazy(() => import('@/pages/AdminUsersPage'))
+const AdminQuotasPage      = lazy(() => import('@/pages/AdminQuotasPage'))
+const AdminAuditPage       = lazy(() => import('@/pages/AdminAuditPage'))
 const ProfilePage          = lazy(() => import('@/pages/ProfilePage'))
 const VerifyEmailPage      = lazy(() => import('@/pages/VerifyEmailPage'))
 const NotFoundPage         = lazy(() => import('@/pages/NotFoundPage'))
@@ -79,6 +82,33 @@ export function AppRouter() {
             element={
               <RoleGuard allowedRoles={['admin']}>
                 <PermissionsPage />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/admin/users"
+            element={
+              <RoleGuard allowedRoles={['admin']}>
+                <AdminUsersPage />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/admin/quotas"
+            element={
+              <RoleGuard allowedRoles={['admin']}>
+                <AdminQuotasPage />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/admin/audit"
+            element={
+              <RoleGuard allowedRoles={['admin']}>
+                <AdminAuditPage />
               </RoleGuard>
             }
           />

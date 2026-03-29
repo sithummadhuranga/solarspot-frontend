@@ -124,10 +124,3 @@ export interface NearbyQueryParams {
   radius?: number   // km, default 10
   limit?:  number   // default 20
 }
-
-export interface NearbyQueryParams {
-  lat:     number
-  lng:     number
-  radius?: number
-  limit?:  number
-}

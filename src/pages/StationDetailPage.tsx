@@ -79,6 +79,7 @@ export default function StationDetailPage() {
   const station  = data?.data
   const isMod    = user?.role === 'moderator' || user?.role === 'admin'
   const isOwner  = user?._id === station?.submittedBy?._id
+  const canOwnerEditStation = station ? ['pending', 'active'].includes(station.status) : false
 
   function handleApprove() {
     if (!station) return
@@ -384,7 +385,7 @@ export default function StationDetailPage() {
             {/* Action buttons */}
             <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] space-y-3">
               {/* Edit own station */}
-              {isOwner && station.status !== 'active' && (
+              {isOwner && canOwnerEditStation && (
                 <Link to={`/my-stations`}
                   className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-gray-200 py-3 text-sm font-bold text-gray-700 hover:border-[#8cc63f] hover:text-[#133c1d] transition-all"
                 >

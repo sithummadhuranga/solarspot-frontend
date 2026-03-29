@@ -2,14 +2,16 @@ import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { Menu, X, Sun, MapPin, Zap, LayoutGrid, User2, LogOut, ShieldCheck } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
+import { getRoleSlug } from '@/lib/auth'
 import { cn } from '@/lib/utils'
 
 export function Navbar() {
   const { user, isAuthenticated, signOut } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const role = getRoleSlug(user?.role)
 
-  const isMod   = user?.role === 'moderator' || user?.role === 'admin'
-  const isAdmin = user?.role === 'admin'
+  const isMod   = role === 'moderator' || role === 'admin'
+  const isAdmin = role === 'admin'
 
   const navLink = (to: string, label: string) => (
     <NavLink

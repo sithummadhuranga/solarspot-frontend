@@ -5,6 +5,7 @@ import {
   clearCredentials,
   setCredentials,
 } from '@/features/auth/authSlice'
+import { getRoleSlug } from '@/lib/auth'
 import type { User } from '@/types/user.types'
 
 /**
@@ -32,7 +33,7 @@ export function useAuth() {
     user,
     isAuthenticated: user !== null,
     isEmailVerified: user?.isEmailVerified ?? false,
-    role:            user?.role ?? null,
+    role:            user ? getRoleSlug(user.role) : null,
     signIn,
     signOut,
   }
