@@ -1,4 +1,4 @@
-import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
+import axios, { type AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
 import { store } from '@/app/store'
 import { clearCredentials, setCredentials, setRefreshing } from '@/features/auth/authSlice'
 import type { User } from '@/types/user.types'
@@ -41,7 +41,7 @@ function onRefreshDone(token: string) {
 }
 
 axiosClient.interceptors.response.use(
-  (res) => res,
+  (res: AxiosResponse) => res,
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
 
