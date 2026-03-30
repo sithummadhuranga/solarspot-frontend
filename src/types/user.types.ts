@@ -1,5 +1,24 @@
-// ─── Role ─────────────────────────────────────────────────────────────────────
-export type UserRole = 'user' | 'moderator' | 'admin'
+// ─── Roles (seeded in backend) ────────────────────────────────────────────────
+export type UserRole =
+  | 'guest'
+  | 'user'
+  | 'station_owner'
+  | 'featured_contributor'
+  | 'trusted_reviewer'
+  | 'review_moderator'
+  | 'weather_analyst'
+  | 'permission_auditor'
+  | 'moderator'
+  | 'admin'
+
+export interface UserRoleObject {
+  _id: string
+  name: UserRole
+  displayName?: string
+  roleLevel?: number
+}
+
+export type UserRoleRef = UserRole | UserRoleObject
 
 // ─── Preferences ──────────────────────────────────────────────────────────────
 export interface UserPreferences {
@@ -13,25 +32,26 @@ export interface User {
   _id:              string
   email:            string
   displayName:      string
-  avatarUrl:        string | null
+  avatarUrl?:       string | null
   role:             UserRole
   isEmailVerified:  boolean
-  bio:              string | null
+  bio?:             string | null
   isActive:         boolean
-  preferences:      UserPreferences
-  lastLoginAt:      string | null
+  isBanned?:        boolean
+  preferences?:     UserPreferences
+  lastLoginAt?:     string | null
   createdAt:        string
   updatedAt:        string
+  deletedAt?:       string | null
 }
 
 // ─── DTOs ─────────────────────────────────────────────────────────────────────
 export interface UpdateProfileDto {
   displayName?: string
-  avatarUrl?:   string
-  bio?:         string
-  preferences?: Partial<UserPreferences>
 }
 
 export interface AdminChangeRoleDto {
-  role: UserRole
+  role?: UserRole
+  isActive?: boolean
+  isBanned?: boolean
 }

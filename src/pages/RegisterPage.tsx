@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -33,7 +33,9 @@ function PasswordStrength({ password }: { password: string }) {
     { label: 'Uppercase letter', ok: /[A-Z]/.test(password) },
     { label: 'Number', ok: /[0-9]/.test(password) },
   ]
+
   if (!password) return null
+
   return (
     <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1">
       {checks.map(({ label, ok }) => (
@@ -50,18 +52,24 @@ export default function RegisterPage() {
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
-  const [register, { isLoading, isSuccess, error }] = useRegisterMutation()
+  const [registerUser, { isLoading, isSuccess, error }] = useRegisterMutation()
 
-  const { register: field, handleSubmit, watch, formState: { errors } } =
-    useForm<RegisterFormData>({ resolver: zodResolver(registerSchema) })
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<RegisterFormData>({ resolver: zodResolver(registerSchema) })
 
   const passwordValue = watch('password', '')
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      await register({ displayName: data.displayName, email: data.email, password: data.password }).unwrap()
+      await registerUser({ displayName: data.displayName, email: data.email, password: data.password }).unwrap()
       setTimeout(() => navigate('/login', { state: { registered: true } }), 2500)
-    } catch { /* error rendered via RTK Query error state */ }
+    } catch {
+      // Error is rendered from RTK Query state.
+    }
   }
 
   const apiError = error && 'data' in error ? (error.data as { message?: string })?.message : undefined
@@ -85,7 +93,9 @@ export default function RegisterPage() {
             <div>
               <h2 className="text-lg font-bold text-gray-900">Check your inbox</h2>
               <p className="mt-1.5 text-sm text-gray-500">
-                We have sent a verification link to your email.<br />Click it to activate your account, then sign in.
+                We have sent a verification link to your email.
+                <br />
+                Click it to activate your account, then sign in.
               </p>
             </div>
             <p className="text-xs text-gray-400 animate-pulse">Redirecting to sign in</p>
@@ -105,7 +115,7 @@ export default function RegisterPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4" noValidate>
               <div className="space-y-1.5">
                 <Label htmlFor="displayName">Display name</Label>
-                <Input id="displayName" placeholder="e.g. Alex Smith" autoComplete="name" aria-invalid={!!errors.displayName} {...field('displayName')} />
+                <Input id="displayName" placeholder="e.g. Alex Smith" autoComplete="name" aria-invalid={!!errors.displayName} {...register('displayName')} />
                 {(errors.displayName || fieldErrors?.displayName) && (
                   <p className="text-xs text-red-500" role="alert">{errors.displayName?.message ?? fieldErrors?.displayName}</p>
                 )}
@@ -113,7 +123,7 @@ export default function RegisterPage() {
 
               <div className="space-y-1.5">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="you@example.com" autoComplete="email" aria-invalid={!!errors.email} {...field('email')} />
+                <Input id="email" type="email" placeholder="you@example.com" autoComplete="email" aria-invalid={!!errors.email} {...register('email')} />
                 {(errors.email || fieldErrors?.email) && (
                   <p className="text-xs text-red-500" role="alert">{errors.email?.message ?? fieldErrors?.email}</p>
                 )}
@@ -122,8 +132,8 @@ export default function RegisterPage() {
               <div className="space-y-1.5">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
-                  <Input id="password" type={showPassword ? 'text' : 'password'} placeholder="Min. 8 chars, uppercase, number" autoComplete="new-password" aria-invalid={!!errors.password} className="pr-10" {...field('password')} />
-                  <button type="button" onClick={() => setShowPassword(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" aria-label={showPassword ? 'Hide' : 'Show'}>
+                  <Input id="password" type={showPassword ? 'text' : 'password'} placeholder="Min. 8 chars, uppercase, number" autoComplete="new-password" aria-invalid={!!errors.password} className="pr-10" {...register('password')} />
+                  <button type="button" onClick={() => setShowPassword((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" aria-label={showPassword ? 'Hide' : 'Show'}>
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
@@ -134,8 +144,8 @@ export default function RegisterPage() {
               <div className="space-y-1.5">
                 <Label htmlFor="confirmPassword">Confirm password</Label>
                 <div className="relative">
-                  <Input id="confirmPassword" type={showConfirm ? 'text' : 'password'} placeholder="Repeat your password" autoComplete="new-password" aria-invalid={!!errors.confirmPassword} className="pr-10" {...field('confirmPassword')} />
-                  <button type="button" onClick={() => setShowConfirm(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" aria-label={showConfirm ? 'Hide' : 'Show'}>
+                  <Input id="confirmPassword" type={showConfirm ? 'text' : 'password'} placeholder="Repeat your password" autoComplete="new-password" aria-invalid={!!errors.confirmPassword} className="pr-10" {...register('confirmPassword')} />
+                  <button type="button" onClick={() => setShowConfirm((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" aria-label={showConfirm ? 'Hide' : 'Show'}>
                     {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
