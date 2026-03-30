@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
 import { Layout } from '@/components/shared/Layout'
 import { Button } from '@/components/ui/button'
-import { useLazyVerifyEmailQuery } from '@/features/auth/authApi'
+import { useLazyVerifyEmailQuery } from '../features/auth/authApi'
 
 export default function VerifyEmailPage() {
   const { token } = useParams<{ token: string }>()
