@@ -41,7 +41,7 @@ export default function AdminUsersPage() {
   const [adminUpdateUser, { isLoading: isSaving }] = useAdminUpdateUserMutation()
   const [drafts, setDrafts] = useState<Record<string, UserRowEdits>>({})
 
-  const users = data?.data ?? []
+  const users = useMemo(() => data?.data ?? [], [data?.data])
   const pagination = data?.pagination
 
   const rowDrafts = useMemo(() => {

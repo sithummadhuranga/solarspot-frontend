@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useNavigate } from 'react-router-dom'
@@ -57,11 +57,11 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors },
   } = useForm<RegisterFormData>({ resolver: zodResolver(registerSchema) })
 
-  const passwordValue = watch('password', '')
+  const passwordValue = useWatch({ control, name: 'password', defaultValue: '' })
 
   const onSubmit = async (data: RegisterFormData) => {
     try {

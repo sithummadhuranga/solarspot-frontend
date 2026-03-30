@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -19,15 +19,11 @@ export default function ProfilePage() {
   const { data, isLoading } = useGetMeQuery()
   const [updateMe, { isLoading: isSaving }] = useUpdateMeMutation()
   const [deleteMe, { isLoading: isDeleting }] = useDeleteMeMutation()
-  const [displayName, setDisplayName] = useState('')
+  const [editedDisplayName, setEditedDisplayName] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const user = data?.data
-
-  useEffect(() => {
-    if (!user) return
-    setDisplayName(user.displayName)
-  }, [user])
+  const displayName = editedDisplayName ?? user?.displayName ?? ''
 
   const handleSave = async (e: FormEvent) => {
     e.preventDefault()
@@ -41,6 +37,7 @@ export default function ProfilePage() {
 
     try {
       await updateMe({ displayName: trimmed }).unwrap()
+      setEditedDisplayName(trimmed)
       toast.success('Profile updated')
     } catch (error) {
       setErrorMessage(getApiErrorMessage(error, 'Could not update profile.'))
@@ -87,7 +84,7 @@ export default function ProfilePage() {
                 <input
                   type="text"
                   value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
+                  onChange={(e) => setEditedDisplayName(e.target.value)}
                   className="rounded-md border border-border px-3 py-2 outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/20"
                 />
               </label>

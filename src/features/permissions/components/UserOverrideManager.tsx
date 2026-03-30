@@ -23,7 +23,7 @@ export function UserOverrideManager({ permissions }: UserOverrideManagerProps) {
   const [removePermissionId, setRemovePermissionId] = useState('')
 
   const { data: usersData } = useListUsersQuery({ page: 1, limit: 50 })
-  const users = usersData?.data ?? []
+  const users = useMemo(() => usersData?.data ?? [], [usersData?.data])
 
   const selectedUser = useMemo(() => users.find((u) => u._id === userId) ?? null, [users, userId])
 
