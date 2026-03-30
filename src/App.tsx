@@ -22,8 +22,8 @@ function App() {
         {},
         { withCredentials: true },
       )
-      .then(({ data }) => {
-        dispatch(setCredentials({ token: data.data.accessToken, user: data.data.user }))
+      .then((response) => {
+        dispatch(setCredentials({ token: response.data.data.accessToken, user: response.data.data.user }))
       })
       .catch(() => {
         // No valid refresh cookie.

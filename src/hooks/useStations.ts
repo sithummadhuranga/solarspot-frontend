@@ -11,6 +11,8 @@ import {
   rejectStation,
   deleteStation,
 } from '@/api/stations.api'
+import type { ApiResponse, PaginatedResponse } from '@/types/api.types'
+import type { Station, NearbyStation } from '@/types/station.types'
 import type { StationQueryParams, NearbyQueryParams, CreateStationDto, UpdateStationDto, RejectStationDto } from '@/types/station.types'
 
 // ─── Query key factory (convention from project spec) ─────────────────────────
@@ -27,7 +29,7 @@ export const stationKeys = {
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
 export function useStationsList(params: StationQueryParams = {}) {
-  return useQuery({
+  return useQuery<PaginatedResponse<Station>>({
     queryKey:    stationKeys.list(params),
     queryFn:     () => getStations(params),
     placeholderData: keepPreviousData,
@@ -36,7 +38,7 @@ export function useStationsList(params: StationQueryParams = {}) {
 }
 
 export function useNearbyStations(params: NearbyQueryParams | null) {
-  return useQuery({
+  return useQuery<ApiResponse<NearbyStation[]>>({
     queryKey:  params ? stationKeys.nearby(params) : stationKeys.nearby({ lat: 0, lng: 0 }),
     queryFn:   () => getNearbyStations(params!),
     enabled:   params !== null,
@@ -45,7 +47,7 @@ export function useNearbyStations(params: NearbyQueryParams | null) {
 }
 
 export function usePendingStations(page = 1) {
-  return useQuery({
+  return useQuery<PaginatedResponse<Station>>({
     queryKey: [...stationKeys.pending(), { page }],
     queryFn:  () => getPendingStations(),
     staleTime: 0,
@@ -53,7 +55,7 @@ export function usePendingStations(page = 1) {
 }
 
 export function useStation(id: string | undefined) {
-  return useQuery({
+  return useQuery<ApiResponse<Station>>({
     queryKey: stationKeys.detail(id ?? ''),
     queryFn:  () => getStation(id!),
     enabled:  Boolean(id),
@@ -66,7 +68,7 @@ export function useStation(id: string | undefined) {
 export function useCreateStation() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return useMutation<ApiResponse<Station>, Error, CreateStationDto>({
     mutationFn: (dto: CreateStationDto) => createStation(dto),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: stationKeys.lists() })
@@ -81,7 +83,7 @@ export function useCreateStation() {
 export function useUpdateStation(id: string) {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return useMutation<ApiResponse<Station>, Error, UpdateStationDto>({
     mutationFn: (dto: UpdateStationDto) => updateStation(id, dto),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: stationKeys.detail(id) })
@@ -97,9 +99,9 @@ export function useUpdateStation(id: string) {
 export function useApproveStation() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return useMutation<ApiResponse<Station>, Error, string>({
     mutationFn: (id: string) => approveStation(id),
-    onSuccess: (_data, id) => {
+    onSuccess: (_data, id: string) => {
       void queryClient.invalidateQueries({ queryKey: stationKeys.detail(id) })
       void queryClient.invalidateQueries({ queryKey: stationKeys.pending() })
       void queryClient.invalidateQueries({ queryKey: stationKeys.lists() })
@@ -114,10 +116,10 @@ export function useApproveStation() {
 export function useRejectStation() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return useMutation<ApiResponse<Station>, Error, { id: string; dto: RejectStationDto }>({
     mutationFn: ({ id, dto }: { id: string; dto: RejectStationDto }) =>
       rejectStation(id, dto),
-    onSuccess: (_data, { id }) => {
+    onSuccess: (_data, { id }: { id: string; dto: RejectStationDto }) => {
       void queryClient.invalidateQueries({ queryKey: stationKeys.detail(id) })
       void queryClient.invalidateQueries({ queryKey: stationKeys.pending() })
       void queryClient.invalidateQueries({ queryKey: stationKeys.lists() })
@@ -132,7 +134,7 @@ export function useRejectStation() {
 export function useDeleteStation() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return useMutation<ApiResponse<null>, Error, string>({
     mutationFn: (id: string) => deleteStation(id),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: stationKeys.lists() })
