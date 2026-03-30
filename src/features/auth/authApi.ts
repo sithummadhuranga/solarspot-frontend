@@ -19,7 +19,6 @@ interface AuthSessionPayload {
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-
     register: builder.mutation<ApiResponse<{ message: string }>, RegisterRequest>({
       query: (body) => ({ url: '/auth/register', method: 'POST', body }),
     }),
@@ -40,7 +39,7 @@ export const authApi = baseApi.injectEndpoints({
             setCredentials({
               token: data.data.accessToken,
               user: data.data.user,
-            })
+            }),
           )
         } catch {
           // Error handling stays at component level.
