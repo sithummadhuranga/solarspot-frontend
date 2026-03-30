@@ -7,7 +7,7 @@ import { Sun, Loader2, AlertCircle, CheckCircle2, Eye, EyeOff, Info } from 'luci
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useRegisterMutation } from '@/features/auth/authApi'
+import { useRegisterMutation } from '../features/auth/authApi'
 
 const registerSchema = z
   .object({
