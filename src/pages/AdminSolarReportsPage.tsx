@@ -7,8 +7,8 @@
  *   - Archive reports that violate community guidelines
  *   - Restore archived reports (publish them)
  *
- * This page is accessible ONLY to roles: moderator, admin.
- * Route: /admin/solar/reports (inside ProtectedRoute + RoleGuard)
+ * This page is protected by backend-authoritative permission checks.
+ * Route: /admin/solar/reports (inside ProtectedRoute + BackendPermissionGuard)
  *
  * Owner: Member 3 · Ref: SolarIntelligence_Module_Prompt.md → A6
  */

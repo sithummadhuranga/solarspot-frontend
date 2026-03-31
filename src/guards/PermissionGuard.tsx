@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { usePermission } from '@/hooks/usePermission'
+import { BackendPermissionGuard } from '@/guards/BackendPermissionGuard'
 
 interface PermissionGuardProps {
   /**
@@ -11,6 +11,8 @@ interface PermissionGuardProps {
   children: ReactNode
   /** Rendered when the user lacks permission. Defaults to null (invisible). */
   fallback?: ReactNode
+  /** Rendered while permission check is loading. Defaults to null. */
+  loadingFallback?: ReactNode
 }
 
 /**
@@ -19,20 +21,19 @@ interface PermissionGuardProps {
  * Uses the same permission action strings as checkPermission middleware on the backend.
  * Fine-grained UI hiding — does NOT replace server-side authorization.
  *
- * TODO (Member 4): connect to PermissionEngine evaluation via permissions API
- *                  once GET /api/permissions/users/:id/overrides is implemented.
- *
  * Usage:
  *   <PermissionGuard action="stations.approve">
  *     <ApproveButton />
  *   </PermissionGuard>
  */
-export function PermissionGuard({ action, children, fallback = null }: PermissionGuardProps) {
-  const { hasPermission } = usePermission()
-
-  if (!hasPermission(action)) {
-    return <>{fallback}</>
-  }
-
-  return <>{children}</>
+export function PermissionGuard({ action, children, fallback = null, loadingFallback = null }: PermissionGuardProps) {
+  return (
+    <BackendPermissionGuard
+      action={action}
+      fallback={fallback}
+      loadingFallback={loadingFallback}
+    >
+      {children}
+    </BackendPermissionGuard>
+  )
 }

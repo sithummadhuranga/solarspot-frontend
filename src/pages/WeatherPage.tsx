@@ -9,7 +9,7 @@ import { SolarReportList } from '@/features/weather/SolarReportList'
 import { StationAnalyticsPanel } from '@/features/weather/StationAnalyticsPanel'
 import { useListStationsQuery } from '@/features/stations/stationsApi'
 import { useBulkRefreshMutation } from '@/features/weather/weatherApi'
-import { PermissionGuard } from '@/guards/PermissionGuard'
+import { BackendPermissionGuard } from '@/guards/BackendPermissionGuard'
 import type { Station } from '@/types/station.types'
 
 //  Station Picker Card 
@@ -94,7 +94,7 @@ export default function WeatherPage() {
         description="Real-time solar output, 5-day forecasts, and community charging reports"
         actions={
           <div className="flex gap-2">
-            <PermissionGuard action="weather.bulk-refresh">
+            <BackendPermissionGuard action="weather.bulk-refresh">
               <button
                 onClick={() => bulkRefresh({ stationIds: [] })}
                 disabled={isRefreshing}
@@ -103,8 +103,8 @@ export default function WeatherPage() {
                 <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
                 Refresh all
               </button>
-            </PermissionGuard>
-            <PermissionGuard action="weather.export">
+            </BackendPermissionGuard>
+            <BackendPermissionGuard action="weather.export">
               <Link
                 to="/api/weather/export?format=csv"
                 target="_blank"
@@ -113,7 +113,7 @@ export default function WeatherPage() {
                 <Download className="h-3.5 w-3.5" />
                 Export CSV
               </Link>
-            </PermissionGuard>
+            </BackendPermissionGuard>
           </div>
         }
       />
