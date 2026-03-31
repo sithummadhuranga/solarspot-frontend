@@ -1,59 +1,68 @@
-/**
- * usersApi — RTK Query endpoints for Users module (Member 4).
- *
- * Covers all 6 user endpoints from PROJECT_OVERVIEW.md.
- * TODO (Member 4): replace placeholder types, add file upload support for avatar.
- */
 import { baseApi } from '@/app/baseApi'
-import { normalizePaginatedUsersResponse, normalizeUserApiResponse } from '@/lib/user-normalize'
 import type { ApiResponse, PaginatedResponse } from '@/types/api.types'
 import type { User, UpdateProfileDto as UpdateProfileInput, AdminChangeRoleDto as AdminUpdateUserInput } from '@/types/user.types'
+import { normalizeUser } from '@/lib/user'
 
-// ─── API slice ─────────────────────────────────────────────────────────────────
+interface ListUsersParams {
+  page?: number
+  limit?: number
+  role?: string
+  search?: string
+  isActive?: boolean
+}
+
 export const usersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
 
-    /** GET /api/users/me — own profile */
     getMe: builder.query<ApiResponse<User>, void>({
-      query:       () => '/users/me',
-      transformResponse: normalizeUserApiResponse,
+      query: () => '/users/me',
+      transformResponse: (response: ApiResponse<User>) => ({
+        ...response,
+        data: normalizeUser(response.data),
+      }),
       providesTags: ['User'],
     }),
 
-    /** PUT /api/users/me — update own profile */
     updateMe: builder.mutation<ApiResponse<User>, UpdateProfileInput>({
-      query:          (body) => ({ url: '/users/me', method: 'PUT', body }),
-      transformResponse: normalizeUserApiResponse,
+      query: (body) => ({ url: '/users/me', method: 'PUT', body }),
+      transformResponse: (response: ApiResponse<User>) => ({
+        ...response,
+        data: normalizeUser(response.data),
+      }),
       invalidatesTags: ['User'],
     }),
 
-    /** DELETE /api/users/me — soft-delete own account */
-    deleteMe: builder.mutation<ApiResponse<null>, void>({
-      query:          () => ({ url: '/users/me', method: 'DELETE' }),
+    deleteMe: builder.mutation<void, void>({
+      query: () => ({ url: '/users/me', method: 'DELETE' }),
       invalidatesTags: ['User'],
     }),
 
-    /** GET /api/users/:id — public profile */
     getUserById: builder.query<ApiResponse<User>, string>({
-      query:       (id) => `/users/${id}`,
-      transformResponse: normalizeUserApiResponse,
+      query: (id) => `/users/${id}`,
+      transformResponse: (response: ApiResponse<User>) => ({
+        ...response,
+        data: normalizeUser(response.data),
+      }),
       providesTags: (_res, _err, id) => [{ type: 'User', id }],
     }),
 
-    /** GET /api/users — admin: paginated user list */
-    listUsers: builder.query<PaginatedResponse<User>, { page?: number; limit?: number; role?: string }>({
-      query:       (params) => ({ url: '/users', params }),
-      transformResponse: normalizePaginatedUsersResponse,
+    listUsers: builder.query<PaginatedResponse<User>, ListUsersParams>({
+      query: (params) => ({ url: '/users', params }),
+      transformResponse: (response: PaginatedResponse<User>) => ({
+        ...response,
+        data: response.data.map((u) => normalizeUser(u)),
+      }),
       providesTags: ['User'],
     }),
 
-    /** PUT /api/users/:id — admin: update any user */
     adminUpdateUser: builder.mutation<ApiResponse<User>, { id: string } & AdminUpdateUserInput>({
-      query:          ({ id, ...body }) => ({ url: `/users/${id}`, method: 'PUT', body }),
-      transformResponse: normalizeUserApiResponse,
+      query: ({ id, ...body }) => ({ url: `/users/${id}`, method: 'PUT', body }),
+      transformResponse: (response: ApiResponse<User>) => ({
+        ...response,
+        data: normalizeUser(response.data),
+      }),
       invalidatesTags: (_res, _err, { id }) => [{ type: 'User', id }],
     }),
-
   }),
   overrideExisting: false,
 })

@@ -1,5 +1,4 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
-import axios from 'axios'
 import { toast } from 'sonner'
 import {
   getStations,
@@ -12,7 +11,8 @@ import {
   rejectStation,
   deleteStation,
 } from '@/api/stations.api'
-import { extractApiErrorMessage } from '@/lib/apiError'
+import type { ApiResponse, PaginatedResponse } from '@/types/api.types'
+import type { Station, NearbyStation } from '@/types/station.types'
 import type { StationQueryParams, NearbyQueryParams, CreateStationDto, UpdateStationDto, RejectStationDto } from '@/types/station.types'
 
 // ─── Query key factory (convention from project spec) ─────────────────────────
@@ -29,23 +29,16 @@ export const stationKeys = {
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
 export function useStationsList(params: StationQueryParams = {}) {
-  return useQuery({
+  return useQuery<PaginatedResponse<Station>>({
     queryKey:    stationKeys.list(params),
     queryFn:     () => getStations(params),
     placeholderData: keepPreviousData,
     staleTime:   30_000,
-    refetchOnWindowFocus: false,
-    retry: (failureCount, error) => {
-      if (axios.isAxiosError(error) && error.response?.status === 429) {
-        return false
-      }
-      return failureCount < 1
-    },
   })
 }
 
 export function useNearbyStations(params: NearbyQueryParams | null) {
-  return useQuery({
+  return useQuery<ApiResponse<NearbyStation[]>>({
     queryKey:  params ? stationKeys.nearby(params) : stationKeys.nearby({ lat: 0, lng: 0 }),
     queryFn:   () => getNearbyStations(params!),
     enabled:   params !== null,
@@ -54,7 +47,7 @@ export function useNearbyStations(params: NearbyQueryParams | null) {
 }
 
 export function usePendingStations(page = 1) {
-  return useQuery({
+  return useQuery<PaginatedResponse<Station>>({
     queryKey: [...stationKeys.pending(), { page }],
     queryFn:  () => getPendingStations(),
     staleTime: 0,
@@ -62,7 +55,7 @@ export function usePendingStations(page = 1) {
 }
 
 export function useStation(id: string | undefined) {
-  return useQuery({
+  return useQuery<ApiResponse<Station>>({
     queryKey: stationKeys.detail(id ?? ''),
     queryFn:  () => getStation(id!),
     enabled:  Boolean(id),
@@ -75,14 +68,14 @@ export function useStation(id: string | undefined) {
 export function useCreateStation() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return useMutation<ApiResponse<Station>, Error, CreateStationDto>({
     mutationFn: (dto: CreateStationDto) => createStation(dto),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: stationKeys.lists() })
       toast.success('Station submitted for review!')
     },
-    onError: (err: unknown) => {
-      toast.error(extractApiErrorMessage(err, 'Failed to submit station'))
+    onError: (err: Error) => {
+      toast.error(err.message ?? 'Failed to submit station')
     },
   })
 }
@@ -90,15 +83,15 @@ export function useCreateStation() {
 export function useUpdateStation(id: string) {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return useMutation<ApiResponse<Station>, Error, UpdateStationDto>({
     mutationFn: (dto: UpdateStationDto) => updateStation(id, dto),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: stationKeys.detail(id) })
       void queryClient.invalidateQueries({ queryKey: stationKeys.lists() })
       toast.success('Station updated successfully')
     },
-    onError: (err: unknown) => {
-      toast.error(extractApiErrorMessage(err, 'Failed to update station'))
+    onError: (err: Error) => {
+      toast.error(err.message ?? 'Failed to update station')
     },
   })
 }
@@ -106,16 +99,16 @@ export function useUpdateStation(id: string) {
 export function useApproveStation() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return useMutation<ApiResponse<Station>, Error, string>({
     mutationFn: (id: string) => approveStation(id),
-    onSuccess: (_data, id) => {
+    onSuccess: (_data, id: string) => {
       void queryClient.invalidateQueries({ queryKey: stationKeys.detail(id) })
       void queryClient.invalidateQueries({ queryKey: stationKeys.pending() })
       void queryClient.invalidateQueries({ queryKey: stationKeys.lists() })
       toast.success('Station approved')
     },
-    onError: (err: unknown) => {
-      toast.error(extractApiErrorMessage(err, 'Failed to approve station'))
+    onError: (err: Error) => {
+      toast.error(err.message ?? 'Failed to approve station')
     },
   })
 }
@@ -123,17 +116,17 @@ export function useApproveStation() {
 export function useRejectStation() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return useMutation<ApiResponse<Station>, Error, { id: string; dto: RejectStationDto }>({
     mutationFn: ({ id, dto }: { id: string; dto: RejectStationDto }) =>
       rejectStation(id, dto),
-    onSuccess: (_data, { id }) => {
+    onSuccess: (_data, { id }: { id: string; dto: RejectStationDto }) => {
       void queryClient.invalidateQueries({ queryKey: stationKeys.detail(id) })
       void queryClient.invalidateQueries({ queryKey: stationKeys.pending() })
       void queryClient.invalidateQueries({ queryKey: stationKeys.lists() })
       toast.success('Station rejected')
     },
-    onError: (err: unknown) => {
-      toast.error(extractApiErrorMessage(err, 'Failed to reject station'))
+    onError: (err: Error) => {
+      toast.error(err.message ?? 'Failed to reject station')
     },
   })
 }
@@ -141,15 +134,15 @@ export function useRejectStation() {
 export function useDeleteStation() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return useMutation<ApiResponse<null>, Error, string>({
     mutationFn: (id: string) => deleteStation(id),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: stationKeys.lists() })
       void queryClient.invalidateQueries({ queryKey: stationKeys.pending() })
       toast.success('Station deleted')
     },
-    onError: (err: unknown) => {
-      toast.error(extractApiErrorMessage(err, 'Failed to delete station'))
+    onError: (err: Error) => {
+      toast.error(err.message ?? 'Failed to delete station')
     },
   })
 }

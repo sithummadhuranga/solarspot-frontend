@@ -1,76 +1,89 @@
-/**
- * authApi — RTK Query endpoints for Auth module (Member 4).
- *
- * Covers all 7 auth endpoints from PROJECT_OVERVIEW.md.
- * TODO (Member 4): replace placeholder types with real request/response shapes.
- */
 import { baseApi } from '@/app/baseApi'
-import { normalizeUser, normalizeUserApiResponse } from '@/lib/user-normalize'
 import type { ApiResponse } from '@/types/api.types'
 import type { User } from '@/types/user.types'
+import { clearCredentials, setCredentials } from './authSlice'
+import { normalizeUser } from '@/lib/user'
 
-// ─── Request / response shapes (stubs) ────────────────────────────────────────
-interface LoginRequest      { email: string; password: string }
-interface RegisterRequest   { email: string; password: string; displayName: string }
-interface ForgotPwdRequest  { email: string }
-interface ResetPwdRequest   { token: string; password: string }
-// Backend returns { accessToken, user } — not "token"
-interface LoginResponse     { accessToken: string; user: User }
-interface RefreshResponse   { token: string }
+interface LoginRequest { email: string; password: string }
+interface RegisterRequest { email: string; password: string; displayName: string }
+interface ForgotPwdRequest { email: string }
+interface ResetPwdRequest {
+  token: string
+  password: string
+  confirmPassword: string
+}
+interface AuthSessionPayload {
+  accessToken: string
+  user: User
+}
 
-// ─── API slice ─────────────────────────────────────────────────────────────────
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-
-    /** POST /api/auth/register */
-    register: builder.mutation<ApiResponse<User>, RegisterRequest>({
+    register: builder.mutation<ApiResponse<{ message: string }>, RegisterRequest>({
       query: (body) => ({ url: '/auth/register', method: 'POST', body }),
-      transformResponse: normalizeUserApiResponse,
-      // TODO (Member 4): on success dispatch setCredentials
     }),
 
-    /** POST /api/auth/login */
-    login: builder.mutation<ApiResponse<LoginResponse>, LoginRequest>({
+    login: builder.mutation<ApiResponse<AuthSessionPayload>, LoginRequest>({
       query: (body) => ({ url: '/auth/login', method: 'POST', body }),
-      transformResponse: (response: ApiResponse<LoginResponse>): ApiResponse<LoginResponse> => ({
+      transformResponse: (response: ApiResponse<AuthSessionPayload>) => ({
         ...response,
         data: {
-          ...response.data,
+          accessToken: response.data.accessToken,
+          user: normalizeUser(response.data.user),
+        },
+      }),
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled
+          dispatch(
+            setCredentials({
+              token: data.data.accessToken,
+              user: data.data.user,
+            }),
+          )
+        } catch {
+          // Error handling stays at component level.
+        }
+      },
+    }),
+
+    logout: builder.mutation<void, void>({
+      query: () => ({ url: '/auth/logout', method: 'POST' }),
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } finally {
+          dispatch(clearCredentials())
+        }
+      },
+    }),
+
+    refresh: builder.mutation<ApiResponse<AuthSessionPayload>, void>({
+      query: () => ({ url: '/auth/refresh', method: 'POST' }),
+      transformResponse: (response: ApiResponse<AuthSessionPayload>) => ({
+        ...response,
+        data: {
+          accessToken: response.data.accessToken,
           user: normalizeUser(response.data.user),
         },
       }),
     }),
 
-    /** POST /api/auth/logout */
-    logout: builder.mutation<ApiResponse<null>, void>({
-      query: () => ({ url: '/auth/logout', method: 'POST' }),
-      // TODO (Member 4): on success dispatch clearCredentials
-    }),
-
-    /** POST /api/auth/refresh — called by baseQueryWithReauth automatically */
-    refresh: builder.mutation<ApiResponse<RefreshResponse>, void>({
-      query: () => ({ url: '/auth/refresh', method: 'POST' }),
-    }),
-
-    /** GET /api/auth/verify-email/:token */
     verifyEmail: builder.query<ApiResponse<null>, string>({
       query: (token) => `/auth/verify-email/${token}`,
     }),
 
-    /** POST /api/auth/forgot-password */
     forgotPassword: builder.mutation<ApiResponse<null>, ForgotPwdRequest>({
       query: (body) => ({ url: '/auth/forgot-password', method: 'POST', body }),
     }),
 
-    /** PATCH /api/auth/reset-password/:token */
     resetPassword: builder.mutation<ApiResponse<null>, ResetPwdRequest>({
       query: ({ token, ...body }) => ({
-        url:    `/auth/reset-password/${token}`,
+        url: `/auth/reset-password/${token}`,
         method: 'PATCH',
         body,
       }),
     }),
-
   }),
   overrideExisting: false,
 })

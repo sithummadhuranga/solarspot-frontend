@@ -13,7 +13,14 @@ export const API_BASE_URL: string = import.meta.env.PROD
 
 // ─── Roles ────────────────────────────────────────────────────────────────────
 export const ROLES = {
+  GUEST: 'guest',
   USER:      'user',
+  STATION_OWNER: 'station_owner',
+  FEATURED_CONTRIBUTOR: 'featured_contributor',
+  TRUSTED_REVIEWER: 'trusted_reviewer',
+  REVIEW_MODERATOR: 'review_moderator',
+  WEATHER_ANALYST: 'weather_analyst',
+  PERMISSION_AUDITOR: 'permission_auditor',
   MODERATOR: 'moderator',
   ADMIN:     'admin',
 } as const
@@ -24,8 +31,14 @@ export type Role = (typeof ROLES)[keyof typeof ROLES]
 export const ROLE_LEVEL: Record<string, number> = {
   guest:     0,
   user:      1,
-  moderator: 2,
-  admin:     3,
+  station_owner: 2,
+  featured_contributor: 2,
+  trusted_reviewer: 2,
+  review_moderator: 3,
+  weather_analyst: 3,
+  permission_auditor: 3,
+  moderator: 3,
+  admin:     4,
 }
 
 // ─── Station options ──────────────────────────────────────────────────────────

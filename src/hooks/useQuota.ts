@@ -1,11 +1,12 @@
 import { useGetQuotaStatsQuery } from '@/features/permissions/permissionsApi'
 import { useAuth } from './useAuth'
 
-// Daily limits match PROJECT_OVERVIEW.md Third-Party APIs table.
+// Daily limits are mirrored from backend QuotaService soft caps.
 const QUOTA_LIMITS: Record<string, number> = {
   brevo:       300,
-  openweather: 1000,
+  openweathermap: 1000,
   perspective: 1440,  // 1 QPS × 60 × 24
+  nominatim: 1000,
   cloudinary:  Infinity,
 }
 
@@ -27,7 +28,7 @@ const ALERT_THRESHOLD = 0.8
  */
 export function useQuota() {
   const { role } = useAuth()
-  const isAdmin  = role === 'admin'
+  const isAdmin  = role === 'admin' || role === 'moderator' || role === 'permission_auditor'
 
   // Skip the network call for non-admins.
   const { data, isLoading, error } = useGetQuotaStatsQuery(undefined, {
@@ -40,14 +41,14 @@ export function useQuota() {
   const isNearLimit = (service: string): boolean => {
     const stat  = quotas.find((q) => q.service === service)
     if (!stat) return false
-    const limit = QUOTA_LIMITS[service] ?? Infinity
+    const limit = stat.limit ?? QUOTA_LIMITS[service] ?? Infinity
     return stat.count / limit >= ALERT_THRESHOLD
   }
 
   const usagePct = (service: string): number => {
     const stat  = quotas.find((q) => q.service === service)
     if (!stat) return 0
-    const limit = QUOTA_LIMITS[service] ?? Infinity
+    const limit = stat.limit ?? QUOTA_LIMITS[service] ?? Infinity
     return Math.min(100, Math.round((stat.count / limit) * 100))
   }
 

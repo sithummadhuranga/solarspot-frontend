@@ -6,7 +6,9 @@ import {
 } from '@reduxjs/toolkit/query/react'
 import type { RootState } from '@/app/store'
 import { clearCredentials, setCredentials, setRefreshing } from '@/features/auth/authSlice'
+import type { ApiResponse } from '@/types/api.types'
 import type { User } from '@/types/user.types'
+import { normalizeUser } from './user'
 import { API_BASE_URL } from './constants'
 
 // ─── Raw base query ────────────────────────────────────────────────────────────
@@ -25,7 +27,19 @@ const rawBaseQuery = fetchBaseQuery({
 // ─── Refresh response shape ────────────────────────────────────────────────────
 // Backend POST /api/auth/refresh returns { success, data: { accessToken, user } }
 interface RefreshResponse {
-  data: { accessToken: string; user: User }
+  accessToken: string
+  user: User
+}
+
+let refreshPromise: Promise<ApiResponse<RefreshResponse> | null> | null = null
+
+function getRequestUrl(args: string | FetchArgs): string {
+  return typeof args === 'string' ? args : args.url
+}
+
+function shouldSkipRefresh(url: string): boolean {
+  if (!url.startsWith('/auth/')) return false
+  return url !== '/auth/refresh'
 }
 
 // ─── Base query with automatic token refresh ──────────────────────────────────
@@ -42,29 +56,40 @@ export const baseQueryWithReauth: BaseQueryFn<
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
   let result = await rawBaseQuery(args, api, extraOptions)
+  const url = getRequestUrl(args)
 
-  if (result.error?.status === 401) {
-    const state = api.getState() as RootState
-
-    // Guard against concurrent refresh calls
-    if (!state.auth.isRefreshing) {
+  if (result.error?.status === 401 && !shouldSkipRefresh(url)) {
+    if (!refreshPromise) {
       api.dispatch(setRefreshing(true))
-
-      const refreshResult = await rawBaseQuery(
-        { url: '/auth/refresh', method: 'POST' },
-        api,
-        extraOptions
+      refreshPromise = Promise.resolve(
+        rawBaseQuery(
+          { url: '/auth/refresh', method: 'POST' },
+          api,
+          extraOptions
+        )
       )
+        .then((refreshResult) => {
+          if (!refreshResult.data) return null
+          return refreshResult.data as ApiResponse<RefreshResponse>
+        })
+        .finally(() => {
+          refreshPromise = null
+          api.dispatch(setRefreshing(false))
+        })
+    }
 
-      api.dispatch(setRefreshing(false))
+    const refreshed = await refreshPromise
 
-      if (refreshResult.data) {
-        const { user, accessToken } = (refreshResult as RefreshResponse).data
-        api.dispatch(setCredentials({ user, token: accessToken }))
-        result = await rawBaseQuery(args, api, extraOptions)
-      } else {
-        api.dispatch(clearCredentials())
-      }
+    if (refreshed?.data?.accessToken) {
+      api.dispatch(
+        setCredentials({
+          user: normalizeUser(refreshed.data.user),
+          token: refreshed.data.accessToken,
+        })
+      )
+      result = await rawBaseQuery(args, api, extraOptions)
+    } else {
+      api.dispatch(clearCredentials())
     }
   }
 

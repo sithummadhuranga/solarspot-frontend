@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
 import { Layout } from '@/components/shared/Layout'
 import { Button } from '@/components/ui/button'
-import { useLazyVerifyEmailQuery } from '@/features/auth/authApi'
+import { useLazyVerifyEmailQuery } from '../features/auth/authApi'
 
 export default function VerifyEmailPage() {
   const { token } = useParams<{ token: string }>()
@@ -11,8 +11,6 @@ export default function VerifyEmailPage() {
 
   useEffect(() => {
     if (!token) return
-    // StrictMode mounts → unmounts → remounts in development.
-    // `preferCacheValue: true` avoids double-hitting the verification endpoint.
     void verifyEmail(token, true)
   }, [token, verifyEmail])
 
@@ -25,7 +23,7 @@ export default function VerifyEmailPage() {
       <div className="mx-auto max-w-xl py-24 text-center">
         <h1 className="text-2xl font-semibold">Email verification</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          {token ? 'Completing verification…' : 'Verification link is missing a token.'}
+          {token ? 'Completing verification...' : 'Verification link is missing a token.'}
         </p>
 
         <div className="mt-8 rounded-xl border bg-card p-6">
@@ -51,7 +49,7 @@ export default function VerifyEmailPage() {
           {token && isFetching && !isSuccess && !error && (
             <div className="flex flex-col items-center gap-3">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">Verifying your email…</p>
+              <p className="text-sm text-muted-foreground">Verifying your email...</p>
             </div>
           )}
 

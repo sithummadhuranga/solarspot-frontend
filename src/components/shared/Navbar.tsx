@@ -1,18 +1,17 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { Menu, X, Sun, MapPin, Zap, LayoutGrid, User2, LogOut, ShieldCheck } from 'lucide-react'
+import { toast } from 'sonner'
 import { useAuth } from '@/hooks/useAuth'
-import { getRoleSlug, getSafeText } from '@/lib/auth'
 import { cn } from '@/lib/utils'
 
 export function Navbar() {
   const { user, isAuthenticated, signOut } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
-  const role = getRoleSlug(user?.role)
-  const userDisplayName = getSafeText(user?.displayName) || 'User'
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
-  const isMod   = role === 'moderator' || role === 'admin'
-  const isAdmin = role === 'admin'
+  const isMod = user?.role === 'moderator' || user?.role === 'admin'
+  const isAdmin = user?.role === 'admin'
 
   const navLink = (to: string, label: string) => (
     <NavLink
@@ -25,11 +24,21 @@ export function Navbar() {
     </NavLink>
   )
 
+  const handleSignOut = async () => {
+    setIsLoggingOut(true)
+    try {
+      await signOut()
+      toast.success('Signed out successfully')
+    } catch {
+      toast.error('Signed out locally, but server logout failed.')
+    } finally {
+      setIsLoggingOut(false)
+    }
+  }
+
   return (
     <nav className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 shadow-sm">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 lg:px-8">
-
-        {/* Brand */}
         <Link to="/" className="flex items-center gap-1.5 shrink-0">
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#8cc63f]">
             <Sun className="h-4 w-4 text-[#133c1d]" />
@@ -37,7 +46,6 @@ export function Navbar() {
           <span className="font-sg font-bold text-gray-900 tracking-tight">SolarSpot</span>
         </Link>
 
-        {/* Desktop nav */}
         <div className="hidden md:flex flex-1 items-center gap-5 mx-6">
           {navLink('/stations', 'Stations')}
           {navLink('/map', 'Map')}
@@ -47,25 +55,32 @@ export function Navbar() {
           {isAdmin && navLink('/admin/permissions', 'Admin')}
         </div>
 
-        {/* Desktop right */}
         <div className="hidden md:flex items-center gap-3 shrink-0">
           {isAuthenticated ? (
             <>
-              <Link to="/stations/new"
-                className="inline-flex items-center gap-1.5 rounded-[12px] bg-[#8cc63f] px-3 py-1.5 text-xs font-sg font-semibold text-[#133c1d] hover:bg-[#7ab334] transition-colors">
+              <Link
+                to="/stations/new"
+                className="inline-flex items-center gap-1.5 rounded-[12px] bg-[#8cc63f] px-3 py-1.5 text-xs font-sg font-semibold text-[#133c1d] hover:bg-[#7ab334] transition-colors"
+              >
                 <Zap className="h-3.5 w-3.5" /> Add Station
               </Link>
               <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
                 <Link to="/profile" className="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900 font-medium transition-colors">
                   {user?.avatarUrl
                     ? <img src={user.avatarUrl} alt="" className="h-6 w-6 rounded-full object-cover" />
-                    : <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#8cc63f]/20 text-[11px] font-bold text-[#133c1d]">
-                          {userDisplayName.charAt(0).toUpperCase()}
+                    : (
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#8cc63f]/20 text-[11px] font-bold text-[#133c1d]">
+                        {user?.displayName?.charAt(0).toUpperCase()}
                       </div>
-                  }
-                  <span className="max-w-[100px] truncate">{userDisplayName}</span>
+                    )}
+                  <span className="max-w-[100px] truncate">{user?.displayName}</span>
                 </Link>
-                <button onClick={signOut} className="text-gray-400 hover:text-red-500 transition-colors" title="Sign out">
+                <button
+                  onClick={() => void handleSignOut()}
+                  disabled={isLoggingOut}
+                  className="text-gray-400 hover:text-red-500 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                  title="Sign out"
+                >
                   <LogOut className="h-4 w-4" />
                 </button>
               </div>
@@ -80,39 +95,52 @@ export function Navbar() {
           )}
         </div>
 
-        {/* Mobile burger */}
         <button onClick={() => setMobileOpen((o) => !o)} className="md:hidden rounded-lg p-2 text-gray-600 hover:bg-gray-100 transition-colors">
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
-      {/* Mobile menu */}
       {mobileOpen && (
         <div className="border-t border-gray-100 bg-white px-4 py-4 md:hidden space-y-1">
           {[
-            { to: '/stations',  label: 'Stations', icon: <LayoutGrid className="h-4 w-4" /> },
-            { to: '/map',       label: 'Map',      icon: <MapPin className="h-4 w-4" /> },
+            { to: '/stations', label: 'Stations', icon: <LayoutGrid className="h-4 w-4" /> },
+            { to: '/map', label: 'Map', icon: <MapPin className="h-4 w-4" /> },
             ...(isAuthenticated ? [{ to: '/my-stations', label: 'My Stations', icon: <Zap className="h-4 w-4" /> }] : []),
             ...(isMod ? [{ to: '/admin/stations/pending', label: 'Moderation', icon: <ShieldCheck className="h-4 w-4" /> }] : []),
           ].map((item) => (
-            <Link key={item.to} to={item.to} onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+            <Link
+              key={item.to}
+              to={item.to}
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            >
               <span className="text-gray-400">{item.icon}</span> {item.label}
             </Link>
           ))}
 
           {isAuthenticated ? (
             <div className="mt-3 border-t border-gray-100 pt-3 space-y-1">
-              <Link to="/stations/new" onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-3 rounded-[16px] bg-[#8cc63f] px-3 py-2.5 text-sm font-sg font-semibold text-[#133c1d]">
+              <Link
+                to="/stations/new"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-3 rounded-[16px] bg-[#8cc63f] px-3 py-2.5 text-sm font-sg font-semibold text-[#133c1d]"
+              >
                 <Zap className="h-4 w-4" /> Add Station
               </Link>
-              <Link to="/profile" onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
-                <User2 className="h-4 w-4 text-gray-400" /> {userDisplayName}
+              <Link
+                to="/profile"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                <User2 className="h-4 w-4 text-gray-400" /> {user?.displayName}
               </Link>
-              <button onClick={() => { signOut(); setMobileOpen(false) }}
-                className="flex w-full items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50">
+              <button
+                onClick={() => {
+                  void handleSignOut()
+                  setMobileOpen(false)
+                }}
+                className="flex w-full items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50"
+              >
                 <LogOut className="h-4 w-4" /> Sign out
               </button>
             </div>
