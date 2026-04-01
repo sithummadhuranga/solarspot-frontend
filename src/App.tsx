@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { setCredentials, setInitialized, selectIsInitializing } from '@/features/auth/authSlice'
 import type { User } from '@/types/user.types'
 import { API_BASE_URL } from '@/lib/constants'
+import { normalizeUser } from '@/lib/user'
 
 let silentRefreshAttempted = false
 
@@ -23,7 +24,12 @@ function App() {
         { withCredentials: true },
       )
       .then((response) => {
-        dispatch(setCredentials({ token: response.data.data.accessToken, user: response.data.data.user }))
+        dispatch(
+          setCredentials({
+            token: response.data.data.accessToken,
+            user: normalizeUser(response.data.data.user),
+          }),
+        )
       })
       .catch(() => {
         // No valid refresh cookie.

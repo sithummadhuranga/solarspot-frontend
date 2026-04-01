@@ -1,5 +1,7 @@
 import { NavLink } from 'react-router-dom'
-import { usePermission } from '@/hooks/usePermission'
+import { useAppSelector } from '@/app/hooks'
+import { selectCurrentUser } from '@/features/auth/authSlice'
+import { useCheckPermissionAccessQuery } from '@/features/permissions/permissionsApi'
 
 /**
  * Sidebar — contextual navigation for authenticated/admin sections.
@@ -10,7 +12,20 @@ import { usePermission } from '@/hooks/usePermission'
  * TODO (All teams): expand nav items as pages are implemented.
  */
 export function Sidebar() {
-  const { hasPermission } = usePermission()
+  const user = useAppSelector(selectCurrentUser)
+
+  const pendingReviewCheck = useCheckPermissionAccessQuery(
+    { action: 'stations.read-pending', context: {} },
+    { skip: !user }
+  )
+
+  const permissionsReadCheck = useCheckPermissionAccessQuery(
+    { action: 'permissions.read', context: {} },
+    { skip: !user }
+  )
+
+  const canReadPending = pendingReviewCheck.data?.data?.allowed ?? false
+  const canReadPermissions = permissionsReadCheck.data?.data?.allowed ?? false
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-medium transition-colors ${
@@ -29,7 +44,7 @@ export function Sidebar() {
         <NavLink to="/stations"       className={navLinkClass}>All Stations</NavLink>
         <NavLink to="/stations/new"   className={navLinkClass}>Submit Station</NavLink>
 
-        {hasPermission('stations.read-pending') && (
+        {canReadPending && (
           <NavLink to="/admin/stations/pending" className={navLinkClass}>Pending Review</NavLink>
         )}
 
@@ -37,17 +52,16 @@ export function Sidebar() {
           Account
         </p>
         <NavLink to="/profile"         className={navLinkClass}>My Profile</NavLink>
-        <NavLink to="/profile/reviews" className={navLinkClass}>My Reviews</NavLink>
+        <NavLink to="/solar/reports/mine" className={navLinkClass}>My Solar Reports</NavLink>
 
-        {hasPermission('permissions.read') && (
+        {canReadPermissions && (
           <>
             <p className="mt-4 px-3 py-2 text-xs font-sg font-bold text-gray-400 uppercase tracking-wider">
               Administration
             </p>
             <NavLink to="/admin/users"       className={navLinkClass}>Users</NavLink>
             <NavLink to="/admin/permissions" className={navLinkClass}>Permissions</NavLink>
-            <NavLink to="/admin/quotas"      className={navLinkClass}>API Quotas</NavLink>
-            <NavLink to="/admin/audit"       className={navLinkClass}>Audit Log</NavLink>
+            <NavLink to="/admin/solar/reports" className={navLinkClass}>Solar Reports</NavLink>
           </>
         )}
 

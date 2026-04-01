@@ -7,8 +7,6 @@ import { Layout } from '@/components/shared/Layout'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { useDeleteMeMutation, useGetMeQuery, useUpdateMeMutation } from '@/features/users/usersApi'
 import { getApiErrorMessage } from '@/lib/errors'
-import { clearCredentials } from '@/features/auth/authSlice'
-import { useAppDispatch } from '@/app/hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -19,9 +17,8 @@ import { Badge } from '@/components/ui/badge'
  *
  */
 export default function ProfilePage() {
-  const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { data, isLoading } = useGetMeQuery()
+  const { data, isLoading, isError } = useGetMeQuery()
   const [updateMe, { isLoading: isSaving }] = useUpdateMeMutation()
   const [deleteMe, { isLoading: isDeleting }] = useDeleteMeMutation()
   const [editedDisplayName, setEditedDisplayName] = useState<string | null>(null)
@@ -29,6 +26,7 @@ export default function ProfilePage() {
 
   const user = data?.data
   const displayName = editedDisplayName ?? user?.displayName ?? ''
+  const isUnchanged = user ? displayName.trim() === user.displayName : false
 
   const roleLabel = user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'User'
   const userInitial = (displayName || user?.email || 'U').charAt(0).toUpperCase()
@@ -58,7 +56,6 @@ export default function ProfilePage() {
 
     try {
       await deleteMe().unwrap()
-      dispatch(clearCredentials())
       toast.success('Your account has been deleted')
       navigate('/', { replace: true })
     } catch (error) {
@@ -78,6 +75,12 @@ export default function ProfilePage() {
           <div className="h-28 animate-pulse rounded-2xl border border-slate-200 bg-white" />
           <div className="h-72 animate-pulse rounded-2xl border border-slate-200 bg-white" />
         </div>
+      )}
+
+      {isError && !user && (
+        <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          Could not load your profile right now. Please refresh and try again.
+        </p>
       )}
 
       {user && (
@@ -165,8 +168,8 @@ export default function ProfilePage() {
             <div className="mt-6 flex items-center justify-end">
               <Button
                 type="submit"
-                disabled={isSaving}
-                className="rounded-xl px-5"
+                disabled={isSaving || isUnchanged}
+                  className="rounded-xl px-5"
               >
                 {isSaving ? 'Saving...' : 'Save changes'}
               </Button>

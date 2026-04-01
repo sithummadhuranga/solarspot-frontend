@@ -2,7 +2,6 @@ import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { ProtectedRoute } from '@/guards/ProtectedRoute'
 import { BackendPermissionGuard } from '@/guards/BackendPermissionGuard'
-import { RoleGuard } from '@/guards/RoleGuard'
 
 const HomePage = lazy(() => import('@/pages/HomePage'))
 const LoginPage = lazy(() => import('@/pages/LoginPage'))
@@ -64,9 +63,9 @@ export function AppRouter() {
           <Route
             path="/admin/stations/pending"
             element={
-              <RoleGuard allowedRoles={['moderator', 'admin']}>
+              <BackendPermissionGuard action="stations.read-pending" fallback={<Navigate to="/unauthorized" replace />}>
                 <ModerationQueuePage />
-              </RoleGuard>
+              </BackendPermissionGuard>
             }
           />
 
@@ -82,9 +81,9 @@ export function AppRouter() {
           <Route
             path="/admin/solar/reports"
             element={
-              <RoleGuard allowedRoles={['moderator', 'admin']}>
+              <BackendPermissionGuard action="weather.admin" fallback={<Navigate to="/unauthorized" replace />}>
                 <AdminSolarReportsPage />
-              </RoleGuard>
+              </BackendPermissionGuard>
             }
           />
 
