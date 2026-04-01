@@ -7,11 +7,16 @@ import {
   MapPin, Zap, Sun, ChevronLeft, ChevronRight, Layers, Navigation2,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { toast } from 'sonner'
 import { useStationsList, useNearbyStations } from '@/hooks/useStations'
 import { useAuth } from '@/hooks/useAuth'
-import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, DEFAULT_SEARCH_RADIUS_KM, CONNECTOR_TYPES } from '@/lib/constants'
+import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, DEFAULT_SEARCH_RADIUS_KM, CONNECTOR_TYPES, AMENITIES } from '@/lib/constants'
 import { cn } from '@/lib/utils'
-import type { ConnectorType, NearbyStation, StationQueryParams } from '@/types/station.types'
+import type { Amenity, ConnectorType, NearbyStation, StationQueryParams } from '@/types/station.types'
+
+function formatAmenityLabel(value: Amenity) {
+  return value.replace('_', ' ').replace(/\b\w/g, (m) => m.toUpperCase())
+}
 
 // ─── Marker icons ─────────────────────────────────────────────────────────────
 
@@ -156,6 +161,7 @@ export default function StationMapPage() {
   const [searchInput,     setSearchInput]     = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [connectorFilter, setConnectorFilter] = useState<ConnectorType | undefined>()
+  const [amenitiesFilter, setAmenitiesFilter] = useState<Amenity[]>([])
   const [minRating,       setMinRating]       = useState(0)
   const [isVerified,      setIsVerified]      = useState<boolean | undefined>()
   const [sortBy,          setSortBy]          = useState<StationQueryParams['sortBy']>('distance')
@@ -167,7 +173,10 @@ export default function StationMapPage() {
     if (!navigator.geolocation) return
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => setMapCenter({ lat: coords.latitude, lng: coords.longitude }),
-      () => {},
+      () => {
+        toast.error('Unable to access your location. Using default map center.')
+      },
+      { timeout: 8000, enableHighAccuracy: true, maximumAge: 60_000 }
     )
   }, [])
 
@@ -184,20 +193,33 @@ export default function StationMapPage() {
   const listParams: StationQueryParams = {
     search: debouncedSearch || undefined,
     connectorType: connectorFilter,
+    amenities: amenitiesFilter.length > 0 ? amenitiesFilter.join(',') : undefined,
     minRating: minRating > 0 ? minRating : undefined,
     isVerified, sortBy, page, limit: 10,
     lat: mapCenter.lat, lng: mapCenter.lng, radius: mapRadius,
   }
 
-  const { data: listData, isLoading: listLoading } = useStationsList(listParams)
-  const { data: nearbyData } = useNearbyStations({
+  const {
+    data: listData,
+    isLoading: listLoading,
+    isError: listError,
+  } = useStationsList(listParams)
+  const {
+    data: nearbyData,
+    isError: nearbyError,
+  } = useNearbyStations({
     lat: mapCenter.lat, lng: mapCenter.lng, radius: mapRadius, limit: 100,
   })
 
   const stations: NearbyStation[]       = (listData?.data ?? []) as NearbyStation[]
   const pagination                       = listData?.pagination
   const nearbyStations: NearbyStation[] = nearbyData?.data ?? []
-  const activeFilters = [connectorFilter, minRating > 0 ? minRating : undefined, isVerified].filter(Boolean).length
+  const activeFilters = [
+    connectorFilter,
+    amenitiesFilter.length > 0 ? amenitiesFilter.join(',') : undefined,
+    minRating > 0 ? minRating : undefined,
+    isVerified,
+  ].filter(Boolean).length
 
   return (
     <div className="relative flex h-screen w-full flex-col overflow-hidden">
@@ -268,6 +290,11 @@ export default function StationMapPage() {
 
           {/* Filters toggle */}
           <div className="shrink-0 border-b border-gray-100 bg-gray-50 px-3 py-2">
+            {(listError || nearbyError) && (
+              <div className="mb-2 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-2 text-[11px] text-amber-700">
+                Some station data could not be loaded. Try refreshing or changing filters.
+              </div>
+            )}
             <button
               onClick={() => setFiltersOpen((v) => !v)}
               className={cn(
@@ -316,6 +343,38 @@ export default function StationMapPage() {
                     className="w-full accent-[#8cc63f]" />
                 </div>
 
+                {/* Amenities */}
+                <div>
+                  <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Amenities</p>
+                  <div className="flex flex-wrap gap-1">
+                    {AMENITIES.map((amenity) => {
+                      const selected = amenitiesFilter.includes(amenity)
+                      return (
+                        <button
+                          key={amenity}
+                          onClick={() => {
+                            setAmenitiesFilter((prev) => {
+                              if (prev.includes(amenity)) {
+                                return prev.filter((a) => a !== amenity)
+                              }
+                              return [...prev, amenity as Amenity]
+                            })
+                            setPage(1)
+                          }}
+                          className={cn(
+                            'rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-colors',
+                            selected
+                              ? 'bg-[#8cc63f] border-[#8cc63f] text-[#133c1d]'
+                              : 'border-gray-200 text-gray-500 hover:border-[#8cc63f]/50'
+                          )}
+                        >
+                          {formatAmenityLabel(amenity as Amenity)}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
                 {/* Sort + Verified */}
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex-1">
@@ -344,7 +403,13 @@ export default function StationMapPage() {
 
                 {activeFilters > 0 && (
                   <button
-                    onClick={() => { setConnectorFilter(undefined); setMinRating(0); setIsVerified(undefined); setPage(1) }}
+                    onClick={() => {
+                      setConnectorFilter(undefined)
+                      setAmenitiesFilter([])
+                      setMinRating(0)
+                      setIsVerified(undefined)
+                      setPage(1)
+                    }}
                     className="flex w-full items-center justify-center gap-1 rounded-lg py-1 text-xs text-red-500 hover:bg-red-50 transition-colors">
                     <X className="h-3 w-3" /> Clear all
                   </button>
@@ -415,7 +480,9 @@ export default function StationMapPage() {
           {/* My location */}
           <button
             onClick={() => navigator.geolocation?.getCurrentPosition(
-              ({ coords }) => setMapCenter({ lat: coords.latitude, lng: coords.longitude })
+              ({ coords }) => setMapCenter({ lat: coords.latitude, lng: coords.longitude }),
+              () => toast.error('Could not get your current location'),
+              { timeout: 8000, enableHighAccuracy: true, maximumAge: 60_000 }
             )}
             className="absolute bottom-24 right-4 z-[1000] flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-[#8cc63f] shadow-[0_12px_48px_rgba(0,0,0,0.12)] hover:border-[#8cc63f]/50 hover:shadow-[0_16px_64px_rgba(0,0,0,0.16)] transition-all"
             title="My location">

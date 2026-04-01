@@ -95,6 +95,7 @@ export type UpdateStationDto = Partial<CreateStationDto>
 
 export interface RejectStationDto {
   rejectionReason: string
+  reason?: string
 }
 
 // ─── Nearby station (has extra distanceKm field) ──────────────────────────────
@@ -116,6 +117,7 @@ export interface StationQueryParams {
   amenities?:     string        // comma-separated
   sortBy?:        'newest' | 'rating' | 'distance' | 'featured'
   submittedBy?:   string
+  status?:        StationStatus
 }
 
 export interface NearbyQueryParams {
@@ -123,11 +125,4 @@ export interface NearbyQueryParams {
   lng:     number
   radius?: number   // km, default 10
   limit?:  number   // default 20
-}
-
-export interface NearbyQueryParams {
-  lat:     number
-  lng:     number
-  radius?: number
-  limit?:  number
 }

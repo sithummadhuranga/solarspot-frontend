@@ -1,13 +1,19 @@
 import path from "path"
 import tailwindcss from "@tailwindcss/vite"
 import react from "@vitejs/plugin-react"
-import { defineConfig } from "vite"
+import { defineConfig, loadEnv } from "vite"
 
 // https://vite.dev/config/
-export default defineConfig(() => {
-  // VITE_PROXY_TARGET is injected by Docker compose (http://backend:5000).
-  // Falls back to localhost:5000 for plain local development outside Docker.
-  const proxyTarget = process.env.VITE_PROXY_TARGET ?? 'http://localhost:5000'
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+
+  // Proxy target precedence:
+  // 1) VITE_PROXY_TARGET (explicit proxy override)
+  // 2) VITE_API_URL (legacy/local backend URL)
+  // 3) localhost:5000 (current local backend default)
+  const proxyOverride = env.VITE_PROXY_TARGET?.trim() || undefined
+  const apiUrl = env.VITE_API_URL?.trim() || undefined
+  const proxyTarget = proxyOverride || apiUrl || 'http://localhost:5000'
 
   return {
     plugins: [react(), tailwindcss()],

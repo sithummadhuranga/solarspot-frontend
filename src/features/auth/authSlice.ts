@@ -1,7 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '@/app/store'
+import { normalizeUser } from '@/lib/user-normalize'
 import type { User } from '@/types/user.types'
+
+import { getRoleSlug } from '@/lib/auth'
 
 // ─── State shape ───────────────────────────────────────────────────────────────
 interface AuthState {
@@ -39,7 +42,7 @@ const authSlice = createSlice({
       state,
       action: PayloadAction<{ user: User; token: string }>
     ) {
-      state.user = action.payload.user
+      state.user = normalizeUser(action.payload.user)
       state.token = action.payload.token
     },
 
@@ -77,6 +80,6 @@ export const authReducer = authSlice.reducer
 export const selectCurrentUser      = (state: RootState) => state.auth.user
 export const selectToken            = (state: RootState) => state.auth.token
 export const selectIsAuthenticated  = (state: RootState) => state.auth.token !== null
-export const selectUserRole         = (state: RootState) => state.auth.user?.role ?? 'guest'
+export const selectUserRole         = (state: RootState) => getRoleSlug(state.auth.user?.role)
 export const selectIsRefreshing     = (state: RootState) => state.auth.isRefreshing
 export const selectIsInitializing   = (state: RootState) => state.auth.isInitializing

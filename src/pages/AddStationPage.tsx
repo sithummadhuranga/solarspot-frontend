@@ -193,10 +193,18 @@ export default function AddStationPage() {
     const errs: Record<string, string> = {}
     if (s === 1) {
       if (!form.name.trim())        errs.name     = 'Station name is required'
-      if (!form.lat || !form.lng)   errs.location = 'Please place a pin on the map'
+      const hasPin = form.lat !== null && form.lng !== null
+      const hasAddress = form.addressString.trim().length > 0
+      if (!hasPin && !hasAddress) {
+        errs.location = 'Please place a pin on the map or enter an address'
+      }
     }
-    if (s === 2 && form.connectors.length === 0) {
-      errs.connectors = 'Add at least one connector'
+    if (s === 2) {
+      if (form.connectors.length === 0) {
+        errs.connectors = 'Add at least one connector'
+      } else if (form.connectors.some((c) => c.powerKw <= 0 || c.count <= 0)) {
+        errs.connectors = 'Connector power and port count must be greater than 0'
+      }
     }
     setErrors(errs)
     return Object.keys(errs).length === 0

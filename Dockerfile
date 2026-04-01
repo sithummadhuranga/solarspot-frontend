@@ -9,7 +9,8 @@ RUN npm ci
 # Stage 2: production build
 FROM deps AS builder
 COPY . .
-# VITE_API_BASE_URL is injected at build time in production
+# VITE_API_BASE_URL is injected at build time in production.
+# Default to /api so axiosClient uses /api/... paths, which nginx proxies to the backend.
 ARG VITE_API_BASE_URL=/api
 ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
 RUN npm run build

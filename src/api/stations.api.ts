@@ -84,9 +84,14 @@ export async function rejectStation(
   id: string,
   dto: RejectStationDto
 ): Promise<ApiResponse<Station>> {
+  const normalizedReason = (dto.reason ?? dto.rejectionReason)?.trim()
   const { data } = await axiosClient.patch<ApiResponse<Station>>(
     `/stations/${id}/reject`,
-    dto
+    {
+      ...dto,
+      rejectionReason: normalizedReason,
+      reason: normalizedReason,
+    }
   )
   return data
 }

@@ -17,6 +17,23 @@ import '@/features/users/usersApi'
 import '@/features/permissions/permissionsApi'
 // ──────────────────────────────────────────────────────────────────────────────
 
+// Recover from stale chunk URLs after a new deployment/build.
+if (typeof window !== 'undefined') {
+  window.addEventListener('vite:preloadError', (event) => {
+    event.preventDefault()
+
+    const hasReloaded = sessionStorage.getItem('vite-preload-reloaded') === '1'
+    if (!hasReloaded) {
+      sessionStorage.setItem('vite-preload-reloaded', '1')
+      window.location.reload()
+    }
+  })
+
+  window.addEventListener('pageshow', () => {
+    sessionStorage.removeItem('vite-preload-reloaded')
+  })
+}
+
 const queryClient = new QueryClient()
 
 const root = document.getElementById('root')

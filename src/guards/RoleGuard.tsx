@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAppSelector } from '@/app/hooks'
 import { selectCurrentUser } from '@/features/auth/authSlice'
+import { getRoleSlug } from '@/lib/auth'
 import type { UserRole } from '@/types/user.types'
 
 interface RoleGuardProps {
@@ -26,8 +27,9 @@ interface RoleGuardProps {
  */
 export function RoleGuard({ allowedRoles, children, fallback = '/unauthorized' }: RoleGuardProps) {
   const user = useAppSelector(selectCurrentUser)
+  const role = getRoleSlug(user?.role)
 
-  if (!user || !allowedRoles.includes(user.role)) {
+  if (!user || !allowedRoles.includes(role as UserRole)) {
     return <Navigate to={fallback} replace />
   }
 

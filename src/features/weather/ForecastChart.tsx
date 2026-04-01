@@ -68,7 +68,14 @@ export function ForecastChart({ stationId }: Props) {
     )
   }
 
-  const { forecast, bestWindows, station, generatedAt } = data.data
+  const payload = data.data
+  const forecast = Array.isArray(payload.forecast) ? payload.forecast : []
+  const bestWindows = Array.isArray(payload.bestWindows) ? payload.bestWindows : []
+  const stationName = payload.station?.name ?? 'Unknown station'
+  const stationSolarPanelKw = Number.isFinite(payload.station?.solarPanelKw) ? payload.station.solarPanelKw : 0
+  const generatedAtText = payload.generatedAt
+    ? format(new Date(payload.generatedAt), 'dd MMM HH:mm')
+    : 'just now'
 
   const chartData = forecast.map((slot: ForecastSlot) => ({
     dt: formatTick(slot.dt),
@@ -86,8 +93,8 @@ export function ForecastChart({ stationId }: Props) {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Solar Forecast</p>
-            <p className="text-base font-bold text-slate-900">{station.name}</p>
-            <p className="text-xs text-slate-500">{station.solarPanelKw} kW array · Generated {format(new Date(generatedAt), 'dd MMM HH:mm')}</p>
+            <p className="text-base font-bold text-slate-900">{stationName}</p>
+            <p className="text-xs text-slate-500">{stationSolarPanelKw} kW array · Generated {generatedAtText}</p>
           </div>
           <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
             {forecast.length} forecast slots
