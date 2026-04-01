@@ -55,11 +55,11 @@ export default function AdminQuotasPage() {
           </div>
         )}
 
-        {!isLoading && quotas.map((quota) => {
+        {!isLoading && quotas.map((quota, index) => {
           const usage = pct(quota.count, quota.limit)
           const atRisk = usage >= 80
           return (
-            <article key={`${quota.service}-${quota.date}`} className="rounded-[20px] border border-gray-100 bg-white p-5 shadow-sm">
+            <article key={`${quota.service}-${index}`} className="rounded-[20px] border border-gray-100 bg-white p-5 shadow-sm">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="text-xs uppercase tracking-wider text-gray-400">Service</p>
@@ -83,8 +83,6 @@ export default function AdminQuotasPage() {
                 <p className="text-sm text-gray-600">{quota.count} / {quota.limit}</p>
                 <p className="text-sm font-semibold text-[#133c1d]">{usage}%</p>
               </div>
-
-              <p className="mt-3 text-xs text-gray-400">Last sample date: {quota.date}</p>
             </article>
           )
         })}

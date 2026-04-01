@@ -11,13 +11,6 @@ import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
 import type { Station } from '@/types/station.types'
 
-const TABS = [
-  { key: undefined,    label: 'All' },
-  { key: 'active',     label: 'Active' },
-  { key: 'pending',    label: 'Pending' },
-  { key: 'rejected',   label: 'Rejected' },
-] as const
-
 function DeleteConfirm({ station, onConfirm, isPending }: { station: Station; onConfirm: () => void; isPending: boolean }) {
   return (
     <AlertDialog.Root>
@@ -52,11 +45,11 @@ export default function MyStationsPage() {
   const [editTarget, setEditTarget]   = useState<Station | null>(null)
   const [formOpen,   setFormOpen]     = useState(false)
   const [page,       setPage]         = useState(1)
-  const [activeTab,  setActiveTab]    = useState<string | undefined>(undefined)
   const deleteMutation                = useDeleteStation()
 
   const { data, isLoading } = useStationsList({
     submittedBy: user?._id,
+    status: 'active',
     page,
     limit:  12,
     sortBy: 'newest',
@@ -64,16 +57,20 @@ export default function MyStationsPage() {
 
   const allStations = data?.data ?? []
   const pagination  = data?.pagination
+  const currentUserId = user?._id
 
-  const stations = activeTab
-    ? allStations.filter((s) => s.status === activeTab)
-    : allStations
+  const approvedStations = allStations.filter((station) => {
+    const submittedById = station.submittedBy?._id
+    return station.status === 'active' && !!currentUserId && submittedById === currentUserId
+  })
+
+  const stations = approvedStations
 
   const counts = {
-    all:      allStations.length,
-    active:   allStations.filter((s) => s.status === 'active').length,
-    pending:  allStations.filter((s) => s.status === 'pending').length,
-    rejected: allStations.filter((s) => s.status === 'rejected').length,
+    all:      approvedStations.length,
+    active:   approvedStations.length,
+    pending:  0,
+    rejected: 0,
   }
 
   function openEdit(station: Station) { setEditTarget(station); setFormOpen(true) }
@@ -93,7 +90,7 @@ export default function MyStationsPage() {
             <div>
               <h1 className="text-3xl font-extrabold text-[#133c1d] sm:text-4xl font-sg">My Stations</h1>
               <p className="mt-2 text-[#133c1d]/80 text-sm font-medium">
-                {pagination?.total ?? 0} station{(pagination?.total ?? 0) !== 1 ? 's' : ''} submitted by you
+                {approvedStations.length} approved station{approvedStations.length !== 1 ? 's' : ''} submitted by you
               </p>
             </div>
             <Link to="/stations/new">
@@ -125,21 +122,6 @@ export default function MyStationsPage() {
           ))}
         </div>
 
-        {/* Tabs */}
-        <div className="mb-6 flex gap-2 rounded-xl bg-white border border-gray-100 p-1.5 shadow-sm w-fit">
-          {TABS.map((tab) => (
-            <button key={String(tab.key)} onClick={() => { setActiveTab(tab.key); setPage(1) }}
-              className={cn(
-                'rounded-lg px-5 py-2 text-sm font-bold transition-all',
-                (activeTab ?? undefined) === tab.key
-                  ? 'bg-[#133c1d] text-white shadow-md'
-                  : 'text-gray-600 hover:bg-[#f5faf0] hover:text-[#1a6b3c]'
-              )}>
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
         {/* Loading */}
         {isLoading && (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -154,18 +136,16 @@ export default function MyStationsPage() {
               <Zap className="h-10 w-10 text-[#1a6b3c]" />
             </div>
             <h3 className="text-lg font-extrabold text-[#133c1d] font-sg">
-              {activeTab ? `No ${activeTab} stations` : 'No stations yet'}
+              No approved stations yet
             </h3>
             <p className="mt-2 text-sm font-medium text-gray-500 max-w-xs">
-              {activeTab ? 'Try another tab to see other stations.' : 'Submit your first solar charging station to get started!'}
+              Submit a station and wait for admin approval to see it here.
             </p>
-            {!activeTab && (
-              <Link to="/stations/new" className="mt-6">
-                <Button className="bg-[#1a1a1a] hover:bg-black text-white font-bold px-6 py-5 rounded-xl font-sg">
-                  <PlusCircle className="mr-2 h-4 w-4" /> Submit Station
-                </Button>
-              </Link>
-            )}
+            <Link to="/stations/new" className="mt-6">
+              <Button className="bg-[#1a1a1a] hover:bg-black text-white font-bold px-6 py-5 rounded-xl font-sg">
+                <PlusCircle className="mr-2 h-4 w-4" /> Submit Station
+              </Button>
+            </Link>
           </div>
         )}
 

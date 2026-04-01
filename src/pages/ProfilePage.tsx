@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Mail, ShieldCheck, UserRound } from 'lucide-react'
 import { toast } from 'sonner'
 import { Layout } from '@/components/shared/Layout'
 import { PageHeader } from '@/components/shared/PageHeader'
@@ -8,6 +9,10 @@ import { useDeleteMeMutation, useGetMeQuery, useUpdateMeMutation } from '@/featu
 import { getApiErrorMessage } from '@/lib/errors'
 import { clearCredentials } from '@/features/auth/authSlice'
 import { useAppDispatch } from '@/app/hooks'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
 
 /**
  * ProfilePage — view and edit the current user's profile.
@@ -24,6 +29,9 @@ export default function ProfilePage() {
 
   const user = data?.data
   const displayName = editedDisplayName ?? user?.displayName ?? ''
+
+  const roleLabel = user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'User'
+  const userInitial = (displayName || user?.email || 'U').charAt(0).toUpperCase()
 
   const handleSave = async (e: FormEvent) => {
     e.preventDefault()
@@ -62,15 +70,43 @@ export default function ProfilePage() {
     <Layout showSidebar>
       <PageHeader
         title="My Profile"
-        description="Manage your account details and preferences"
+        description="Manage your account details"
       />
 
-      {isLoading && <p className="text-sm font-medium text-gray-500">Loading…</p>}
+      {isLoading && (
+        <div className="max-w-3xl space-y-4">
+          <div className="h-28 animate-pulse rounded-2xl border border-slate-200 bg-white" />
+          <div className="h-72 animate-pulse rounded-2xl border border-slate-200 bg-white" />
+        </div>
+      )}
 
       {user && (
-        <div className="max-w-xl space-y-6">
-          <form onSubmit={handleSave} className="rounded-lg border bg-card p-5">
-            <h2 className="text-base font-semibold">Profile Details</h2>
+        <div className="max-w-3xl space-y-6">
+          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_28px_rgba(15,23,42,0.06)]">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-lg font-black text-emerald-800">
+                  {userInitial}
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-[#133c1d]">{displayName || 'Unnamed user'}</p>
+                  <p className="text-sm text-slate-500">{user.email}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="primary" className="rounded-full px-3 py-1">
+                  {roleLabel}
+                </Badge>
+                <Badge variant={user.isEmailVerified ? 'blue' : 'amber'} className="rounded-full px-3 py-1">
+                  {user.isEmailVerified ? 'Verified email' : 'Email not verified'}
+                </Badge>
+              </div>
+            </div>
+          </section>
+
+          <form onSubmit={handleSave} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_28px_rgba(15,23,42,0.06)]">
+            <h2 className="text-lg font-bold text-[#133c1d]">Profile Details</h2>
+            <p className="mt-1 text-sm text-slate-500">Update your display name. Email address is read-only.</p>
 
             {errorMessage && (
               <p className="mt-3 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
@@ -78,65 +114,80 @@ export default function ProfilePage() {
               </p>
             )}
 
-            <div className="mt-4 grid gap-4">
-              <label className="flex flex-col gap-1 text-sm">
-                <span className="font-medium">Display Name</span>
-                <input
+            <div className="mt-5 grid gap-5 md:grid-cols-2">
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="displayName" className="text-sm text-slate-700">Display Name</Label>
+                <div className="relative">
+                  <UserRound className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <Input
+                    id="displayName"
                   type="text"
                   value={displayName}
                   onChange={(e) => setEditedDisplayName(e.target.value)}
-                  className="rounded-md border border-border px-3 py-2 outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/20"
-                />
-              </label>
+                    className="h-10 pl-9"
+                  />
+                </div>
+              </div>
 
-              <label className="flex flex-col gap-1 text-sm">
-                <span className="font-medium">Email</span>
-                <input
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="email" className="text-sm text-slate-700">Email</Label>
+                <div className="relative">
+                  <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <Input
+                    id="email"
                   type="email"
                   value={user.email}
                   disabled
-                  className="rounded-md border border-border bg-muted px-3 py-2 text-muted-foreground"
-                />
-              </label>
+                    className="h-10 bg-slate-50 pl-9 text-slate-500"
+                  />
+                </div>
+              </div>
 
-              <div className="grid gap-3 rounded-md bg-muted/60 p-3 text-sm md:grid-cols-3">
-                <p>
-                  <span className="font-medium">Role:</span> {user.role}
-                </p>
-                <p>
-                  <span className="font-medium">Verified:</span> {user.isEmailVerified ? 'Yes' : 'No'}
-                </p>
-                <p>
-                  <span className="font-medium">Status:</span> {user.isActive ? 'Active' : 'Inactive'}
-                </p>
+              <div className="md:col-span-2 grid gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 md:grid-cols-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Role</p>
+                  <p className="mt-1 font-semibold text-slate-800">{roleLabel}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Email</p>
+                  <p className="mt-1 font-semibold text-slate-800">{user.isEmailVerified ? 'Verified' : 'Unverified'}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Account</p>
+                  <p className="mt-1 inline-flex items-center gap-1 font-semibold text-slate-800">
+                    <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                    {user.isActive ? 'Active' : 'Inactive'}
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="mt-5 flex items-center justify-between">
-              <button
+            <div className="mt-6 flex items-center justify-end">
+              <Button
                 type="submit"
                 disabled={isSaving}
-                className="rounded bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-xl px-5"
               >
                 {isSaving ? 'Saving...' : 'Save changes'}
-              </button>
+              </Button>
             </div>
           </form>
 
-          <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-5">
+          <section className="rounded-2xl border border-destructive/30 bg-destructive/5 p-5">
             <h2 className="text-base font-semibold text-destructive">Danger Zone</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 text-sm text-slate-600">
               Deleting your account will deactivate it and revoke active sessions.
             </p>
-            <button
+            <Button
               type="button"
+              variant="destructive"
               onClick={handleDelete}
               disabled={isDeleting}
-              className="mt-4 rounded bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground transition hover:bg-destructive/90 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-4 rounded-xl"
             >
               {isDeleting ? 'Deleting...' : 'Delete account'}
-            </button>
-          </div>
+            </Button>
+          </section>
         </div>
       )}
     </Layout>

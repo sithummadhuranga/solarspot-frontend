@@ -117,6 +117,7 @@ export interface StationQueryParams {
   amenities?:     string        // comma-separated
   sortBy?:        'newest' | 'rating' | 'distance' | 'featured'
   submittedBy?:   string
+  status?:        StationStatus
 }
 
 export interface NearbyQueryParams {

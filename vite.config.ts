@@ -10,8 +10,8 @@ export default defineConfig(({ mode }) => {
   // Proxy target precedence:
   // 1) VITE_PROXY_TARGET (explicit proxy override)
   // 2) VITE_API_URL (legacy/local backend URL)
-  // 3) localhost:5001 (current local backend default)
-  const proxyTarget = env.VITE_PROXY_TARGET ?? env.VITE_API_URL ?? 'http://localhost:5001'
+  // 3) localhost:5000 (current local backend default)
+  const proxyTarget = env.VITE_PROXY_TARGET ?? env.VITE_API_URL ?? 'http://localhost:5000'
 
   return {
     plugins: [react(), tailwindcss()],
