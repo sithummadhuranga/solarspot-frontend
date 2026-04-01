@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { PlusCircle, Loader2, Zap, Trash2, Edit2, Sun, CheckCircle, Clock, ChevronLeft, ChevronRight } from 'lucide-react'
+import { PlusCircle, Loader2, Zap, Trash2, Edit2, Sun, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react'
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Navbar } from '@/components/shared/Navbar'
@@ -69,8 +69,6 @@ export default function MyStationsPage() {
   const counts = {
     all:      approvedStations.length,
     active:   approvedStations.length,
-    pending:  0,
-    rejected: 0,
   }
 
   function openEdit(station: Station) { setEditTarget(station); setFormOpen(true) }
@@ -105,12 +103,10 @@ export default function MyStationsPage() {
       <div className="mx-auto max-w-5xl px-4 py-10 lg:px-8">
 
         {/* Stats bar */}
-        <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {[
             { label: 'Total',    count: counts.all,      bg: 'bg-white',           icon: <Sun className="h-5 w-5 text-[#1a6b3c]" />, text: 'text-[#133c1d]' },
             { label: 'Active',   count: counts.active,   bg: 'bg-emerald-50',       icon: <CheckCircle className="h-5 w-5 text-emerald-600" />, text: 'text-emerald-800' },
-            { label: 'Pending',  count: counts.pending,  bg: 'bg-amber-50',         icon: <Clock className="h-5 w-5 text-amber-600" />, text: 'text-amber-800' },
-            { label: 'Rejected', count: counts.rejected, bg: 'bg-red-50',           icon: <Zap className="h-5 w-5 text-red-500" />, text: 'text-red-800' },
           ].map((item) => (
             <div key={item.label} className={cn('rounded-[20px] border border-gray-100 p-5 flex items-center gap-4 shadow-[0_4px_24px_rgba(0,0,0,0.04)]', item.bg)}>
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-sm shrink-0">{item.icon}</div>
@@ -158,7 +154,7 @@ export default function MyStationsPage() {
                 station={station}
                 actions={
                   <div className="flex gap-3">
-                    {['pending', 'active'].includes(station.status) && (
+                    {station.status === 'active' && (
                       <Button size="sm" variant="outline" className="flex-1 gap-1.5 border-2 border-gray-200 hover:border-[#8cc63f] hover:text-[#133c1d] font-bold rounded-xl" onClick={(e) => { e.preventDefault(); openEdit(station) }}>
                         <Edit2 className="h-4 w-4" /> Edit
                       </Button>

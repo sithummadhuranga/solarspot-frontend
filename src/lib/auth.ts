@@ -1,12 +1,16 @@
 export function getRoleSlug(role: unknown): string {
-  if (typeof role === 'string') return role
+  if (typeof role === 'string') return role.trim().toLowerCase()
 
   if (role && typeof role === 'object') {
     const candidate = role as { slug?: unknown; name?: unknown; displayName?: unknown }
-    if (typeof candidate.slug === 'string' && candidate.slug.length > 0) return candidate.slug
-    if (typeof candidate.name === 'string' && candidate.name.length > 0) return candidate.name
+    if (typeof candidate.slug === 'string' && candidate.slug.trim().length > 0) {
+      return candidate.slug.trim().toLowerCase()
+    }
+    if (typeof candidate.name === 'string' && candidate.name.trim().length > 0) {
+      return candidate.name.trim().toLowerCase()
+    }
     if (typeof candidate.displayName === 'string' && candidate.displayName.length > 0) {
-      return candidate.displayName.toLowerCase().replace(/\s+/g, '-')
+      return candidate.displayName.trim().toLowerCase().replace(/\s+/g, '-')
     }
   }
 

@@ -85,7 +85,8 @@ function StatCard({
 
 export default function DashboardPage() {
   const { user, role, isEmailVerified } = useAuth()
-  const userDisplayName = getSafeText(user?.displayName) || 'Explorer'
+  const safeDisplayName = getSafeText(user?.displayName)
+  const userDisplayName = !safeDisplayName || safeDisplayName === 'N/A' ? 'Explorer' : safeDisplayName
 
   const { data: stationResponse, isLoading: stationsLoading } = useListStationsQuery(
     {

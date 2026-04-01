@@ -2,11 +2,23 @@ import { getRoleSlug, getSafeText } from '@/lib/auth'
 import type { ApiResponse, PaginatedResponse } from '@/types/api.types'
 import type { User, UserPreferences, UserRole } from '@/types/user.types'
 
-const VALID_ROLES: UserRole[] = ['user', 'moderator', 'admin']
+const VALID_ROLES: UserRole[] = [
+  'guest',
+  'user',
+  'station_owner',
+  'featured_contributor',
+  'trusted_reviewer',
+  'review_moderator',
+  'weather_analyst',
+  'permission_auditor',
+  'moderator',
+  'admin',
+]
+const VALID_ROLE_SET = new Set<UserRole>(VALID_ROLES)
 
 function normalizeRole(role: unknown): UserRole {
-  const slug = getRoleSlug(role)
-  return VALID_ROLES.includes(slug as UserRole) ? (slug as UserRole) : 'user'
+  const normalized = getRoleSlug(role).trim().toLowerCase() as UserRole
+  return VALID_ROLE_SET.has(normalized) ? normalized : 'user'
 }
 
 function normalizePreferences(preferences: unknown): UserPreferences {
