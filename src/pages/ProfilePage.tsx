@@ -6,17 +6,14 @@ import { Layout } from '@/components/shared/Layout'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { useDeleteMeMutation, useGetMeQuery, useUpdateMeMutation } from '@/features/users/usersApi'
 import { getApiErrorMessage } from '@/lib/errors'
-import { clearCredentials } from '@/features/auth/authSlice'
-import { useAppDispatch } from '@/app/hooks'
 
 /**
  * ProfilePage — view and edit the current user's profile.
  *
  */
 export default function ProfilePage() {
-  const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { data, isLoading } = useGetMeQuery()
+  const { data, isLoading, isError } = useGetMeQuery()
   const [updateMe, { isLoading: isSaving }] = useUpdateMeMutation()
   const [deleteMe, { isLoading: isDeleting }] = useDeleteMeMutation()
   const [editedDisplayName, setEditedDisplayName] = useState<string | null>(null)
@@ -24,6 +21,7 @@ export default function ProfilePage() {
 
   const user = data?.data
   const displayName = editedDisplayName ?? user?.displayName ?? ''
+  const isUnchanged = user ? displayName.trim() === user.displayName : false
 
   const handleSave = async (e: FormEvent) => {
     e.preventDefault()
@@ -50,7 +48,6 @@ export default function ProfilePage() {
 
     try {
       await deleteMe().unwrap()
-      dispatch(clearCredentials())
       toast.success('Your account has been deleted')
       navigate('/', { replace: true })
     } catch (error) {
@@ -66,6 +63,12 @@ export default function ProfilePage() {
       />
 
       {isLoading && <p className="text-sm font-medium text-gray-500">Loading…</p>}
+
+      {isError && !user && (
+        <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          Could not load your profile right now. Please refresh and try again.
+        </p>
+      )}
 
       {user && (
         <div className="max-w-xl space-y-6">
@@ -115,7 +118,7 @@ export default function ProfilePage() {
             <div className="mt-5 flex items-center justify-between">
               <button
                 type="submit"
-                disabled={isSaving}
+                disabled={isSaving || isUnchanged}
                 className="rounded bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSaving ? 'Saving...' : 'Save changes'}

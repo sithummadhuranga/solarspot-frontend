@@ -2,6 +2,8 @@ import { baseApi } from '@/app/baseApi'
 import type { ApiResponse, PaginatedResponse } from '@/types/api.types'
 import type { User, UpdateProfileDto as UpdateProfileInput, AdminChangeRoleDto as AdminUpdateUserInput } from '@/types/user.types'
 import { normalizeUser } from '@/lib/user'
+import type { RootState } from '@/app/store'
+import { clearCredentials, setCredentials } from '@/features/auth/authSlice'
 
 interface ListUsersParams {
   page?: number
@@ -29,11 +31,35 @@ export const usersApi = baseApi.injectEndpoints({
         ...response,
         data: normalizeUser(response.data),
       }),
+      async onQueryStarted(_arg, { dispatch, getState, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled
+          const token = (getState() as RootState).auth.token
+          if (token) {
+            dispatch(
+              setCredentials({
+                token,
+                user: data.data,
+              }),
+            )
+          }
+        } catch {
+          // Component-level error handling keeps UX feedback localized.
+        }
+      },
       invalidatesTags: ['User'],
     }),
 
     deleteMe: builder.mutation<void, void>({
       query: () => ({ url: '/users/me', method: 'DELETE' }),
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+          dispatch(clearCredentials())
+        } catch {
+          // Keep existing auth state when server-side deletion fails.
+        }
+      },
       invalidatesTags: ['User'],
     }),
 
@@ -61,7 +87,7 @@ export const usersApi = baseApi.injectEndpoints({
         ...response,
         data: normalizeUser(response.data),
       }),
-      invalidatesTags: (_res, _err, { id }) => [{ type: 'User', id }],
+      invalidatesTags: (_res, _err, { id }) => [{ type: 'User', id }, 'User'],
     }),
   }),
   overrideExisting: false,

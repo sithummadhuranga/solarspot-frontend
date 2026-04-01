@@ -3,6 +3,7 @@ import { store } from '@/app/store'
 import { clearCredentials, setCredentials, setRefreshing } from '@/features/auth/authSlice'
 import type { User } from '@/types/user.types'
 import { API_BASE_URL } from '@/lib/constants'
+import { normalizeUser } from '@/lib/user'
 
 // axiosClient base URL is derived from the same VITE_API_BASE_URL that RTK Query
 // uses — defaults to '/api' so all requests are relative to the current origin.
@@ -76,7 +77,7 @@ axiosClient.interceptors.response.use(
           { withCredentials: true }
         )
         const { accessToken, user } = res.data.data
-        store.dispatch(setCredentials({ user, token: accessToken }))
+        store.dispatch(setCredentials({ user: normalizeUser(user), token: accessToken }))
         onRefreshDone(accessToken)
         originalRequest.headers.Authorization = `Bearer ${accessToken}`
         return axiosClient(originalRequest)

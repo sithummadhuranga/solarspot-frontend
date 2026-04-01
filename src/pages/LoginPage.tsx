@@ -4,8 +4,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Sun, Loader2, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react'
-import { useAppDispatch } from '@/app/hooks'
-import { setCredentials } from '@/features/auth/authSlice'
 import { useLoginMutation } from '../features/auth/authApi'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -26,7 +24,6 @@ type LoginFormData = z.infer<typeof loginSchema>
 export default function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const dispatch = useAppDispatch()
   const [showPassword, setShowPassword] = useState(false)
   const [login, { isLoading, error }] = useLoginMutation()
 
@@ -41,9 +38,7 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      const res = await login(data).unwrap()
-      const { accessToken, user } = res.data
-      dispatch(setCredentials({ token: accessToken, user }))
+      await login(data).unwrap()
       navigate(from, { replace: true })
     } catch {
       // Error is rendered via RTK Query state.
