@@ -37,8 +37,13 @@ export function CreateReviewModal({ stationId, editTarget, onClose }: CreateRevi
 
     try {
       if (isEditing && editTarget) {
-        await updateReview({ id: editTarget._id, rating, title: title.trim() || undefined, content }).unwrap()
-        onClose()
+        const updateResult = await updateReview({ id: editTarget._id, rating, title: title.trim() || undefined, content }).unwrap()
+        const updateStatus = updateResult?.data?.moderationStatus ?? 'approved'
+        if (updateStatus === 'approved') {
+          onClose()
+        } else {
+          setSubmitResult(updateStatus as SubmitResult)
+        }
       } else {
         const dto: CreateReviewDto = {
           station: stationId,
