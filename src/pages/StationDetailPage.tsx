@@ -6,7 +6,7 @@ import 'leaflet/dist/leaflet.css'
 import {
   ChevronLeft, Star, MapPin, Zap, Sun, Clock, CheckCircle,
   Shield, User, Calendar, Loader2, AlertTriangle, Edit2,
-  MessageSquare, CloudSun,
+  CloudSun,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Navbar } from '@/components/shared/Navbar'
@@ -16,6 +16,7 @@ import { SolarWidget } from '@/features/weather/SolarWidget'
 import { ForecastChart } from '@/features/weather/ForecastChart'
 import { SolarReportList } from '@/features/weather/SolarReportList'
 import { StationAnalyticsPanel } from '@/features/weather/StationAnalyticsPanel'
+import { ReviewList } from '@/components/reviews/ReviewList'
 import { useStation, useApproveStation, useRejectStation } from '@/hooks/useStations'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
@@ -352,12 +353,14 @@ export default function StationDetailPage() {
               )}
             </div>
 
-            {/* ── Placeholder: Reviews (Member 2) ──────────────────────── */}
-            <div className="rounded-[20px] border-2 border-dashed border-gray-200 bg-white p-8 text-center">
-              <MessageSquare className="mx-auto h-10 w-10 text-gray-300 mb-3" />
-              <p className="text-sm font-bold text-gray-500 font-sg">Reviews & Ratings</p>
-              <p className="text-xs font-medium text-gray-400 mt-1">Member 2 — Reviews section will appear here</p>
-            </div>
+            {/* ── Reviews (Member 2) ─────────────────────────────────── */}
+            {id && (
+              <ReviewList
+                stationId={id}
+                averageRating={station.averageRating}
+                reviewCount={station.reviewCount}
+              />
+            )}
 
             {/* ── Solar Intelligence (Member 3) ─────────────────────── */}
             {id && (
