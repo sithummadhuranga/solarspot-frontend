@@ -66,13 +66,13 @@ export const reviewsApi = baseApi.injectEndpoints({
     /** POST /api/reviews/:id/helpful */
     markHelpful: builder.mutation<ApiResponse<Review>, string>({
       query:           (id) => ({ url: `/reviews/${id}/helpful`, method: 'POST' }),
-      invalidatesTags: (_res, _err, id) => [{ type: 'Review', id }],
+      invalidatesTags: ['Review'],
     }),
 
     /** POST /api/reviews/:id/flag */
     flagReview: builder.mutation<ApiResponse<Review>, { id: string; reason?: string }>({
       query:           ({ id, ...body }) => ({ url: `/reviews/${id}/flag`, method: 'POST', body }),
-      invalidatesTags: (_res, _err, { id }) => [{ type: 'Review', id }],
+      invalidatesTags: ['Review'],
     }),
 
     /** GET /api/reviews/flagged — moderator only */

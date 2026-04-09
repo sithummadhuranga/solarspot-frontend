@@ -4,8 +4,9 @@ import { useFlagReviewMutation } from '@/features/reviews/reviewsApi'
 import type { Review } from '@/types/review.types'
 
 interface FlagReviewModalProps {
-  review:  Review
-  onClose: () => void
+  review:   Review
+  onClose:  () => void
+  onSuccess?: () => void
 }
 
 const FLAG_REASONS = [
@@ -16,7 +17,7 @@ const FLAG_REASONS = [
   'Other',
 ]
 
-export function FlagReviewModal({ review, onClose }: FlagReviewModalProps) {
+export function FlagReviewModal({ review, onClose, onSuccess }: FlagReviewModalProps) {
   const [reason, setReason]   = useState('')
   const [custom, setCustom]   = useState('')
   const [flagReview, { isLoading }] = useFlagReviewMutation()
@@ -33,6 +34,7 @@ export function FlagReviewModal({ review, onClose }: FlagReviewModalProps) {
     try {
       await flagReview({ id: review._id, reason: effectiveReason }).unwrap()
       onClose()
+      onSuccess?.()
     } catch (err: unknown) {
       const msg = (err as { data?: { message?: string } })?.data?.message
       setError(msg ?? 'Failed to flag review. You may have already flagged this.')

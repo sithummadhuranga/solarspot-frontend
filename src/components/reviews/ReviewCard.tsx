@@ -1,15 +1,15 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Flag, ThumbsUp, Trash2, Edit2, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { StarRating } from './StarRating'
-import { useMarkHelpfulMutation, useDeleteReviewMutation } from '@/features/reviews/reviewsApi'
+import { useMarkHelpfulMutation, useDeleteReviewMutation, useFlagReviewMutation } from '@/features/reviews/reviewsApi'
 import type { Review, ReviewAuthor } from '@/types/review.types'
 
 interface ReviewCardProps {
   review:     Review
   currentUserId?: string
   isModerator?: boolean
-  onFlag?:    (review: Review) => void
+  onFlag?:    (review: Review, onSuccess: () => void) => void
   onModerate?:(review: Review) => void
   onEdit?:    (review: Review) => void
   className?: string
@@ -36,6 +36,7 @@ export function ReviewCard({
 }: ReviewCardProps) {
   const [markHelpful, { isLoading: isVoting }] = useMarkHelpfulMutation()
   const [deleteReview, { isLoading: isDeleting }] = useDeleteReviewMutation()
+  const [flagReviewMutation, { isLoading: isUnflagging }] = useFlagReviewMutation()
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   const author = typeof review.author === 'string'
@@ -44,14 +45,38 @@ export function ReviewCard({
 
   const isOwn = currentUserId === author._id
   const hasVoted = currentUserId ? review.helpfulVotes.includes(currentUserId) : false
+  const hasFlaggedFromServer = currentUserId ? (review.flaggedBy ?? []).includes(currentUserId) : false
   const moderationBadge = MODERATION_BADGE[review.moderationStatus]
   const isVisible = review.moderationStatus === 'approved' || isModerator
+
+  // Optimistic UI state
+  const [optimisticHasVoted, setOptimisticHasVoted] = useState(hasVoted)
+  const [optimisticCount, setOptimisticCount]       = useState(review.helpfulCount)
+  const [optimisticHasFlagged, setOptimisticHasFlagged] = useState(hasFlaggedFromServer)
+
+  // Sync optimistic state when server data updates
+  useEffect(() => { setOptimisticHasVoted(hasVoted) }, [hasVoted])
+  useEffect(() => { setOptimisticCount(review.helpfulCount) }, [review.helpfulCount])
+  useEffect(() => { setOptimisticHasFlagged(hasFlaggedFromServer) }, [hasFlaggedFromServer])
 
   if (!isVisible) return null
 
   function handleHelpful() {
     if (!currentUserId || isOwn) return
-    markHelpful(review._id)
+    const wasVoted = optimisticHasVoted
+    setOptimisticHasVoted(!wasVoted)
+    setOptimisticCount((prev) => wasVoted ? prev - 1 : prev + 1)
+    markHelpful(review._id).unwrap().catch(() => {
+      setOptimisticHasVoted(wasVoted)
+      setOptimisticCount((prev) => wasVoted ? prev + 1 : prev - 1)
+    })
+  }
+
+  function handleUnflag() {
+    setOptimisticHasFlagged(false)
+    flagReviewMutation({ id: review._id }).unwrap().catch(() => {
+      setOptimisticHasFlagged(true)
+    })
   }
 
   function handleDelete() {
@@ -125,21 +150,21 @@ export function ReviewCard({
               disabled={isVoting}
               className={cn(
                 'flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-colors',
-                hasVoted
+                optimisticHasVoted
                   ? 'bg-[#1a6b3c] text-white'
                   : 'bg-[#f5faf0] text-[#1a6b3c] hover:bg-[#dcfce7]',
               )}
             >
               <ThumbsUp className="h-3.5 w-3.5" />
-              Helpful {review.helpfulCount > 0 && `(${review.helpfulCount})`}
+              Helpful {optimisticCount > 0 && `(${optimisticCount})`}
             </button>
           )}
 
           {/* Helpful count (logged-out or own review) */}
-          {(!currentUserId || isOwn) && review.helpfulCount > 0 && (
+          {(!currentUserId || isOwn) && optimisticCount > 0 && (
             <span className="flex items-center gap-1.5 text-xs font-medium text-gray-400">
               <ThumbsUp className="h-3.5 w-3.5" />
-              {review.helpfulCount} found helpful
+              {optimisticCount} found helpful
             </span>
           )}
         </div>
@@ -166,13 +191,26 @@ export function ReviewCard({
           )}
 
           {/* Flag (others' reviews, logged in) */}
-          {currentUserId && !isOwn && !review.flaggedBy.includes(currentUserId) && onFlag && (
-            <button
-              onClick={() => onFlag(review)}
-              className="flex items-center gap-1 rounded-xl bg-gray-50 px-3 py-1.5 text-xs font-bold text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors"
-            >
-              <Flag className="h-3 w-3" /> Flag
-            </button>
+          {currentUserId && !isOwn && (
+            optimisticHasFlagged ? (
+              <button
+                onClick={handleUnflag}
+                disabled={isUnflagging}
+                title="Remove your flag"
+                className="flex items-center gap-1 rounded-xl border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-bold text-red-500 hover:bg-red-100 transition-colors"
+              >
+                <Flag className="h-3 w-3 fill-red-500" /> Flagged
+              </button>
+            ) : (
+              onFlag && (
+                <button
+                  onClick={() => onFlag(review, () => setOptimisticHasFlagged(true))}
+                  className="flex items-center gap-1 rounded-xl bg-gray-50 px-3 py-1.5 text-xs font-bold text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors"
+                >
+                  <Flag className="h-3 w-3" /> Flag
+                </button>
+              )
+            )
           )}
 
           {/* Delete (own review or moderator) */}

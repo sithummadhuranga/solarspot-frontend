@@ -33,7 +33,7 @@ export function ReviewList({ stationId, averageRating = 0, reviewCount = 0 }: Re
   const [sort, setSort]           = useState<string>('newest')
   const [showCreate, setShowCreate] = useState(false)
   const [editTarget, setEditTarget] = useState<Review | null>(null)
-  const [flagTarget, setFlagTarget] = useState<Review | null>(null)
+  const [flagTarget, setFlagTarget] = useState<{ review: Review; onSuccess: () => void } | null>(null)
   const [moderateTarget, setModerateTarget] = useState<Review | null>(null)
 
   const { data, isLoading, isFetching } = useListReviewsQuery({
@@ -162,7 +162,7 @@ export function ReviewList({ stationId, averageRating = 0, reviewCount = 0 }: Re
               review={review}
               currentUserId={user?._id}
               isModerator={isModerator}
-              onFlag={user ? setFlagTarget : undefined}
+              onFlag={user ? (r, onSuccess) => setFlagTarget({ review: r, onSuccess }) : undefined}
               onEdit={setEditTarget}
               onModerate={isModerator ? setModerateTarget : undefined}
             />
@@ -227,7 +227,8 @@ export function ReviewList({ stationId, averageRating = 0, reviewCount = 0 }: Re
       )}
       {flagTarget && (
         <FlagReviewModal
-          review={flagTarget}
+          review={flagTarget.review}
+          onSuccess={flagTarget.onSuccess}
           onClose={() => setFlagTarget(null)}
         />
       )}
