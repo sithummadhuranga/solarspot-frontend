@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { MapPin, Sun, Zap, Star, ArrowDown, Phone, Leaf, BarChart3 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { useStationsList } from '@/hooks/useStations'
 import { StationCard } from '@/components/stations/StationCard'
@@ -6,148 +7,7 @@ import { StationCard } from '@/components/stations/StationCard'
 import carSvg from '@/assets/images/car.svg'
 import chargingStationSvg from '@/assets/images/charging station.svg'
 
-const SG = "'Space Grotesk', sans-serif"
-const IN = "'Inter', sans-serif"
-
-/* ─────────────────────────────────────────────────────────────────────────── */
-/* Responsive injection — ensures the layout works at every breakpoint.        */
-/* We inject a <style> block once so we don't need Tailwind for responsive CSS */
-const RESPONSIVE_CSS = `
-  /* ── Base (mobile-first) ── */
-  .lp-hero-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2rem;
-    min-height: unset;
-    padding-top: 2.5rem;
-    padding-bottom: 160px;
-  }
-  .lp-hero-text { width: 100%; max-width: 100%; }
-  .lp-hero-car-wrap {
-    position: relative;
-    width: 100%;
-    height: 260px;
-    overflow: visible;
-  }
-  .lp-hero-car {
-    position: absolute;
-    bottom: 5px; /* raised slightly */
-    right: -5%;
-    width: 110%;
-    height: auto;
-    filter: drop-shadow(0 24px 40px rgba(0,0,0,0.22));
-  }
-  .lp-nav-middle { display: none; }
-  .lp-nav-right { display: none; }
-  .lp-nav-auth { display: flex; }
-  .lp-circles div { display: none; }
-
-  /* ── Tablet ≥ 768px ── */
-  @media (min-width: 768px) {
-    .lp-hero-inner {
-      flex-direction: row;
-      align-items: center;
-      min-height: 75vh;
-      gap: 1rem;
-      padding-top: 3rem;
-    }
-    .lp-hero-text { width: 50%; max-width: 52%; flex-shrink: 0; }
-    .lp-hero-car-wrap { width: 50%; height: 400px; }
-    .lp-hero-car { width: 120%; right: -10%; }
-    .lp-nav-right { display: flex; }
-    .lp-nav-auth { display: none; }
-    .lp-circles div { display: block; }
-  }
-
-  /* ── Desktop ≥ 1024px ── */
-  @media (min-width: 1024px) {
-    .lp-hero-inner { gap: 2rem; min-height: 82vh; }
-    .lp-hero-text { width: 45%; max-width: 45%; }
-    .lp-hero-car-wrap { height: 580px; }
-    .lp-hero-car { width: 175%; right: -8%; bottom: 15px; } /* moved up and left */
-    .lp-nav-middle { display: flex; }
-  }
-
-  /* ── Wide ≥ 1280px ── */
-  @media (min-width: 1280px) {
-    .lp-hero-car { width: 195%; right: -10%; bottom: 25px; } /* moved up and left */
-    .lp-hero-car-wrap { height: 600px; }
-  }
-
-  /* About section responsive */
-  .lp-about-cols {
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-    align-items: center;
-  }
-  .lp-charger-col { width: 180px; }
-  .lp-about-text-col { width: 100%; }
-  .lp-features-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-  @media (min-width: 640px) {
-    .lp-features-grid { grid-template-columns: 1fr 1fr; }
-    .lp-charger-col { width: 200px; }
-  }
-  @media (min-width: 900px) {
-    .lp-about-cols { flex-direction: row; align-items: flex-end; }
-    .lp-charger-col { width: 260px; flex-shrink: 0; }
-    .lp-about-text-col { flex: 1; }
-    .lp-features-grid { grid-template-columns: 1fr 1fr; }
-  }
-  @media (min-width: 1100px) {
-    .lp-charger-col { width: 480px; }
-  }
-  @media (min-width: 1280px) {
-    .lp-charger-col { width: 560px; }
-  }
-
-  /* Stats grid responsive */
-  .lp-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    text-align: center;
-  }
-  @media (min-width: 768px) {
-    .lp-stats-grid { grid-template-columns: repeat(4, 1fr); }
-  }
-
-  /* Typography scale */
-  .lp-h1 {
-    font-size: clamp(1.9rem, 5.5vw, 3.6rem);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    font-weight: 800;
-    margin: 0;
-    font-family: ${SG};
-  }
-
-  /* Scroll bounce animation */
-  @keyframes lp-bounce {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(6px); }
-  }
-  .lp-arrow-btn { animation: lp-bounce 2s ease-in-out infinite; }
-
-  /* Card hover */
-  .lp-card {
-    background: #fff;
-    border-radius: 20px;
-    padding: 1.75rem 1.5rem;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
-    border: 1px solid rgba(0,0,0,0.04);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .lp-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 55px rgba(26,107,60,0.14);
-  }
-`
+/* ─────────────────────────────────────────────────────────────────────── */
 
 export default function HomePage() {
   const { isAuthenticated } = useAuth()
@@ -158,316 +18,321 @@ export default function HomePage() {
   const featuredStations = featuredData?.data ?? []
 
   return (
-    <div style={{ fontFamily: IN, background: '#8cc63f', overflowX: 'hidden' }}>
-      <style>{RESPONSIVE_CSS}</style>
+    <div className="overflow-x-hidden bg-white">
 
-      {/* ── Top Bar ── */}
-      <div style={{
-        background: '#3b7012', color: '#fff', fontSize: '0.8rem',
-        padding: '0.55rem 0', textAlign: 'center', fontFamily: IN, letterSpacing: '0.01em'
-      }}>
-        Book Online &nbsp;|&nbsp; You can request booking (pending confirmation) in 24 hours
+      {/* ── Announcement Bar ── */}
+      <div className="bg-[#0b2614] text-center text-[0.78rem] font-medium tracking-wide text-white/70 py-2.5 px-4">
+        🌞 Book Online &nbsp;·&nbsp; Request a booking (pending confirmation) within 24 hours
       </div>
 
-      {/* ── Navbar ── */}
-      <nav style={{ position: 'relative', zIndex: 50, borderBottom: '1px solid rgba(255,255,255,0.15)' }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0.85rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
+      {/* ── Landing Navbar ── */}
+      <nav className="relative z-50 border-b border-white/10 bg-transparent">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-6 lg:px-8">
 
           {/* Brand */}
-          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
-            <span style={{ fontSize: '1.6rem' }}>🌞</span>
-            <span style={{ fontFamily: SG, fontWeight: 800, fontSize: '1.35rem', color: '#133c1d', letterSpacing: '-0.02em' }}>SolarSpot</span>
+          <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#8cc63f] shadow-lg shadow-[#8cc63f]/20 transition-transform group-hover:scale-105">
+              <Sun className="h-5 w-5 text-[#0b2614]" />
+            </div>
+            <span className="font-sg text-xl font-extrabold tracking-tight text-[#0b2614]">
+              SolarSpot
+            </span>
           </Link>
 
-          {/* Nav Links — hidden on mobile */}
-          <div className="lp-nav-middle" style={{ alignItems: 'center', gap: '1.5rem' }}>
+          {/* Center links — hidden <md */}
+          <div className="hidden lg:flex items-center gap-7">
             {[
-              { label: '• Home', href: '#hero' },
-              { label: 'About Us', href: '#about' },
-              { label: 'Services', to: '/stations' },
-              { label: 'Gallery', to: '/stations' },
-              { label: 'Blog', to: '/weather' },
-              { label: 'Contact Us', href: '#footer' },
-            ].map((item, i) =>
+              { label: 'Home', href: '#hero' },
+              { label: 'About', href: '#about' },
+              { label: 'Stations', to: '/stations' },
+              { label: 'Weather', to: '/weather' },
+              { label: 'Contact', href: '#footer' },
+            ].map((item) =>
               item.to ? (
-                <Link key={item.label} to={item.to} style={{ fontFamily: IN, fontWeight: i === 0 ? 700 : 500, fontSize: '0.93rem', color: '#133c1d', textDecoration: 'none' }}>
+                <Link key={item.label} to={item.to}
+                  className="text-[0.88rem] font-semibold text-[#133c1d]/80 hover:text-[#133c1d] transition-colors"
+                >
                   {item.label}
                 </Link>
               ) : (
-                <a key={item.label} href={item.href} style={{ fontFamily: IN, fontWeight: i === 0 ? 700 : 500, fontSize: '0.93rem', color: '#133c1d', textDecoration: 'none' }}>
+                <a key={item.label} href={item.href}
+                  className="text-[0.88rem] font-semibold text-[#133c1d]/80 hover:text-[#133c1d] transition-colors"
+                >
                   {item.label}
                 </a>
               )
             )}
           </div>
 
-          {/* Right — Phone + CTA (hidden on mobile, visible on tablets+) */}
-          <div className="lp-nav-right" style={{ alignItems: 'center', gap: '1.25rem', flexShrink: 0 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#133c1d' }}>
-              <span style={{ fontSize: '1.3rem' }}>📞</span>
-              <div style={{ lineHeight: 1.25 }}>
-                <div style={{ fontSize: '0.7rem', opacity: 0.7, fontWeight: 500 }}>Please Make a call</div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 700 }}>(+94) 11 234 5678</div>
+          {/* Right side */}
+          <div className="flex items-center gap-3 shrink-0">
+            {/* Phone — hidden <md */}
+            <div className="hidden md:flex items-center gap-2.5 text-[#133c1d] mr-2">
+              <Phone className="h-4 w-4 text-[#1a6b3c]" />
+              <div className="leading-tight">
+                <div className="text-[0.65rem] font-medium text-[#133c1d]/50 uppercase tracking-wider">Call us</div>
+                <div className="text-[0.82rem] font-bold">(+94) 11 234 5678</div>
               </div>
             </div>
-            <Link
-              to={isAuthenticated ? '/dashboard' : '/register'}
-              style={{
-                background: '#1a1a1a', color: '#fff', padding: '0.6rem 1.3rem',
-                borderRadius: '10px', fontFamily: SG, fontWeight: 600, fontSize: '0.9rem',
-                textDecoration: 'none', whiteSpace: 'nowrap'
-              }}
-            >
-              {isAuthenticated ? 'Dashboard ›' : 'Get a Quote ›'}
-            </Link>
-          </div>
 
-          {/* Mobile-only small auth buttons */}
-          <div className="lp-nav-auth" style={{ alignItems: 'center', gap: '0.5rem' }}>
             {!isAuthenticated && (
-              <Link to="/login" style={{ fontFamily: SG, fontWeight: 700, fontSize: '0.85rem', color: '#133c1d', textDecoration: 'none', padding: '0.4rem 0.9rem', border: '2px solid #133c1d', borderRadius: '8px' }}>Login</Link>
+              <Link to="/login"
+                className="hidden sm:inline-flex text-[0.85rem] font-bold text-[#133c1d] px-4 py-2 rounded-xl border-2 border-[#133c1d]/15 hover:border-[#133c1d]/30 transition-colors"
+              >
+                Log in
+              </Link>
             )}
-            <Link to={isAuthenticated ? '/dashboard' : '/register'} style={{ background: '#1a1a1a', color: '#fff', padding: '0.4rem 0.9rem', borderRadius: '8px', fontFamily: SG, fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none' }}>
-              {isAuthenticated ? 'Dashboard' : 'Sign Up'}
+
+            <Link to={isAuthenticated ? '/dashboard' : '/register'}
+              className="inline-flex items-center gap-1.5 bg-[#133c1d] text-white px-5 py-2.5 rounded-xl text-[0.85rem] font-sg font-bold shadow-lg shadow-[#133c1d]/20 hover:bg-[#0b2614] transition-all hover:shadow-xl hover:shadow-[#133c1d]/25 active:scale-[0.98]"
+            >
+              {isAuthenticated ? 'Dashboard' : 'Get Started'} <span className="text-[#8cc63f]">→</span>
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* ── Hero Section ── */}
-      <section id="hero" style={{ position: 'relative', overflow: 'hidden' }}>
+      {/* ═══════════════════════════════════════════════════════════════════ */}
+      {/* HERO SECTION                                                       */}
+      {/* ═══════════════════════════════════════════════════════════════════ */}
+      <section id="hero" className="relative overflow-hidden bg-[#8cc63f]">
 
-        {/* Concentric Circles — decorative, visible at tablet+ */}
-        <div className="lp-circles">
-          <div style={{ position: 'absolute', top: '-18%', right: '-10%', width: '900px', height: '900px', borderRadius: '50%', background: '#97cf42', zIndex: 0, pointerEvents: 'none' }} />
-          <div style={{ position: 'absolute', top: '-6%', right: '-3%', width: '700px', height: '700px', borderRadius: '50%', background: '#a2d94d', zIndex: 1, pointerEvents: 'none' }} />
-          <div style={{ position: 'absolute', top: '5%', right: '6%', width: '530px', height: '530px', borderRadius: '50%', background: '#afde5a', zIndex: 2, pointerEvents: 'none' }} />
-        </div>
+        {/* Gradient orbs */}
+        <div className="hero-orb w-[600px] h-[600px] bg-[#97cf42] -top-[15%] -right-[8%] opacity-60" />
+        <div className="hero-orb w-[480px] h-[480px] bg-[#a2d94d] top-[5%] right-[4%] opacity-50" style={{ animationDelay: '2s' }} />
+        <div className="hero-orb w-[350px] h-[350px] bg-[#afde5a] top-[15%] right-[12%] opacity-40" style={{ animationDelay: '4s' }} />
 
         {/* Content */}
-        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem', position: 'relative', zIndex: 10 }}>
-          <div className="lp-hero-inner">
+        <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-4 pt-12 pb-40 lg:pt-16 lg:pb-48 min-h-[60vh] lg:min-h-[80vh]">
 
             {/* LEFT — Text */}
-            <div className="lp-hero-text">
-              <h1 className="lp-h1">
-                <span style={{ color: '#fff', display: 'block' }}>Premium Power Of The</span>
-                <span style={{ color: '#133c1d', display: 'block' }}>Charging And Future Industry</span>
+            <div className="w-full lg:w-[48%] lg:shrink-0">
+              <h1 className="font-sg font-extrabold tracking-tight leading-[1.05]"
+                style={{ fontSize: 'clamp(2.2rem, 5.5vw, 3.8rem)' }}
+              >
+                <span className="block text-white drop-shadow-sm">Premium Power Of</span>
+                <span className="block text-[#133c1d]">The Charging Future</span>
               </h1>
 
-              <p style={{
-                fontFamily: IN, fontWeight: 400, fontSize: 'clamp(0.9rem, 2vw, 1.05rem)',
-                color: 'rgba(255,255,255,0.88)', lineHeight: 1.75,
-                marginTop: '1.25rem', marginBottom: '2rem', maxWidth: '460px'
-              }}>
-                Experience the future of electric vehicle charging with our cutting-edge solutions.
-                Fast, reliable, and eco-friendly charging stations for your home or business.
+              <p className="mt-5 text-white/85 font-medium leading-relaxed max-w-[460px]"
+                style={{ fontSize: 'clamp(0.92rem, 2vw, 1.05rem)' }}
+              >
+                Experience the future of electric vehicle charging. Fast, reliable,
+                and 100% solar-powered — the greenest way to charge your EV in Sri Lanka.
               </p>
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.85rem', alignItems: 'center' }}>
-                <Link
-                  to={isAuthenticated ? '/stations' : '/register'}
-                  style={{
-                    background: '#1a1a1a', color: '#fff', padding: '0.8rem 2rem',
-                    borderRadius: '10px', fontFamily: IN, fontWeight: 600, fontSize: '0.95rem',
-                    textDecoration: 'none', boxShadow: '0 8px 25px rgba(0,0,0,0.25)',
-                    display: 'inline-flex', alignItems: 'center', gap: '0.35rem'
-                  }}
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <Link to={isAuthenticated ? '/stations' : '/register'}
+                  className="inline-flex items-center gap-2 bg-[#133c1d] text-white px-7 py-3.5 rounded-2xl font-sg font-bold text-[0.95rem] shadow-xl shadow-black/20 hover:bg-[#0b2614] transition-all hover:shadow-2xl active:scale-[0.97]"
                 >
-                  Book Now &nbsp;›
+                  Explore Stations <span className="text-[#8cc63f]">→</span>
                 </Link>
+                <Link to="/map"
+                  className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md text-white px-6 py-3.5 rounded-2xl font-sg font-bold text-[0.95rem] border border-white/20 hover:bg-white/25 transition-all"
+                >
+                  <MapPin className="h-4 w-4" /> View Map
+                </Link>
+              </div>
 
-                {/* Social row */}
-                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.8)', letterSpacing: '0.04em' }}>
-                  {['FB', 'TW', 'YT', 'LD'].map((s, i, arr) => (
-                    <span key={s}>
-                      <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>{s}</a>
-                      {i < arr.length - 1 && <span style={{ opacity: 0.4, marginLeft: '0.5rem' }}>|</span>}
-                    </span>
-                  ))}
-                  <span style={{ marginLeft: '0.5rem', opacity: 0.5 }}>—</span>
-                  <span style={{ marginLeft: '0.5rem' }}>Follow Us</span>
-                </div>
+              {/* Social row */}
+              <div className="mt-8 flex items-center gap-4 text-[0.78rem] font-semibold text-white/60 tracking-wide">
+                {['FB', 'TW', 'YT', 'LD'].map((s) => (
+                  <a key={s} href="#" className="hover:text-white transition-colors">{s}</a>
+                ))}
+                <span className="w-6 h-px bg-white/20" />
+                <span>Follow Us</span>
               </div>
             </div>
 
-            {/* RIGHT — Car image (charger inside car.svg) */}
-            <div className="lp-hero-car-wrap">
+            {/* RIGHT — Car image */}
+            <div className="relative w-full lg:w-[52%] lg:flex-1 h-[280px] sm:h-[360px] lg:h-[520px] xl:h-[560px]">
               <img
                 src={carSvg}
                 alt="Electric vehicle at solar charging station"
-                className="lp-hero-car"
+                className="absolute bottom-0 right-[-5%] lg:right-[-8%] w-[110%] lg:w-[160%] xl:w-[180%] h-auto drop-shadow-[0_24px_40px_rgba(0,0,0,0.22)]"
               />
             </div>
-
           </div>
         </div>
 
         {/* Bottom SVG Curve */}
-        <div style={{ position: 'absolute', bottom: '-2px', left: 0, width: '100%', zIndex: 20, lineHeight: 0 }}>
-          <svg viewBox="0 0 1440 110" style={{ display: 'block', width: '100%', height: 'clamp(55px, 8vw, 100px)' }} preserveAspectRatio="none">
-            <path d="M0,110 L0,0 Q720,160 1440,0 L1440,110 Z" fill="#f5faf0" />
+        <div className="absolute bottom-[-2px] left-0 w-full z-20" style={{ lineHeight: 0 }}>
+          <svg viewBox="0 0 1440 110" className="block w-full" style={{ height: 'clamp(60px, 8vw, 100px)' }} preserveAspectRatio="none">
+            <path d="M0,110 L0,0 Q720,160 1440,0 L1440,110 Z" fill="#fafdf7" />
           </svg>
-          {/* Down-arrow button — centered on the curve */}
-          <a
-            href="#about"
-            className="lp-arrow-btn"
-            style={{
-              position: 'absolute', bottom: 'clamp(16px, 3vw, 28px)', left: '50%',
-              transform: 'translateX(-50%)',
-              width: '56px', height: '56px', borderRadius: '50%',
-              backgroundColor: '#1a1a1a', display: 'flex', alignItems: 'center',
-              justifyContent: 'center', boxShadow: '0 8px 28px rgba(0,0,0,0.22)',
-              textDecoration: 'none'
-            }}
+          {/* Scroll indicator */}
+          <a href="#about"
+            className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center w-14 h-14 rounded-full bg-[#133c1d] shadow-xl shadow-black/20 hover:bg-[#0b2614] transition-all animate-bounce"
+            style={{ bottom: 'clamp(18px, 3vw, 30px)' }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 5v14M19 12l-7 7-7-7" />
-            </svg>
+            <ArrowDown className="h-5 w-5 text-[#8cc63f]" />
           </a>
         </div>
       </section>
 
-      {/* ─────────────────────────────────────────────────────── */}
-      {/* ── SCROLL 2 — About / Charging Station Feature ──────── */}
-      {/* ─────────────────────────────────────────────────────── */}
-      <section id="about" style={{ background: '#f5faf0', padding: 'clamp(5rem, 10vw, 8rem) 0 clamp(3rem, 6vw, 5rem)' }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
+      {/* ═══════════════════════════════════════════════════════════════════ */}
+      {/* ABOUT / FEATURES                                                   */}
+      {/* ═══════════════════════════════════════════════════════════════════ */}
+      <section id="about" className="bg-[#fafdf7]" style={{ padding: 'clamp(5rem, 10vw, 8rem) 0 clamp(3.5rem, 7vw, 5.5rem)' }}>
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row items-center lg:items-end gap-12 lg:gap-16">
 
-          <div className="lp-about-cols">
-
-            {/* Charging Station Image — now properly in its own section */}
-            <div className="lp-charger-col" style={{ display: 'flex', justifyContent: 'center' }}>
+            {/* Charging Station Image */}
+            <div className="w-48 sm:w-56 lg:w-[420px] xl:w-[520px] shrink-0 flex justify-center">
               <img
                 src={chargingStationSvg}
                 alt="Solar EV charging station"
-                style={{
-                  width: '100%', height: 'auto',
-                  filter: 'drop-shadow(16px 24px 30px rgba(0,0,0,0.18))',
-                }}
+                className="w-full h-auto drop-shadow-[16px_24px_30px_rgba(0,0,0,0.15)]"
               />
             </div>
 
-            {/* About Text + Feature cards */}
-            <div className="lp-about-text-col">
-              <span style={{
-                fontFamily: SG, fontWeight: 700, fontSize: '0.75rem', color: '#1a6b3c',
-                textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '0.6rem'
-              }}>
-                ● About Us
+            {/* Text + Feature cards */}
+            <div className="flex-1 min-w-0">
+              <span className="inline-flex items-center gap-2 text-[0.72rem] font-sg font-bold text-[#1a6b3c] uppercase tracking-[0.15em] mb-3">
+                <span className="w-2 h-2 rounded-full bg-[#8cc63f]" /> About Us
               </span>
-              <h2 style={{
-                fontFamily: SG, fontWeight: 800, fontSize: 'clamp(1.75rem, 4vw, 2.75rem)',
-                letterSpacing: '-0.025em', color: '#0f172a', lineHeight: 1.1, margin: '0 0 1rem'
-              }}>
+              <h2 className="font-sg font-extrabold text-[#0f172a] leading-[1.1] tracking-tight mb-4"
+                style={{ fontSize: 'clamp(1.8rem, 4vw, 2.75rem)' }}
+              >
                 Driving Innovation{' '}
-                <span style={{ color: '#1a6b3c' }}>In Every Charge</span>
+                <span className="text-gradient-animated">In Every Charge</span>
               </h2>
-              <p style={{
-                fontFamily: IN, color: '#64748b', fontSize: 'clamp(0.9rem, 2vw, 1rem)',
-                lineHeight: 1.75, maxWidth: '540px', marginBottom: '2rem'
-              }}>
+              <p className="text-gray-500 font-medium leading-relaxed max-w-[540px] mb-8"
+                style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}
+              >
                 SolarSpot connects EV drivers with the largest network of solar charging stations,
                 helping you discover, rate, and share the best charging experiences.
               </p>
 
               {/* Feature cards */}
-              <div className="lp-features-grid">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
-                  { icon: '📍', title: 'Geospatial Discovery', desc: 'Interactive map to find solar stations near you — search by distance & availability.' },
-                  { icon: '☀️', title: 'Solar Intelligence', desc: 'Real-time solar forecasts so you know the best charging windows.' },
-                  { icon: '⭐', title: 'Community Ratings', desc: 'Rate and review stations to help EV drivers find top experiences.' },
-                  { icon: '🌿', title: 'Eco-Friendly Network', desc: 'Every station runs on 100% clean solar energy — charge guilt-free.' },
+                  { icon: MapPin,    title: 'Geospatial Discovery', desc: 'Interactive map to find solar stations near you — search by distance & availability.', color: 'text-blue-600', bg: 'bg-blue-50' },
+                  { icon: Sun,       title: 'Solar Intelligence',    desc: 'Real-time solar forecasts so you know the best charging windows.',                     color: 'text-amber-600', bg: 'bg-amber-50' },
+                  { icon: Star,      title: 'Community Ratings',     desc: 'Rate and review stations to help EV drivers find top experiences.',                    color: 'text-purple-600', bg: 'bg-purple-50' },
+                  { icon: Leaf,      title: 'Eco-Friendly Network',  desc: 'Every station runs on 100% clean solar energy — charge guilt-free.',                   color: 'text-emerald-600', bg: 'bg-emerald-50' },
                 ].map((f) => (
-                  <div key={f.title} className="lp-card">
-                    <div style={{
-                      width: '48px', height: '48px', borderRadius: '12px',
-                      background: 'linear-gradient(135deg, #dcfce7, #bbf7d0)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '1.4rem', marginBottom: '1rem'
-                    }}>
-                      {f.icon}
+                  <div key={f.title}
+                    className="group rounded-2xl bg-white border border-gray-100 p-5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-glow"
+                  >
+                    <div className={`w-11 h-11 rounded-xl ${f.bg} flex items-center justify-center mb-3.5 group-hover:scale-110 transition-transform duration-300`}>
+                      <f.icon className={`h-5 w-5 ${f.color}`} />
                     </div>
-                    <h3 style={{ fontFamily: SG, fontWeight: 700, fontSize: '1rem', color: '#0f172a', margin: '0 0 0.4rem' }}>{f.title}</h3>
-                    <p style={{ fontFamily: IN, fontSize: '0.875rem', color: '#64748b', lineHeight: 1.65, margin: 0 }}>{f.desc}</p>
+                    <h3 className="font-sg font-bold text-[0.95rem] text-[#0f172a] mb-1.5">{f.title}</h3>
+                    <p className="text-[0.84rem] font-medium text-gray-500 leading-relaxed">{f.desc}</p>
                   </div>
                 ))}
               </div>
             </div>
-
           </div>
         </div>
       </section>
 
-      {/* ── Stats Bar ── */}
-      <section style={{ background: '#133c1d', padding: '2.5rem 0' }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
-          <div className="lp-stats-grid">
+      {/* ═══════════════════════════════════════════════════════════════════ */}
+      {/* STATS BAR                                                          */}
+      {/* ═══════════════════════════════════════════════════════════════════ */}
+      <section className="relative mesh-gradient noise-overlay py-16">
+        <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             {[
-              { num: '150+', label: 'Solar Stations' },
-              { num: '5K+', label: 'Active Drivers' },
-              { num: '100%', label: 'Eco Friendly' },
-              { num: '24/7', label: 'Weather Updates' },
+              { num: '150+',  label: 'Solar Stations',  icon: Zap },
+              { num: '5K+',   label: 'Active Drivers',  icon: BarChart3 },
+              { num: '100%',  label: 'Eco Friendly',    icon: Leaf },
+              { num: '24/7',  label: 'Weather Updates',  icon: Sun },
             ].map((s) => (
-              <div key={s.label}>
-                <div style={{ fontFamily: SG, fontWeight: 800, fontSize: 'clamp(1.6rem, 4vw, 2.25rem)', color: '#8cc63f', letterSpacing: '-0.03em' }}>{s.num}</div>
-                <div style={{ fontFamily: IN, fontWeight: 500, fontSize: '0.8rem', color: 'rgba(255,255,255,0.65)', marginTop: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.09em' }}>{s.label}</div>
+              <div key={s.label} className="text-center group">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/10 mb-4 group-hover:bg-white/15 transition-colors">
+                  <s.icon className="h-5 w-5 text-[#8cc63f]" />
+                </div>
+                <div className="font-sg font-extrabold text-[#8cc63f] tracking-tight"
+                  style={{ fontSize: 'clamp(1.7rem, 4vw, 2.4rem)' }}
+                >
+                  {s.num}
+                </div>
+                <div className="text-[0.78rem] font-medium text-white/50 mt-1 uppercase tracking-[0.1em]">
+                  {s.label}
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Featured Stations ── */}
-      <section style={{ background: '#f5faf0', padding: 'clamp(3.5rem, 7vw, 5rem) 0' }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: '1rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+      {/* ═══════════════════════════════════════════════════════════════════ */}
+      {/* FEATURED STATIONS                                                  */}
+      {/* ═══════════════════════════════════════════════════════════════════ */}
+      <section className="bg-[#fafdf7]" style={{ padding: 'clamp(3.5rem, 7vw, 5.5rem) 0' }}>
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
             <div>
-              <span style={{ fontFamily: SG, fontWeight: 700, fontSize: '0.75rem', color: '#1a6b3c', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '0.45rem' }}>
-                ● Featured Stations
+              <span className="inline-flex items-center gap-2 text-[0.72rem] font-sg font-bold text-[#1a6b3c] uppercase tracking-[0.15em] mb-2">
+                <span className="w-2 h-2 rounded-full bg-[#8cc63f]" /> Featured Stations
               </span>
-              <h2 style={{ fontFamily: SG, fontWeight: 800, fontSize: 'clamp(1.4rem, 3.2vw, 2rem)', color: '#0f172a', margin: 0 }}>
+              <h2 className="font-sg font-extrabold text-[#0f172a] tracking-tight"
+                style={{ fontSize: 'clamp(1.4rem, 3.2vw, 2rem)' }}
+              >
                 Top Solar Charging Spots
               </h2>
             </div>
-            <Link to="/stations" style={{ fontFamily: SG, fontWeight: 700, color: '#1a6b3c', textDecoration: 'none' }}>
-              View all stations →
+            <Link to="/stations"
+              className="inline-flex items-center gap-1.5 font-sg font-bold text-[0.88rem] text-[#1a6b3c] hover:text-[#133c1d] transition-colors group"
+            >
+              View all stations <span className="group-hover:translate-x-0.5 transition-transform">→</span>
             </Link>
           </div>
 
           {featuredLoading ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} style={{ height: '280px', borderRadius: '20px', background: '#eaf6df' }} />
+                <div key={i} className="h-[320px] rounded-2xl bg-[#eaf6df] animate-pulse" />
               ))}
             </div>
           ) : featuredStations.length > 0 ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {featuredStations.map((station) => (
                 <StationCard key={station._id} station={station} />
               ))}
             </div>
           ) : (
-            <div style={{ border: '1px solid #dcfce7', background: '#ffffff', borderRadius: '16px', padding: '1rem 1.25rem', color: '#64748b', fontFamily: IN }}>
+            <div className="rounded-2xl border border-[#dcfce7] bg-white p-6 text-center text-gray-500 font-medium text-sm">
               Featured stations will appear here once they are approved and marked as featured.
             </div>
           )}
         </div>
       </section>
 
-      {/* ── CTA ── */}
+      {/* ═══════════════════════════════════════════════════════════════════ */}
+      {/* CTA BANNER                                                         */}
+      {/* ═══════════════════════════════════════════════════════════════════ */}
       {!isAuthenticated && (
-        <section style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', padding: 'clamp(4rem, 8vw, 6rem) 0', textAlign: 'center' }}>
-          <div style={{ maxWidth: '680px', margin: '0 auto', padding: '0 1.5rem' }}>
-            <h2 style={{ fontFamily: SG, fontWeight: 800, fontSize: 'clamp(1.6rem, 4vw, 2.5rem)', letterSpacing: '-0.03em', color: '#133c1d', margin: '0 0 1rem' }}>Ready to Power Up?</h2>
-            <p style={{ fontFamily: IN, color: '#166534', fontSize: 'clamp(0.9rem, 2.2vw, 1.05rem)', lineHeight: 1.7, maxWidth: '500px', margin: '0 auto 2rem' }}>
+        <section className="relative overflow-hidden" style={{ padding: 'clamp(4rem, 8vw, 6.5rem) 0' }}>
+          {/* Subtle bg gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[#f0fdf4] via-[#dcfce7]/60 to-[#f0fdf4]" />
+          <div className="absolute inset-0 opacity-[0.03]"
+            style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #1a6b3c 1px, transparent 0)', backgroundSize: '32px 32px' }}
+          />
+
+          <div className="relative z-10 mx-auto max-w-[640px] px-6 text-center">
+            <h2 className="font-sg font-extrabold text-[#133c1d] tracking-tight mb-4"
+              style={{ fontSize: 'clamp(1.6rem, 4vw, 2.5rem)' }}
+            >
+              Ready to Power Up?
+            </h2>
+            <p className="text-[#166534]/80 font-medium leading-relaxed max-w-[480px] mx-auto mb-8"
+              style={{ fontSize: 'clamp(0.92rem, 2vw, 1.05rem)' }}
+            >
               Join thousands of EV drivers discovering the best solar-powered charging stations across Sri Lanka.
             </p>
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <Link to="/register" style={{ background: '#133c1d', color: '#fff', padding: '0.85rem 2.2rem', borderRadius: '10px', fontFamily: SG, fontWeight: 700, fontSize: '0.95rem', textDecoration: 'none', boxShadow: '0 6px 24px rgba(19,60,29,0.3)' }}>
-                Create Free Account →
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Link to="/register"
+                className="inline-flex items-center gap-2 bg-[#133c1d] text-white px-7 py-3.5 rounded-2xl font-sg font-bold text-[0.95rem] shadow-xl shadow-[#133c1d]/25 hover:bg-[#0b2614] transition-all active:scale-[0.97]"
+              >
+                Create Free Account <span className="text-[#8cc63f]">→</span>
               </Link>
-              <Link to="/stations" style={{ background: '#fff', color: '#133c1d', padding: '0.85rem 2.2rem', borderRadius: '10px', fontFamily: SG, fontWeight: 700, fontSize: '0.95rem', textDecoration: 'none', border: '2px solid #dcfce7', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
+              <Link to="/stations"
+                className="inline-flex items-center gap-2 bg-white text-[#133c1d] px-7 py-3.5 rounded-2xl font-sg font-bold text-[0.95rem] border-2 border-[#dcfce7] shadow-sm hover:border-[#8cc63f]/40 hover:shadow-md transition-all"
+              >
                 Browse Stations
               </Link>
             </div>
@@ -475,51 +340,77 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ── Footer ── */}
-      <footer id="footer" style={{ background: '#0b2614', padding: 'clamp(2.5rem, 5vw, 4rem) 0 2rem' }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '2rem', marginBottom: '2.5rem' }}>
+      {/* ═══════════════════════════════════════════════════════════════════ */}
+      {/* FOOTER                                                             */}
+      {/* ═══════════════════════════════════════════════════════════════════ */}
+      <footer id="footer" className="bg-[#071a0e]" style={{ padding: 'clamp(3rem, 6vw, 4.5rem) 0 2rem' }}>
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+
+            {/* Brand */}
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                <span style={{ fontSize: '1.5rem' }}>🌞</span>
-                <span style={{ fontFamily: SG, fontWeight: 800, fontSize: '1.2rem', color: '#fff', letterSpacing: '-0.02em' }}>SolarSpot</span>
+              <div className="flex items-center gap-2.5 mb-4">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#8cc63f]/20">
+                  <Sun className="h-4 w-4 text-[#8cc63f]" />
+                </div>
+                <span className="font-sg font-extrabold text-white text-lg tracking-tight">SolarSpot</span>
               </div>
-              <p style={{ fontFamily: IN, fontSize: '0.82rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.7 }}>
+              <p className="text-[0.82rem] text-white/35 leading-relaxed">
                 Discover, submit, and rate solar-powered charging stations across Sri Lanka.
               </p>
             </div>
 
-            {[
-              { title: 'Platform', links: [{ label: 'Stations', to: '/stations' }, { label: 'Weather', to: '/weather' }, { label: 'Dashboard', to: '/dashboard' }] },
-              { title: 'Account', links: [{ label: 'Log In', to: '/login' }, { label: 'Sign Up', to: '/register' }, { label: 'Profile', to: '/profile' }] },
-            ].map(col => (
-              <div key={col.title}>
-                <h4 style={{ fontFamily: SG, fontWeight: 700, fontSize: '0.7rem', color: 'rgba(255,255,255,0.85)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '1rem' }}>{col.title}</h4>
-                <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
-                  {col.links.map(l => (
-                    <li key={l.label}>
-                      <Link to={l.to} style={{ fontFamily: IN, fontSize: '0.88rem', color: 'rgba(255,255,255,0.4)', textDecoration: 'none' }}>{l.label}</Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-
+            {/* Platform links */}
             <div>
-              <h4 style={{ fontFamily: SG, fontWeight: 700, fontSize: '0.7rem', color: 'rgba(255,255,255,0.85)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '1rem' }}>Contact</h4>
-              <div style={{ fontFamily: IN, fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)', lineHeight: 2 }}>
-                <div>📍 Colombo, Sri Lanka</div>
-                <div>📧 info@solarspot.app</div>
-                <div>📞 (+94) 11 234 5678</div>
+              <h4 className="font-sg font-bold text-[0.7rem] text-white/70 uppercase tracking-[0.14em] mb-5">Platform</h4>
+              <ul className="space-y-2.5">
+                {[
+                  { label: 'Stations', to: '/stations' },
+                  { label: 'Weather', to: '/weather' },
+                  { label: 'Dashboard', to: '/dashboard' },
+                ].map((l) => (
+                  <li key={l.label}>
+                    <Link to={l.to} className="text-[0.85rem] text-white/35 hover:text-white/70 transition-colors">{l.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Account links */}
+            <div>
+              <h4 className="font-sg font-bold text-[0.7rem] text-white/70 uppercase tracking-[0.14em] mb-5">Account</h4>
+              <ul className="space-y-2.5">
+                {[
+                  { label: 'Log In', to: '/login' },
+                  { label: 'Sign Up', to: '/register' },
+                  { label: 'Profile', to: '/profile' },
+                ].map((l) => (
+                  <li key={l.label}>
+                    <Link to={l.to} className="text-[0.85rem] text-white/35 hover:text-white/70 transition-colors">{l.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Contact */}
+            <div>
+              <h4 className="font-sg font-bold text-[0.7rem] text-white/70 uppercase tracking-[0.14em] mb-5">Contact</h4>
+              <div className="space-y-2.5 text-[0.85rem] text-white/35">
+                <div className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5 text-[#8cc63f]/50" /> Colombo, Sri Lanka</div>
+                <div className="flex items-center gap-2"><span className="text-[0.75rem]">✉</span> info@solarspot.app</div>
+                <div className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-[#8cc63f]/50" /> (+94) 11 234 5678</div>
               </div>
             </div>
           </div>
 
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.5rem', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem' }}>
-            <span style={{ fontFamily: IN, fontSize: '0.78rem', color: 'rgba(255,255,255,0.25)' }}>© {new Date().getFullYear()} SolarSpot. All rights reserved.</span>
-            <div style={{ display: 'flex', gap: '1.5rem' }}>
-              {['Privacy Policy', 'Terms of Service'].map(t => (
-                <a key={t} href="#" style={{ fontFamily: IN, fontSize: '0.78rem', color: 'rgba(255,255,255,0.25)', textDecoration: 'none' }}>{t}</a>
+          {/* Bottom bar */}
+          <div className="border-t border-white/[0.06] pt-6 flex flex-wrap items-center justify-between gap-3">
+            <span className="text-[0.75rem] text-white/20">
+              © {new Date().getFullYear()} SolarSpot. All rights reserved.
+            </span>
+            <div className="flex gap-6">
+              {['Privacy Policy', 'Terms of Service'].map((t) => (
+                <a key={t} href="#" className="text-[0.75rem] text-white/20 hover:text-white/40 transition-colors">{t}</a>
               ))}
             </div>
           </div>
