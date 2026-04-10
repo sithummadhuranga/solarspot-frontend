@@ -101,7 +101,7 @@ export default function ModerationQueuePage() {
               <ClipboardList className="h-5 w-5 text-[#8cc63f]" />
             </div>
             <div>
-              <h1 className="text-2xl font-sg font-bold text-white sm:text-3xl">Moderation Queue</h1>
+              <h1 className="text-2xl font-sg font-bold text-white sm:text-3xl">Station Moderation Queue</h1>
               <p className="text-[#f5faf0]/80 text-sm">
                 {pagination ? `${pagination.total} station${pagination.total !== 1 ? 's' : ''} awaiting review` : 'Loading…'}
               </p>

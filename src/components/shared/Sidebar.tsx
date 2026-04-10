@@ -8,14 +8,17 @@ import { useCheckPermissionAccessQuery } from '@/features/permissions/permission
  *
  * Rendered by Layout only when showSidebar={true}.
  * Items are conditionally shown based on the current user's permissions.
- *
- * TODO (All teams): expand nav items as pages are implemented.
  */
 export function Sidebar() {
   const user = useAppSelector(selectCurrentUser)
 
-  const pendingReviewCheck = useCheckPermissionAccessQuery(
+  const stationPendingCheck = useCheckPermissionAccessQuery(
     { action: 'stations.read-pending', context: {} },
+    { skip: !user }
+  )
+
+  const reviewModerateCheck = useCheckPermissionAccessQuery(
+    { action: 'reviews.moderate', context: {} },
     { skip: !user }
   )
 
@@ -24,8 +27,11 @@ export function Sidebar() {
     { skip: !user }
   )
 
-  const canReadPending = pendingReviewCheck.data?.data?.allowed ?? false
-  const canReadPermissions = permissionsReadCheck.data?.data?.allowed ?? false
+  const canModerateSations  = stationPendingCheck.data?.data?.allowed  ?? false
+  const canModerateReviews  = reviewModerateCheck.data?.data?.allowed  ?? false
+  const canReadPermissions  = permissionsReadCheck.data?.data?.allowed ?? false
+
+  const hasModerationAccess = canModerateSations || canModerateReviews
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-medium transition-colors ${
@@ -44,14 +50,28 @@ export function Sidebar() {
         <NavLink to="/stations"       className={navLinkClass}>All Stations</NavLink>
         <NavLink to="/stations/new"   className={navLinkClass}>Submit Station</NavLink>
 
-        {canReadPending && (
-          <NavLink to="/admin/stations/pending" className={navLinkClass}>Pending Review</NavLink>
+        {hasModerationAccess && (
+          <>
+            <p className="mt-4 px-3 py-2 text-xs font-sg font-bold text-gray-400 uppercase tracking-wider">
+              Moderation
+            </p>
+            {canModerateSations && (
+              <NavLink to="/admin/stations/pending" className={navLinkClass}>
+                Station Queue
+              </NavLink>
+            )}
+            {canModerateReviews && (
+              <NavLink to="/admin/reviews" className={navLinkClass}>
+                Review Queue
+              </NavLink>
+            )}
+          </>
         )}
 
         <p className="mt-4 px-3 py-2 text-xs font-sg font-bold text-gray-400 uppercase tracking-wider">
           Account
         </p>
-        <NavLink to="/profile"         className={navLinkClass}>My Profile</NavLink>
+        <NavLink to="/profile"            className={navLinkClass}>My Profile</NavLink>
         <NavLink to="/solar/reports/mine" className={navLinkClass}>My Solar Reports</NavLink>
 
         {canReadPermissions && (
@@ -59,8 +79,8 @@ export function Sidebar() {
             <p className="mt-4 px-3 py-2 text-xs font-sg font-bold text-gray-400 uppercase tracking-wider">
               Administration
             </p>
-            <NavLink to="/admin/users"       className={navLinkClass}>Users</NavLink>
-            <NavLink to="/admin/permissions" className={navLinkClass}>Permissions</NavLink>
+            <NavLink to="/admin/users"         className={navLinkClass}>Users</NavLink>
+            <NavLink to="/admin/permissions"   className={navLinkClass}>Permissions</NavLink>
             <NavLink to="/admin/solar/reports" className={navLinkClass}>Solar Reports</NavLink>
           </>
         )}

@@ -50,7 +50,8 @@ export function Navbar() {
           {navLink('/stations', 'Stations')}
           {navLink('/map', 'Map')}
           {isAuthenticated && navLink('/my-stations', 'My Stations')}
-          {isMod && navLink('/admin/stations/pending', 'Moderation')}
+          {isMod && navLink('/admin/stations/pending', 'Station Queue')}
+          {isMod && navLink('/admin/reviews', 'Review Queue')}
           {navLink('/weather', 'Weather')}
           {isAdmin && navLink('/admin/permissions', 'Admin')}
         </div>
@@ -106,7 +107,10 @@ export function Navbar() {
             { to: '/stations', label: 'Stations', icon: <LayoutGrid className="h-4 w-4" /> },
             { to: '/map', label: 'Map', icon: <MapPin className="h-4 w-4" /> },
             ...(isAuthenticated ? [{ to: '/my-stations', label: 'My Stations', icon: <Zap className="h-4 w-4" /> }] : []),
-            ...(isMod ? [{ to: '/admin/stations/pending', label: 'Moderation', icon: <ShieldCheck className="h-4 w-4" /> }] : []),
+            ...(isMod ? [
+              { to: '/admin/stations/pending', label: 'Station Queue', icon: <ShieldCheck className="h-4 w-4" /> },
+              { to: '/admin/reviews', label: 'Review Queue', icon: <ShieldCheck className="h-4 w-4" /> },
+            ] : []),
           ].map((item) => (
             <Link
               key={item.to}
