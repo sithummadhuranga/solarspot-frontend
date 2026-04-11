@@ -2,7 +2,10 @@ import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { Layout } from '@/components/shared/Layout'
 import { PageHeader } from '@/components/shared/PageHeader'
-import { useAdminUpdateUserMutation, useListUsersQuery } from '@/features/users/usersApi'
+import { useAdminUpdateUserMutation, useAdminDeleteUserMutation, useListUsersQuery } from '@/features/users/usersApi'
+import { auditLogger } from '@/utils/auditLogger'
+import { useAppSelector } from '@/app/hooks'
+import { selectCurrentUser } from '@/features/auth/authSlice'
 import { getApiErrorMessage } from '@/lib/errors'
 import { EDITABLE_ROLES, ROLE_LABELS } from '@/lib/user'
 import type { AdminChangeRoleDto, User, UserRole } from '@/types/user.types'
@@ -39,6 +42,24 @@ export default function AdminUsersPage() {
   })
 
   const [adminUpdateUser, { isLoading: isSaving }] = useAdminUpdateUserMutation()
+  const [adminDeleteUser, { isLoading: isDeleting }] = useAdminDeleteUserMutation()
+  const currentAdmin = useAppSelector(selectCurrentUser)
+  const handleDeleteUser = async (user: User) => {
+    if (currentAdmin?._id === user._id) {
+      toast.error('You cannot delete your own admin account from this screen.')
+      return
+    }
+
+    if (!window.confirm(`Are you sure you want to delete user ${user.displayName}? This action cannot be undone.`)) return
+    try {
+      await adminDeleteUser(user._id).unwrap()
+      auditLogger.log(currentAdmin?._id || 'admin', 'delete_user', { targetUserId: user._id, targetEmail: user.email })
+      toast.success(`Deleted ${user.displayName}`)
+    } catch (error) {
+      const fallbackMessage = 'Could not delete user. If this backend does not expose admin delete yet, remove from UI or enable DELETE /api/users/:id.'
+      toast.error(getApiErrorMessage(error, fallbackMessage))
+    }
+  }
   const [drafts, setDrafts] = useState<Record<string, UserRowEdits>>({})
 
   const users = useMemo(() => data?.data ?? [], [data?.data])
@@ -90,6 +111,11 @@ export default function AdminUsersPage() {
 
     try {
       await adminUpdateUser({ id: user._id, ...payload }).unwrap()
+      auditLogger.log(currentAdmin?._id || 'admin', 'update_user', {
+        targetUserId: user._id,
+        targetEmail: user.email,
+        changes: payload,
+      })
       toast.success(`Updated ${user.displayName}`)
       setDrafts((current) => {
         const next = { ...current }
@@ -242,7 +268,7 @@ export default function AdminUsersPage() {
                         {new Date(user.createdAt).toLocaleDateString()}
                       </td>
 
-                      <td className="px-2 py-3 align-top">
+                      <td className="px-2 py-3 align-top flex gap-2">
                         <button
                           type="button"
                           disabled={!dirty || isSaving}
@@ -250,6 +276,14 @@ export default function AdminUsersPage() {
                           className="rounded bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           Save
+                        </button>
+                        <button
+                          type="button"
+                          disabled={isDeleting || currentAdmin?._id === user._id}
+                          onClick={() => handleDeleteUser(user)}
+                          className="rounded bg-destructive px-3 py-1.5 text-xs font-medium text-destructive-foreground transition hover:bg-destructive/90 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          Delete
                         </button>
                       </td>
                     </tr>

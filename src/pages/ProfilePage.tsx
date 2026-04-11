@@ -12,9 +12,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 
+type TabId = 'info' | 'stations' | 'reviews'
+
 /**
- * ProfilePage — view and edit the current user's profile.
- *
+ * ProfilePage — view and edit the current user's profile with tabs.
  */
 export default function ProfilePage() {
   const navigate = useNavigate()
@@ -23,6 +24,7 @@ export default function ProfilePage() {
   const [deleteMe, { isLoading: isDeleting }] = useDeleteMeMutation()
   const [editedDisplayName, setEditedDisplayName] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState<TabId>('info')
 
   const user = data?.data
   const displayName = editedDisplayName ?? user?.displayName ?? ''
@@ -63,15 +65,21 @@ export default function ProfilePage() {
     }
   }
 
+  const TABS: Array<{ id: TabId; label: string }> = [
+    { id: 'info', label: 'My Info' },
+    { id: 'stations', label: 'My Stations' },
+    { id: 'reviews', label: 'My Reviews' },
+  ]
+
   return (
     <Layout showSidebar>
       <PageHeader
         title="My Profile"
-        description="Manage your account details"
+        description="Manage your account details and content"
       />
 
       {isLoading && (
-        <div className="max-w-3xl space-y-4">
+        <div className="max-w-4xl space-y-4">
           <div className="h-28 animate-pulse rounded-2xl border border-slate-200 bg-white" />
           <div className="h-72 animate-pulse rounded-2xl border border-slate-200 bg-white" />
         </div>
@@ -84,7 +92,8 @@ export default function ProfilePage() {
       )}
 
       {user && (
-        <div className="max-w-3xl space-y-6">
+        <div className="max-w-4xl space-y-6">
+          {/* User Header Card */}
           <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_28px_rgba(15,23,42,0.06)]">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-4">
@@ -107,90 +116,136 @@ export default function ProfilePage() {
             </div>
           </section>
 
-          <form onSubmit={handleSave} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_28px_rgba(15,23,42,0.06)]">
-            <h2 className="text-lg font-bold text-[#133c1d]">Profile Details</h2>
-            <p className="mt-1 text-sm text-slate-500">Update your display name. Email address is read-only.</p>
-
-            {errorMessage && (
-              <p className="mt-3 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                {errorMessage}
-              </p>
-            )}
-
-            <div className="mt-5 grid gap-5 md:grid-cols-2">
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="displayName" className="text-sm text-slate-700">Display Name</Label>
-                <div className="relative">
-                  <UserRound className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                  <Input
-                    id="displayName"
-                  type="text"
-                  value={displayName}
-                  onChange={(e) => setEditedDisplayName(e.target.value)}
-                    className="h-10 pl-9"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="email" className="text-sm text-slate-700">Email</Label>
-                <div className="relative">
-                  <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                  <Input
-                    id="email"
-                  type="email"
-                  value={user.email}
-                  disabled
-                    className="h-10 bg-slate-50 pl-9 text-slate-500"
-                  />
-                </div>
-              </div>
-
-              <div className="md:col-span-2 grid gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 md:grid-cols-3">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Role</p>
-                  <p className="mt-1 font-semibold text-slate-800">{roleLabel}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Email</p>
-                  <p className="mt-1 font-semibold text-slate-800">{user.isEmailVerified ? 'Verified' : 'Unverified'}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Account</p>
-                  <p className="mt-1 inline-flex items-center gap-1 font-semibold text-slate-800">
-                    <ShieldCheck className="h-4 w-4 text-emerald-600" />
-                    {user.isActive ? 'Active' : 'Inactive'}
-                  </p>
-                </div>
+          {/* Tab Navigation */}
+          <div className="rounded-2xl border border-slate-200 bg-white shadow-[0_8px_28px_rgba(15,23,42,0.06)] overflow-hidden">
+            <div className="border-b border-slate-200 bg-slate-50">
+              <div className="flex">
+                {TABS.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex-1 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                      activeTab === tab.id
+                        ? 'border-emerald-600 text-emerald-700'
+                        : 'border-transparent text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
               </div>
             </div>
 
-            <div className="mt-6 flex items-center justify-end">
-              <Button
-                type="submit"
-                disabled={isSaving || isUnchanged}
-                  className="rounded-xl px-5"
-              >
-                {isSaving ? 'Saving...' : 'Save changes'}
-              </Button>
-            </div>
-          </form>
+            {/* Tab Content */}
+            <div className="p-6">
+              {/* My Info Tab */}
+              {activeTab === 'info' && (
+                <form onSubmit={handleSave} className="space-y-6">
+                  <div>
+                    <h2 className="text-lg font-bold text-[#133c1d]">Profile Details</h2>
+                    <p className="mt-1 text-sm text-slate-500">Update your display name. Email address is read-only.</p>
+                  </div>
 
-          <section className="rounded-2xl border border-destructive/30 bg-destructive/5 p-5">
-            <h2 className="text-base font-semibold text-destructive">Danger Zone</h2>
-            <p className="mt-1 text-sm text-slate-600">
-              Deleting your account will deactivate it and revoke active sessions.
-            </p>
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="mt-4 rounded-xl"
-            >
-              {isDeleting ? 'Deleting...' : 'Delete account'}
-            </Button>
-          </section>
+                  {errorMessage && (
+                    <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                      {errorMessage}
+                    </p>
+                  )}
+
+                  <div className="grid gap-5 md:grid-cols-2">
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="displayName" className="text-sm text-slate-700">Display Name</Label>
+                      <div className="relative">
+                        <UserRound className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                        <Input
+                          id="displayName"
+                          type="text"
+                          value={displayName}
+                          onChange={(e) => setEditedDisplayName(e.target.value)}
+                          className="h-10 pl-9"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="email" className="text-sm text-slate-700">Email</Label>
+                      <div className="relative">
+                        <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                        <Input
+                          id="email"
+                          type="email"
+                          value={user.email}
+                          disabled
+                          className="h-10 bg-slate-50 pl-9 text-slate-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="md:col-span-2 grid gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 md:grid-cols-3">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Role</p>
+                        <p className="mt-1 font-semibold text-slate-800">{roleLabel}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Email Status</p>
+                        <p className="mt-1 font-semibold text-slate-800">{user.isEmailVerified ? 'Verified' : 'Unverified'}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Account</p>
+                        <p className="mt-1 inline-flex items-center gap-1 font-semibold text-slate-800">
+                          <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                          {user.isActive ? 'Active' : 'Inactive'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end pt-4 border-t border-slate-200">
+                    <Button
+                      type="submit"
+                      disabled={isSaving || isUnchanged}
+                      className="rounded-xl px-5"
+                    >
+                      {isSaving ? 'Saving...' : 'Save changes'}
+                    </Button>
+                  </div>
+
+                  {/* Danger Zone */}
+                  <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-5">
+                    <h3 className="text-base font-semibold text-destructive">Danger Zone</h3>
+                    <p className="mt-1 text-sm text-slate-600">
+                      Deleting your account will deactivate it and revoke active sessions.
+                    </p>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={handleDelete}
+                      disabled={isDeleting}
+                      className="mt-4 rounded-xl"
+                    >
+                      {isDeleting ? 'Deleting...' : 'Delete account'}
+                    </Button>
+                  </div>
+                </form>
+              )}
+
+              {/* My Stations Tab */}
+              {activeTab === 'stations' && (
+                <div className="text-center py-12">
+                  <p className="text-slate-600">My Stations interface</p>
+                  <p className="mt-2 text-xs text-slate-500">View your submitted and approved solar stations</p>
+                </div>
+              )}
+
+              {/* My Reviews Tab */}
+              {activeTab === 'reviews' && (
+                <div className="text-center py-12">
+                  <p className="text-slate-600">My Reviews interface</p>
+                  <p className="mt-2 text-xs text-slate-500">View your submitted reviews and ratings</p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </Layout>
