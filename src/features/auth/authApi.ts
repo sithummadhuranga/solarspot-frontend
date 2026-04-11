@@ -69,8 +69,15 @@ export const authApi = baseApi.injectEndpoints({
       }),
     }),
 
-    verifyEmail: builder.query<ApiResponse<null>, string>({
+    verifyEmail: builder.query<ApiResponse<AuthSessionPayload>, string>({
       query: (token) => `/auth/verify-email/${token}`,
+      transformResponse: (response: ApiResponse<AuthSessionPayload>) => ({
+        ...response,
+        data: {
+          accessToken: response.data.accessToken,
+          user: normalizeUser(response.data.user),
+        },
+      }),
     }),
 
     forgotPassword: builder.mutation<ApiResponse<null>, ForgotPwdRequest>({

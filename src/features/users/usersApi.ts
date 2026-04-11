@@ -63,8 +63,18 @@ export const usersApi = baseApi.injectEndpoints({
       invalidatesTags: ['User'],
     }),
 
+
     getUserById: builder.query<ApiResponse<User>, string>({
       query: (id) => `/users/${id}`,
+      transformResponse: (response: ApiResponse<User>) => ({
+        ...response,
+        data: normalizeUser(response.data),
+      }),
+      providesTags: (_res, _err, id) => [{ type: 'User', id }],
+    }),
+
+    getUserPublicProfile: builder.query<ApiResponse<User>, string>({
+      query: (id) => `/api/users/${id}/public`,
       transformResponse: (response: ApiResponse<User>) => ({
         ...response,
         data: normalizeUser(response.data),
@@ -82,12 +92,17 @@ export const usersApi = baseApi.injectEndpoints({
     }),
 
     adminUpdateUser: builder.mutation<ApiResponse<User>, { id: string } & AdminUpdateUserInput>({
-      query: ({ id, ...body }) => ({ url: `/users/${id}`, method: 'PUT', body }),
+      query: ({ id, ...body }) => ({ url: `/api/admin/users/${id}`, method: 'PUT', body }),
       transformResponse: (response: ApiResponse<User>) => ({
         ...response,
         data: normalizeUser(response.data),
       }),
       invalidatesTags: (_res, _err, { id }) => [{ type: 'User', id }, 'User'],
+    }),
+
+    adminDeleteUser: builder.mutation<void, string>({
+      query: (id) => ({ url: `/api/admin/users/${id}`, method: 'DELETE' }),
+      invalidatesTags: (_res, _err, id) => [{ type: 'User', id }, 'User'],
     }),
   }),
   overrideExisting: false,
@@ -98,6 +113,8 @@ export const {
   useUpdateMeMutation,
   useDeleteMeMutation,
   useGetUserByIdQuery,
+  useGetUserPublicProfileQuery,
   useListUsersQuery,
   useAdminUpdateUserMutation,
+  useAdminDeleteUserMutation,
 } = usersApi

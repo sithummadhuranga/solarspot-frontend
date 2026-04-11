@@ -4,15 +4,26 @@ import { Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
 import { Layout } from '@/components/shared/Layout'
 import { Button } from '@/components/ui/button'
 import { useLazyVerifyEmailQuery } from '../features/auth/authApi'
+import { useDispatch } from 'react-redux'
+import { setCredentials } from '@/features/auth/authSlice'
 
 export default function VerifyEmailPage() {
-  const { token } = useParams<{ token: string }>()
-  const [verifyEmail, { isFetching, isSuccess, error }] = useLazyVerifyEmailQuery()
+  const { token } = useParams<{ token?: string }>()
+  const [verifyEmail, { isFetching, isSuccess, error, data }] = useLazyVerifyEmailQuery()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (!token) return
-    void verifyEmail(token, true)
+    verifyEmail(token, true)
   }, [token, verifyEmail])
+
+  useEffect(() => {
+    if (isSuccess && data && data.data && data.data.accessToken && data.data.user) {
+      dispatch(setCredentials({ token: data.data.accessToken, user: data.data.user }))
+      // Optionally redirect to dashboard or home after auto-login
+      // window.location.href = '/';
+    }
+  }, [isSuccess, data, dispatch])
 
   const apiMessage = error && 'data' in error
     ? (error.data as { message?: string })?.message
@@ -57,10 +68,10 @@ export default function VerifyEmailPage() {
             <div className="flex flex-col items-center gap-3">
               <CheckCircle2 className="h-6 w-6 text-green-600" />
               <p className="text-sm text-muted-foreground">
-                Your email has been verified. You can now sign in.
+                Your email has been verified and you are now signed in.
               </p>
               <Button asChild>
-                <Link to="/login">Continue to login</Link>
+                <Link to="/">Go to dashboard</Link>
               </Button>
             </div>
           )}

@@ -7,7 +7,9 @@ import type { UserRole } from '@/types/user.types'
 
 interface RoleGuardProps {
   /** Roles that are allowed to access the wrapped content. */
-  allowedRoles: UserRole[]
+  allowedRoles?: UserRole[]
+  /** Minimum role required (inclusive, e.g. 'admin' allows admin and higher). */
+  minRole?: UserRole
   /** Rendered when the user has the required role. */
   children: ReactNode
   /** Where to redirect on role mismatch. Defaults to /unauthorized. */
@@ -17,21 +19,44 @@ interface RoleGuardProps {
 /**
  * RoleGuard — renders children only when the current user's role is in allowedRoles.
  *
- * TODO (Member 4): integrate with the full role hierarchy (roleLevel comparison)
- *                  once the RBAC engine is implemented.
- *
+ * Supports both allowedRoles and minRole (role hierarchy).
  * Usage:
- *   <RoleGuard allowedRoles={['admin', 'moderator']}>
+ *   <RoleGuard minRole="admin">
  *     <AdminPanel />
  *   </RoleGuard>
+ *   <RoleGuard allowedRoles={['admin', 'moderator']}>...</RoleGuard>
  */
-export function RoleGuard({ allowedRoles, children, fallback = '/unauthorized' }: RoleGuardProps) {
-  const user = useAppSelector(selectCurrentUser)
-  const role = getRoleSlug(user?.role)
+const ROLE_HIERARCHY: UserRole[] = [
+  'guest',
+  'user',
+  'station_owner',
+  'featured_contributor',
+  'trusted_reviewer',
+  'review_moderator',
+  'weather_analyst',
+  'permission_auditor',
+  'moderator',
+  'admin',
+]
 
-  if (!user || !allowedRoles.includes(role as UserRole)) {
-    return <Navigate to={fallback} replace />
+export function RoleGuard({ allowedRoles, minRole, children, fallback = '/unauthorized' }: RoleGuardProps) {
+  const user = useAppSelector(selectCurrentUser)
+  const role = getRoleSlug(user?.role) as UserRole
+
+  let allowed = false
+  if (!user) allowed = false
+  else if (allowedRoles && allowedRoles.length > 0) {
+    allowed = allowedRoles.includes(role)
+  } else if (minRole) {
+    const userIdx = ROLE_HIERARCHY.indexOf(role)
+    const minIdx = ROLE_HIERARCHY.indexOf(minRole)
+    allowed = userIdx >= minIdx
+  } else {
+    allowed = true // No restriction
   }
 
+  if (!allowed) {
+    return <Navigate to={fallback} replace />
+  }
   return <>{children}</>
 }
