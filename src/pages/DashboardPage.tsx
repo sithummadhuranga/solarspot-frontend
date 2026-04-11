@@ -13,8 +13,8 @@ import {
 import { Layout } from '@/components/shared/Layout'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { useAuth } from '@/hooks/useAuth'
+import { useStationsList } from '@/hooks/useStations'
 import { getSafeText } from '@/lib/auth'
-import { useListStationsQuery } from '@/features/stations/stationsApi'
 import {
   useGetLiveWeatherQuery,
   useGetSolarReportsQuery,
@@ -88,14 +88,14 @@ export default function DashboardPage() {
   const safeDisplayName = getSafeText(user?.displayName)
   const userDisplayName = !safeDisplayName || safeDisplayName === 'N/A' ? 'Explorer' : safeDisplayName
 
-  const { data: stationResponse, isLoading: stationsLoading } = useListStationsQuery(
+  const { data: stationResponse, isLoading: stationsLoading } = useStationsList(
     {
       submittedBy: user?._id,
       page: 1,
       limit: 50,
       sortBy: 'newest',
     },
-    { skip: !user?._id },
+    { enabled: Boolean(user?._id) },
   )
 
   const { data: reportResponse, isLoading: reportsLoading } = useGetSolarReportsQuery(
@@ -131,6 +131,9 @@ export default function DashboardPage() {
 
   const latestReport = reports[0]
   const liveWeather = liveWeatherResponse?.data
+  const liveSolar = liveWeather?.solar
+  const liveStationWeather = liveWeather?.station
+  const liveWeatherMain = liveWeather?.weather?.weatherMain
   const analytics = analyticsResponse?.data
 
   return (
@@ -173,10 +176,10 @@ export default function DashboardPage() {
         />
         <StatCard
           title="Solar Watch"
-          value={liveWeather ? `${liveWeather.solar.solarScore}/100` : '--'}
+          value={liveSolar ? `${liveSolar.solarScore}/100` : '--'}
           detail={
-            liveWeather
-              ? `${liveWeather.station.name} · ${liveWeather.solar.estimatedOutputKw.toFixed(2)} kW estimated`
+            liveSolar && liveStationWeather
+              ? `${liveStationWeather.name} · ${liveSolar.estimatedOutputKw.toFixed(2)} kW estimated`
               : 'Add or activate a station to see a live solar snapshot'
           }
           icon={<Zap className="h-5 w-5" />}
@@ -324,10 +327,10 @@ export default function DashboardPage() {
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-100/80">Live output outlook</p>
-                      <p className="mt-3 text-4xl font-black">{liveWeather ? `${liveWeather.solar.solarScore}/100` : '--'}</p>
+                      <p className="mt-3 text-4xl font-black">{liveSolar ? `${liveSolar.solarScore}/100` : '--'}</p>
                       <p className="mt-2 text-sm text-emerald-50/85">
-                        {liveWeather
-                          ? `${liveWeather.solar.estimatedOutputKw.toFixed(2)} kW estimated under ${liveWeather.weather.weatherMain.toLowerCase()} conditions`
+                        {liveSolar
+                          ? `${liveSolar.estimatedOutputKw.toFixed(2)} kW estimated under ${(liveWeatherMain ?? 'current').toLowerCase()} conditions`
                           : liveWeatherLoading
                             ? 'Loading live solar conditions…'
                             : 'Live weather will appear once data is available.'}
@@ -340,12 +343,14 @@ export default function DashboardPage() {
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="rounded-2xl bg-slate-50 p-4">
                     <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Analytics reports</p>
-                    <p className="mt-2 text-2xl font-black text-slate-900">{analytics?.overview.totalReports ?? 0}</p>
+                    <p className="mt-2 text-2xl font-black text-slate-900">{analytics?.overview?.totalReports ?? 0}</p>
                   </div>
                   <div className="rounded-2xl bg-slate-50 p-4">
                     <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Average station score</p>
                     <p className="mt-2 text-2xl font-black text-slate-900">
-                      {analytics?.hasData ? `${Math.round(analytics.overview.avgSolarScore)}/100` : '--'}
+                      {analytics?.hasData && typeof analytics?.overview?.avgSolarScore === 'number'
+                        ? `${Math.round(analytics.overview.avgSolarScore)}/100`
+                        : '--'}
                     </p>
                   </div>
                 </div>
@@ -356,7 +361,7 @@ export default function DashboardPage() {
                     {(activeStation.address.city || activeStation.address.formattedAddress || 'Location not specified')}
                   </div>
                   <p className="mt-2">
-                    {liveWeather?.weather.isFallback
+                    {liveWeather?.weather?.isFallback
                       ? 'Showing fallback weather data because the external forecast source is unavailable right now.'
                       : 'Using the latest live weather payload from the solar intelligence service.'}
                   </p>

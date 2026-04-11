@@ -37,10 +37,10 @@ type StatusFilter = 'all' | 'published' | 'draft' | 'archived'
 
 function StatusBadge({ status }: { status: SolarReport['status'] }) {
   const cfg = {
-    published: { icon: <CheckCircle2 className="h-3 w-3" />, text: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30', label: 'Published' },
-    draft:     { icon: <Clock        className="h-3 w-3" />, text: 'text-amber-400',   bg: 'bg-amber-500/10 border-amber-500/30',     label: 'Draft'     },
-    archived:  { icon: <Archive      className="h-3 w-3" />, text: 'text-slate-400',   bg: 'bg-slate-700/60 border-slate-600/40',     label: 'Archived'  },
-  }[status] ?? { icon: null, text: 'text-slate-400', bg: 'bg-slate-700/40 border-slate-600/40', label: status }
+    published: { icon: <CheckCircle2 className="h-3 w-3" />, text: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200', label: 'Published' },
+    draft:     { icon: <Clock className="h-3 w-3" />, text: 'text-amber-700', bg: 'bg-amber-50 border-amber-200', label: 'Draft' },
+    archived:  { icon: <Archive className="h-3 w-3" />, text: 'text-gray-600', bg: 'bg-gray-100 border-gray-200', label: 'Archived' },
+  }[status] ?? { icon: null, text: 'text-gray-600', bg: 'bg-gray-100 border-gray-200', label: status }
 
   return (
     <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${cfg.bg} ${cfg.text}`}>
@@ -90,7 +90,7 @@ function ReportTableRow({ report }: { report: SolarReport }) {
   }
 
   return (
-    <div className="rounded-xl border border-slate-700/60 bg-slate-800/50 p-4 hover:border-slate-600/80 transition-all group">
+    <div className="rounded-[16px] border border-gray-100 bg-white p-4 shadow-sm transition-all hover:border-[#8cc63f]/40">
       <div className="flex items-start gap-3">
         <ScoreBadge score={report.solarScore} />
 
@@ -99,31 +99,31 @@ function ReportTableRow({ report }: { report: SolarReport }) {
           <div className="flex flex-wrap items-center gap-2 mb-1">
             <Link
               to={`/stations/${stationId}`}
-              className="text-sm font-bold text-white hover:text-emerald-300 transition-colors truncate"
+              className="truncate text-sm font-bold text-[#133c1d] transition-colors hover:text-[#276537]"
             >
               {stationName}
             </Link>
             <StatusBadge status={report.status} />
           </div>
-          <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 mb-3">
-            <span>by <span className="text-slate-300 font-medium">{submitter}</span></span>
+          <div className="mb-3 flex flex-wrap items-center gap-3 text-xs text-gray-500">
+            <span>by <span className="font-medium text-gray-700">{submitter}</span></span>
             <span>·</span>
             <time>{formatDate(report.visitedAt)}</time>
           </div>
 
           {/* Output metrics */}
-          <div className="flex flex-wrap gap-4 mb-3">
-            <Stat label="Est." value={`${report.estimatedOutputKw} kW`} colour="text-sky-300" />
+          <div className="mb-3 flex flex-wrap gap-4">
+            <Stat label="Est." value={`${report.estimatedOutputKw} kW`} colour="text-sky-700" />
             {report.actualOutputKw !== null && (
-              <Stat label="Actual" value={`${report.actualOutputKw} kW`} colour="text-emerald-300" />
+              <Stat label="Actual" value={`${report.actualOutputKw} kW`} colour="text-emerald-700" />
             )}
             {report.accuracyPct !== null && (
-              <Stat label="Accuracy" value={`${report.accuracyPct}%`} colour="text-violet-300" />
+              <Stat label="Accuracy" value={`${report.accuracyPct}%`} colour="text-amber-700" />
             )}
           </div>
 
           {/* Weather conditions */}
-          <div className="flex flex-wrap gap-2 text-[11px] text-slate-500 mb-3">
+          <div className="mb-3 flex flex-wrap gap-2 text-[11px] text-gray-500">
             <span className="flex items-center gap-1"><Thermometer className="h-3 w-3" />{w.temperatureC}°C</span>
             <span className="flex items-center gap-1"><Cloud className="h-3 w-3" />{w.cloudCoverPct}%</span>
             <span className="flex items-center gap-1"><Sun className="h-3 w-3" />UV {w.uvIndex.toFixed(1)}</span>
@@ -132,14 +132,14 @@ function ReportTableRow({ report }: { report: SolarReport }) {
 
           {/* Notes */}
           {report.notes && (
-            <p className="text-xs text-slate-400 italic mb-3 line-clamp-2 border-l-2 border-slate-700 pl-2">
+            <p className="mb-3 line-clamp-2 border-l-2 border-gray-200 pl-2 text-xs italic text-gray-500">
               {report.notes}
             </p>
           )}
 
           {/* Error */}
           {rowError && (
-            <p className="text-xs text-red-400 flex items-center gap-1 mb-2">
+            <p className="mb-2 flex items-center gap-1 text-xs text-red-600">
               <AlertCircle className="h-3.5 w-3.5 shrink-0" /> {rowError}
             </p>
           )}
@@ -150,7 +150,7 @@ function ReportTableRow({ report }: { report: SolarReport }) {
               <button
                 onClick={handleArchive}
                 disabled={archiving}
-                className="flex items-center gap-1.5 rounded-lg border border-orange-600/40 bg-orange-900/10 px-2.5 py-1 text-xs font-semibold text-orange-400 hover:bg-orange-900/20 disabled:opacity-40 transition-colors"
+                className="flex items-center gap-1.5 rounded-lg border border-orange-200 bg-orange-50 px-2.5 py-1 text-xs font-semibold text-orange-700 transition-colors hover:bg-orange-100 disabled:opacity-40"
               >
                 <Archive className="h-3 w-3" />
                 {archiving ? 'Archiving…' : 'Archive'}
@@ -159,7 +159,7 @@ function ReportTableRow({ report }: { report: SolarReport }) {
               <button
                 onClick={handleRestore}
                 disabled={publishing}
-                className="flex items-center gap-1.5 rounded-lg border border-emerald-600/40 bg-emerald-900/10 px-2.5 py-1 text-xs font-semibold text-emerald-400 hover:bg-emerald-900/20 disabled:opacity-40 transition-colors"
+                className="flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100 disabled:opacity-40"
               >
                 <CheckCircle2 className="h-3 w-3" />
                 {publishing ? 'Restoring…' : 'Restore to Published'}
@@ -175,7 +175,7 @@ function ReportTableRow({ report }: { report: SolarReport }) {
 function Stat({ label, value, colour }: { label: string; value: string; colour: string }) {
   return (
     <div>
-      <p className="text-[10px] text-slate-500 uppercase tracking-wider">{label}</p>
+      <p className="text-[10px] uppercase tracking-wider text-gray-400">{label}</p>
       <p className={`text-xs font-bold tabular-nums ${colour}`}>{value}</p>
     </div>
   )
@@ -184,15 +184,15 @@ function Stat({ label, value, colour }: { label: string; value: string; colour: 
 // ── Filter tab ────────────────────────────────────────────────────────────────
 
 function FilterTab({ active, label, onClick }: {
-  value: StatusFilter; active: boolean; label: string; onClick: () => void
+  active: boolean; label: string; onClick: () => void
 }) {
   return (
     <button
       onClick={onClick}
       className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
         active
-          ? 'bg-emerald-600/20 border border-emerald-600/40 text-emerald-300'
-          : 'text-slate-400 hover:text-slate-200 border border-transparent'
+          ? 'border border-[#8cc63f]/40 bg-[#8cc63f]/15 text-[#133c1d]'
+          : 'border border-transparent text-gray-500 hover:text-[#133c1d]'
       }`}
     >
       {label}
@@ -248,43 +248,43 @@ export default function AdminSolarReportsPage() {
         title="Solar Reports — Admin"
         description="Monitor, moderate, and manage all crowdsourced solar intelligence reports"
         actions={
-          <div className="flex items-center gap-2 rounded-xl bg-red-900/20 border border-red-800/40 px-3 py-2">
-            <Shield className="h-4 w-4 text-red-400 shrink-0" />
-            <span className="text-xs font-bold text-red-300">Admin Only</span>
+          <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2">
+            <Shield className="h-4 w-4 shrink-0 text-red-500" />
+            <span className="text-xs font-bold text-red-700">Admin Only</span>
           </div>
         }
       />
 
       {/* ── Summary stats ─────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 mb-6">
-        <AdminStatCard icon={<FileText  className="h-4 w-4 text-slate-400" />}    label="Total"     value={statsAll?.pagination.total ?? 0}       color="text-white" />
-        <AdminStatCard icon={<CheckCircle2 className="h-4 w-4 text-emerald-400" />} label="Published" value={statsPublished?.pagination.total ?? 0}  color="text-emerald-400" />
-        <AdminStatCard icon={<Clock     className="h-4 w-4 text-amber-400" />}    label="Drafts"    value={statsDraft?.pagination.total ?? 0}      color="text-amber-400" />
-        <AdminStatCard icon={<Archive   className="h-4 w-4 text-slate-500" />}    label="Archived"  value={statsArchived?.pagination.total ?? 0}   color="text-slate-400" />
+        <AdminStatCard icon={<FileText className="h-4 w-4 text-gray-500" />} label="Total" value={statsAll?.pagination.total ?? 0} color="text-[#133c1d]" />
+        <AdminStatCard icon={<CheckCircle2 className="h-4 w-4 text-emerald-600" />} label="Published" value={statsPublished?.pagination.total ?? 0} color="text-emerald-700" />
+        <AdminStatCard icon={<Clock className="h-4 w-4 text-amber-600" />} label="Drafts" value={statsDraft?.pagination.total ?? 0} color="text-amber-700" />
+        <AdminStatCard icon={<Archive className="h-4 w-4 text-gray-500" />} label="Archived" value={statsArchived?.pagination.total ?? 0} color="text-gray-700" />
       </div>
 
       {/* ── Filters bar ───────────────────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center gap-3 mb-6 p-4 rounded-2xl border border-slate-700/60 bg-slate-800/40">
+      <div className="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
         {/* Status filter */}
-        <div className="flex items-center gap-1 bg-slate-900/50 rounded-xl p-1 border border-slate-800">
-          <Filter className="h-3.5 w-3.5 text-slate-500 ml-2 mr-1 shrink-0" />
-          <FilterTab value="all"       active={statusFilter === 'all'}       label="All"       onClick={() => handleStatusChange('all')} />
-          <FilterTab value="published" active={statusFilter === 'published'} label="Published" onClick={() => handleStatusChange('published')} />
-          <FilterTab value="draft"     active={statusFilter === 'draft'}     label="Drafts"    onClick={() => handleStatusChange('draft')} />
-          <FilterTab value="archived"  active={statusFilter === 'archived'}  label="Archived"  onClick={() => handleStatusChange('archived')} />
+        <div className="flex items-center gap-1 rounded-xl border border-gray-200 bg-gray-50 p-1">
+          <Filter className="ml-2 mr-1 h-3.5 w-3.5 shrink-0 text-gray-500" />
+          <FilterTab active={statusFilter === 'all'} label="All" onClick={() => handleStatusChange('all')} />
+          <FilterTab active={statusFilter === 'published'} label="Published" onClick={() => handleStatusChange('published')} />
+          <FilterTab active={statusFilter === 'draft'} label="Drafts" onClick={() => handleStatusChange('draft')} />
+          <FilterTab active={statusFilter === 'archived'} label="Archived" onClick={() => handleStatusChange('archived')} />
         </div>
 
         {/* Station name filter */}
         <div className="relative flex-1 min-w-52">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500 pointer-events-none" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-500" />
           <input
             value={stationSearch}
             onChange={(e) => setStationSearch(e.target.value)}
             placeholder="Filter by station name…"
-            className="w-full rounded-xl border border-slate-700 bg-slate-800/60 py-2 pl-9 pr-8 text-sm text-white placeholder:text-slate-500 focus:border-emerald-600/50 focus:outline-none focus:ring-1 focus:ring-emerald-600/30 transition-all"
+            className="w-full rounded-xl border border-gray-200 bg-white py-2 pl-9 pr-8 text-sm text-gray-800 placeholder:text-gray-400 transition-all focus:border-[#8cc63f] focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/20"
           />
           {stationSearch && (
-            <button onClick={() => setStationSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white">
+            <button onClick={() => setStationSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
               <X className="h-3.5 w-3.5" />
             </button>
           )}
@@ -295,17 +295,17 @@ export default function AdminSolarReportsPage() {
       {query.isLoading && (
         <div className="space-y-3">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-36 rounded-xl bg-slate-800/60 animate-pulse border border-slate-700/40" />
+            <div key={i} className="h-36 animate-pulse rounded-xl border border-gray-100 bg-gray-100/70" />
           ))}
         </div>
       )}
 
       {/* ── Empty state ────────────────────────────────────────────────────── */}
       {!query.isLoading && filtered.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 rounded-2xl border-2 border-dashed border-slate-700 text-center">
-          <Zap className="h-12 w-12 text-slate-600 mb-3" />
-          <p className="text-sm font-bold text-slate-400">No reports found</p>
-          <p className="text-xs text-slate-500 mt-1">Try adjusting your filters.</p>
+        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 bg-white py-20 text-center">
+          <Zap className="mb-3 h-12 w-12 text-gray-400" />
+          <p className="text-sm font-bold text-gray-700">No reports found</p>
+          <p className="mt-1 text-xs text-gray-500">Try adjusting your filters.</p>
         </div>
       )}
 
@@ -317,7 +317,7 @@ export default function AdminSolarReportsPage() {
           </div>
 
           {/* Count */}
-          <p className="text-center text-xs text-slate-500 mb-4">
+          <p className="mb-4 text-center text-xs text-gray-500">
             Page {page} · {pagination?.total ?? 0} total report{(pagination?.total ?? 0) !== 1 ? 's' : ''}
           </p>
 
@@ -327,17 +327,17 @@ export default function AdminSolarReportsPage() {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={!pagination?.hasPrev}
-                className="flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-2 text-sm font-semibold text-slate-300 hover:bg-slate-700 disabled:opacity-30 transition-colors"
+                className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-30"
               >
                 <ChevronLeft className="h-4 w-4" /> Prev
               </button>
-              <span className="text-sm text-slate-400 tabular-nums">
+              <span className="text-sm tabular-nums text-gray-500">
                 {page} / {pagination?.totalPages}
               </span>
               <button
                 onClick={() => setPage((p) => Math.min(pagination?.totalPages ?? 1, p + 1))}
                 disabled={!pagination?.hasNext}
-                className="flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-2 text-sm font-semibold text-slate-300 hover:bg-slate-700 disabled:opacity-30 transition-colors"
+                className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-30"
               >
                 Next <ChevronRight className="h-4 w-4" />
               </button>
@@ -347,15 +347,15 @@ export default function AdminSolarReportsPage() {
       )}
 
       {/* Attribution */}
-      <p className="mt-10 text-center text-xs text-slate-600">
+      <p className="mt-10 text-center text-xs text-gray-500">
         Solar data powered by{' '}
-        <a href="https://openweathermap.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-400">
+        <a href="https://openweathermap.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#133c1d]">
           OpenWeatherMap
         </a>
         {' · '}
-        <Link to="/weather" className="underline hover:text-slate-400">Solar Intelligence Dashboard</Link>
+        <Link to="/weather" className="underline hover:text-[#133c1d]">Solar Intelligence Dashboard</Link>
         {' · '}
-        <Link to="/admin/solar/analytics" className="underline hover:text-slate-400">
+        <Link to="/admin/solar/analytics" className="underline hover:text-[#133c1d]">
           <BarChart2 className="h-3 w-3 inline mr-0.5" />Station Analytics
         </Link>
       </p>
@@ -367,8 +367,8 @@ function AdminStatCard({ icon, label, value, color }: {
   icon: React.ReactNode; label: string; value: number; color: string
 }) {
   return (
-    <div className="rounded-xl border border-slate-700/60 bg-slate-800/50 p-4">
-      <div className="flex items-center gap-2 mb-2">{icon}<span className="text-[10px] text-slate-500 uppercase tracking-wider">{label}</span></div>
+    <div className="rounded-[16px] border border-gray-100 bg-white p-4 shadow-sm">
+      <div className="mb-2 flex items-center gap-2">{icon}<span className="text-[10px] uppercase tracking-wider text-gray-400">{label}</span></div>
       <p className={`text-2xl font-extrabold tabular-nums ${color}`}>{value}</p>
     </div>
   )

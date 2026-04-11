@@ -9,7 +9,6 @@ import App from './App'
 import './index.css'
 
 import '@/features/auth/authApi'
-import '@/features/stations/stationsApi'
 import '@/features/reviews/reviewsApi'
 import '@/features/weather/weatherApi'
 import '@/features/weather/solarApi'

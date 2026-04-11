@@ -2,14 +2,17 @@ import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tansta
 import { toast } from 'sonner'
 import {
   getStations,
+  searchStations,
   getNearbyStations,
   getPendingStations,
   getStation,
+  getStationStats,
   createStation,
   updateStation,
   approveStation,
   rejectStation,
   deleteStation,
+  featureStation,
 } from '@/api/stations.api'
 import type { ApiResponse, PaginatedResponse } from '@/types/api.types'
 import type { Station, NearbyStation } from '@/types/station.types'
@@ -20,18 +23,26 @@ export const stationKeys = {
   all:     ['stations'] as const,
   lists:   () => [...stationKeys.all, 'list'] as const,
   list:    (filters: StationQueryParams) => [...stationKeys.lists(), filters] as const,
+  searches: () => [...stationKeys.all, 'search'] as const,
+  search:  (q: string, page: number, limit: number) => [...stationKeys.searches(), { q, page, limit }] as const,
   nearby:  (params: NearbyQueryParams) => [...stationKeys.all, 'nearby', params] as const,
   pending: () => [...stationKeys.all, 'pending'] as const,
   details: () => [...stationKeys.all, 'detail'] as const,
   detail:  (id: string) => [...stationKeys.details(), id] as const,
+  stats:   (id: string) => [...stationKeys.all, 'stats', id] as const,
+}
+
+interface UseStationsListOptions {
+  enabled?: boolean
 }
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
-export function useStationsList(params: StationQueryParams = {}) {
+export function useStationsList(params: StationQueryParams = {}, options: UseStationsListOptions = {}) {
   return useQuery<PaginatedResponse<Station>>({
     queryKey:    stationKeys.list(params),
     queryFn:     () => getStations(params),
+    enabled:     options.enabled ?? true,
     placeholderData: keepPreviousData,
     staleTime:   30_000,
   })
@@ -43,6 +54,17 @@ export function useNearbyStations(params: NearbyQueryParams | null) {
     queryFn:   () => getNearbyStations(params!),
     enabled:   params !== null,
     staleTime: 60_000,
+  })
+}
+
+export function useStationSearch(q: string | undefined, page = 1, limit = 10) {
+  const query = q?.trim() ?? ''
+  return useQuery<PaginatedResponse<Station>>({
+    queryKey: stationKeys.search(query, page, limit),
+    queryFn:  () => searchStations({ q: query, page, limit }),
+    enabled:  query.length > 0,
+    placeholderData: keepPreviousData,
+    staleTime: 30_000,
   })
 }
 
@@ -58,6 +80,15 @@ export function useStation(id: string | undefined) {
   return useQuery<ApiResponse<Station>>({
     queryKey: stationKeys.detail(id ?? ''),
     queryFn:  () => getStation(id!),
+    enabled:  Boolean(id),
+    staleTime: 60_000,
+  })
+}
+
+export function useStationStats(id: string | undefined) {
+  return useQuery<ApiResponse<unknown>>({
+    queryKey: stationKeys.stats(id ?? ''),
+    queryFn:  () => getStationStats(id!),
     enabled:  Boolean(id),
     staleTime: 60_000,
   })
@@ -143,6 +174,22 @@ export function useDeleteStation() {
     },
     onError: (err: Error) => {
       toast.error(err.message ?? 'Failed to delete station')
+    },
+  })
+}
+
+export function useFeatureStation() {
+  const queryClient = useQueryClient()
+
+  return useMutation<ApiResponse<Station>, Error, string>({
+    mutationFn: (id: string) => featureStation(id),
+    onSuccess: (_data, id: string) => {
+      void queryClient.invalidateQueries({ queryKey: stationKeys.detail(id) })
+      void queryClient.invalidateQueries({ queryKey: stationKeys.lists() })
+      toast.success('Station featured')
+    },
+    onError: (err: Error) => {
+      toast.error(err.message ?? 'Failed to feature station')
     },
   })
 }
