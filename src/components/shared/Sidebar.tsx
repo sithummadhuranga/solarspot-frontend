@@ -11,8 +11,6 @@ import { useCheckPermissionAccessQuery } from '@/features/permissions/permission
  */
 export function Sidebar() {
   const user = useAppSelector(selectCurrentUser)
-  const isModerator = user?.role === 'moderator' || user?.role === 'admin'
-  const isAdmin = user?.role === 'admin'
 
   const stationPendingCheck = useCheckPermissionAccessQuery(
     { action: 'stations.read-pending', context: {} },
@@ -29,9 +27,9 @@ export function Sidebar() {
     { skip: !user }
   )
 
-  const canModerateStations = isModerator && (stationPendingCheck.data?.data?.allowed  ?? false)
-  const canModerateReviews  = isModerator && (reviewModerateCheck.data?.data?.allowed  ?? false)
-  const canReadPermissions  = isAdmin && (permissionsReadCheck.data?.data?.allowed ?? false)
+  const canModerateStations = stationPendingCheck.data?.data?.allowed  ?? false
+  const canModerateReviews  = reviewModerateCheck.data?.data?.allowed  ?? false
+  const canReadPermissions  = permissionsReadCheck.data?.data?.allowed ?? false
 
   const hasModerationAccess = canModerateStations || canModerateReviews
 

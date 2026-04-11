@@ -32,12 +32,17 @@ export const stationKeys = {
   stats:   (id: string) => [...stationKeys.all, 'stats', id] as const,
 }
 
+interface UseStationsListOptions {
+  enabled?: boolean
+}
+
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
-export function useStationsList(params: StationQueryParams = {}) {
+export function useStationsList(params: StationQueryParams = {}, options: UseStationsListOptions = {}) {
   return useQuery<PaginatedResponse<Station>>({
     queryKey:    stationKeys.list(params),
     queryFn:     () => getStations(params),
+    enabled:     options.enabled ?? true,
     placeholderData: keepPreviousData,
     staleTime:   30_000,
   })

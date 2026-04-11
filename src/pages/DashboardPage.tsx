@@ -88,12 +88,15 @@ export default function DashboardPage() {
   const safeDisplayName = getSafeText(user?.displayName)
   const userDisplayName = !safeDisplayName || safeDisplayName === 'N/A' ? 'Explorer' : safeDisplayName
 
-  const { data: stationResponse, isLoading: stationsLoading } = useStationsList({
-    submittedBy: user?._id,
-    page: 1,
-    limit: 50,
-    sortBy: 'newest',
-  })
+  const { data: stationResponse, isLoading: stationsLoading } = useStationsList(
+    {
+      submittedBy: user?._id,
+      page: 1,
+      limit: 50,
+      sortBy: 'newest',
+    },
+    { enabled: Boolean(user?._id) },
+  )
 
   const { data: reportResponse, isLoading: reportsLoading } = useGetSolarReportsQuery(
     {
