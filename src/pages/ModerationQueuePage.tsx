@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Loader2, CheckCircle, XCircle, Eye, ClipboardList } from 'lucide-react'
+import { Loader2, CheckCircle, XCircle, Eye, ClipboardList, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Layout } from '@/components/shared/Layout'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { RejectionReasonModal } from '@/components/stations/RejectionReasonModal'
-import { usePendingStations, useApproveStation, useRejectStation } from '@/hooks/useStations'
+import { usePendingStations, useApproveStation, useRejectStation, useDeleteStation } from '@/hooks/useStations'
+import { useAuth } from '@/hooks/useAuth'
 import { formatDate } from '@/lib/utils'
 import type { Station } from '@/types/station.types'
 
@@ -55,10 +56,13 @@ export default function ModerationQueuePage() {
   const [rejectTarget, setRejectTarget] = useState<Station | null>(null)
   // Track which rows are fading (just-actioned)
   const [fadingIds,   setFadingIds]   = useState<Set<string>>(new Set())
+  const { role } = useAuth()
+  const isAdmin = role === 'admin'
 
   const { data, isLoading } = usePendingStations(page)
   const approveMutation     = useApproveStation()
   const rejectMutation      = useRejectStation()
+  const deleteMutation      = useDeleteStation()
 
   const stations   = data?.data ?? []
   const pagination = data?.pagination
@@ -85,6 +89,21 @@ export default function ModerationQueuePage() {
           }),
       }
     )
+  }
+
+  function handleDeleteStation(station: Station) {
+    const ok = window.confirm(`Delete station "${station.name}"? This action cannot be undone.`)
+    if (!ok) return
+
+    setFadingIds((s) => new Set(s).add(station._id))
+    deleteMutation.mutate(station._id, {
+      onSettled: () =>
+        setFadingIds((s) => {
+          const n = new Set(s)
+          n.delete(station._id)
+          return n
+        }),
+    })
   }
 
   return (
@@ -160,6 +179,17 @@ export default function ModerationQueuePage() {
                           <Button size="sm" variant="destructive" onClick={() => setRejectTarget(station)}>
                             <XCircle className="mr-1 h-3.5 w-3.5" /> Reject
                           </Button>
+                          {isAdmin && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-red-200 text-red-600 hover:bg-red-50"
+                              disabled={deleteMutation.isPending}
+                              onClick={() => handleDeleteStation(station)}
+                            >
+                              <Trash2 className="mr-1 h-3.5 w-3.5" /> Delete
+                            </Button>
+                          )}
                         </div>
                       </td>
                     </tr>

@@ -5,7 +5,7 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import {
   ChevronLeft, Star, MapPin, Zap, Sun, Clock, CheckCircle,
-  Shield, User, Calendar, Loader2, AlertTriangle, Edit2,
+  Shield, User, Calendar, Loader2, AlertTriangle, Edit2, Trash2,
   CloudSun,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -17,7 +17,7 @@ import { ForecastChart } from '@/features/weather/ForecastChart'
 import { SolarReportList } from '@/features/weather/SolarReportList'
 import { StationAnalyticsPanel } from '@/features/weather/StationAnalyticsPanel'
 import { ReviewList } from '@/components/reviews/ReviewList'
-import { useStation, useApproveStation, useRejectStation } from '@/hooks/useStations'
+import { useStation, useApproveStation, useRejectStation, useDeleteStation } from '@/hooks/useStations'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
 import type { Amenity } from '@/types/station.types'
@@ -76,9 +76,11 @@ export default function StationDetailPage() {
   const { data, isLoading, error } = useStation(id)
   const approveMutation            = useApproveStation()
   const rejectMutation             = useRejectStation()
+  const deleteMutation             = useDeleteStation()
 
   const station  = data?.data
   const isMod    = role === 'moderator' || role === 'admin'
+  const isAdmin  = role === 'admin'
   const isOwner  = user?._id === station?.submittedBy?._id
   const canOwnerEditStation = station ? ['pending', 'active'].includes(station.status) : false
 
@@ -91,6 +93,16 @@ export default function StationDetailPage() {
     if (!station) return
     rejectMutation.mutate({ id: station._id, dto: { rejectionReason: reason } }, {
       onSuccess: () => setRejectOpen(false),
+    })
+  }
+
+  function handleDelete() {
+    if (!station) return
+    const ok = window.confirm(`Delete station "${station.name}"? This action cannot be undone.`)
+    if (!ok) return
+
+    deleteMutation.mutate(station._id, {
+      onSuccess: () => navigate('/stations'),
     })
   }
 
@@ -428,6 +440,19 @@ export default function StationDetailPage() {
               >
                 <MapPin className="h-4 w-4" /> View on Map
               </Link>
+
+              {isAdmin && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full border-red-200 text-red-600 hover:bg-red-50 font-bold"
+                  onClick={handleDelete}
+                  disabled={deleteMutation.isPending}
+                >
+                  {deleteMutation.isPending ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Trash2 className="mr-1.5 h-4 w-4" />}
+                  Delete Station
+                </Button>
+              )}
             </div>
 
             {/* Moderation panel */}
