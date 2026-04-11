@@ -45,13 +45,19 @@ export default function AdminUsersPage() {
   const [adminDeleteUser, { isLoading: isDeleting }] = useAdminDeleteUserMutation()
   const currentAdmin = useAppSelector(selectCurrentUser)
   const handleDeleteUser = async (user: User) => {
+    if (currentAdmin?._id === user._id) {
+      toast.error('You cannot delete your own admin account from this screen.')
+      return
+    }
+
     if (!window.confirm(`Are you sure you want to delete user ${user.displayName}? This action cannot be undone.`)) return
     try {
       await adminDeleteUser(user._id).unwrap()
       auditLogger.log(currentAdmin?._id || 'admin', 'delete_user', { targetUserId: user._id, targetEmail: user.email })
       toast.success(`Deleted ${user.displayName}`)
     } catch (error) {
-      toast.error(getApiErrorMessage(error, 'Could not delete user.'))
+      const fallbackMessage = 'Could not delete user. If this backend does not expose admin delete yet, remove from UI or enable DELETE /api/users/:id.'
+      toast.error(getApiErrorMessage(error, fallbackMessage))
     }
   }
   const [drafts, setDrafts] = useState<Record<string, UserRowEdits>>({})
@@ -273,7 +279,7 @@ export default function AdminUsersPage() {
                         </button>
                         <button
                           type="button"
-                          disabled={isDeleting}
+                          disabled={isDeleting || currentAdmin?._id === user._id}
                           onClick={() => handleDeleteUser(user)}
                           className="rounded bg-destructive px-3 py-1.5 text-xs font-medium text-destructive-foreground transition hover:bg-destructive/90 disabled:cursor-not-allowed disabled:opacity-50"
                         >

@@ -71,36 +71,52 @@ export function AppRouter() {
             }
           />
           <Route
-            path="/admin/*"
+            path="/admin/users"
             element={
               <RoleGuard minRole="admin">
-                <Routes>
-                  <Route path="users" element={
-                    <BackendPermissionGuard action="users.read-list" fallback={<Navigate to="/unauthorized" replace />}>
-                      <AdminUsersPage />
-                    </BackendPermissionGuard>
-                  } />
-                  <Route path="stations/pending" element={
-                    <BackendPermissionGuard action="stations.read-pending" fallback={<Navigate to="/unauthorized" replace />}>
-                      <ModerationQueuePage />
-                    </BackendPermissionGuard>
-                  } />
-                  <Route path="reviews" element={
-                    <BackendPermissionGuard action="reviews.moderate" fallback={<Navigate to="/unauthorized" replace />}>
-                      <ReviewsPage />
-                    </BackendPermissionGuard>
-                  } />
-                  <Route path="solar/reports" element={
-                    <BackendPermissionGuard action="weather.admin" fallback={<Navigate to="/unauthorized" replace />}>
-                      <AdminSolarReportsPage />
-                    </BackendPermissionGuard>
-                  } />
-                  <Route path="permissions" element={
-                    <BackendPermissionGuard action="permissions.read" fallback={<Navigate to="/unauthorized" replace />}>
-                      <PermissionsPage />
-                    </BackendPermissionGuard>
-                  } />
-                </Routes>
+                <BackendPermissionGuard action="users.read-list" fallback={<Navigate to="/unauthorized" replace />}>
+                  <AdminUsersPage />
+                </BackendPermissionGuard>
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/stations/pending"
+            element={
+              <RoleGuard minRole="admin">
+                <BackendPermissionGuard action="stations.read-pending" fallback={<Navigate to="/unauthorized" replace />}>
+                  <ModerationQueuePage />
+                </BackendPermissionGuard>
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/reviews"
+            element={
+              <RoleGuard minRole="admin">
+                <BackendPermissionGuard action="reviews.moderate" fallback={<Navigate to="/unauthorized" replace />}>
+                  <ReviewsPage />
+                </BackendPermissionGuard>
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/solar/reports"
+            element={
+              <RoleGuard minRole="admin">
+                <BackendPermissionGuard action="weather.admin" fallback={<Navigate to="/unauthorized" replace />}>
+                  <AdminSolarReportsPage />
+                </BackendPermissionGuard>
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/permissions"
+            element={
+              <RoleGuard minRole="admin">
+                <BackendPermissionGuard action="permissions.read" fallback={<Navigate to="/unauthorized" replace />}>
+                  <PermissionsPage />
+                </BackendPermissionGuard>
               </RoleGuard>
             }
           />

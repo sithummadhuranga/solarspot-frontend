@@ -1,16 +1,17 @@
 import { useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
 import { Layout } from '@/components/shared/Layout'
 import { Button } from '@/components/ui/button'
 import { useLazyVerifyEmailQuery } from '../features/auth/authApi'
-import { useDispatch } from 'react-redux'
+import { useAppDispatch } from '@/app/hooks'
 import { setCredentials } from '@/features/auth/authSlice'
 
 export default function VerifyEmailPage() {
   const { token } = useParams<{ token?: string }>()
   const [verifyEmail, { isFetching, isSuccess, error, data }] = useLazyVerifyEmailQuery()
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!token) return
@@ -20,10 +21,9 @@ export default function VerifyEmailPage() {
   useEffect(() => {
     if (isSuccess && data && data.data && data.data.accessToken && data.data.user) {
       dispatch(setCredentials({ token: data.data.accessToken, user: data.data.user }))
-      // Optionally redirect to dashboard or home after auto-login
-      // window.location.href = '/';
+      navigate('/dashboard', { replace: true })
     }
-  }, [isSuccess, data, dispatch])
+  }, [isSuccess, data, dispatch, navigate])
 
   const apiMessage = error && 'data' in error
     ? (error.data as { message?: string })?.message
@@ -71,7 +71,7 @@ export default function VerifyEmailPage() {
                 Your email has been verified and you are now signed in.
               </p>
               <Button asChild>
-                <Link to="/">Go to dashboard</Link>
+                <Link to="/dashboard">Go to dashboard</Link>
               </Button>
             </div>
           )}
