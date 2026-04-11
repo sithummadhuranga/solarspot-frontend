@@ -45,13 +45,13 @@ export default function AdminUsersPage() {
   const [adminDeleteUser, { isLoading: isDeleting }] = useAdminDeleteUserMutation()
   const currentAdmin = useAppSelector(selectCurrentUser)
   const handleDeleteUser = async (user: User) => {
-    if (!window.confirm(`Are you sure you want to delete user ${user.displayName}? This action cannot be undone.`)) return;
+    if (!window.confirm(`Are you sure you want to delete user ${user.displayName}? This action cannot be undone.`)) return
     try {
-      await adminDeleteUser((user as any)._id).unwrap();
-      auditLogger.log(currentAdmin?._id || 'admin', 'delete_user', { targetUserId: (user as any)._id, targetEmail: user.email });
-      toast.success(`Deleted ${user.displayName}`);
+      await adminDeleteUser(user._id).unwrap()
+      auditLogger.log(currentAdmin?._id || 'admin', 'delete_user', { targetUserId: user._id, targetEmail: user.email })
+      toast.success(`Deleted ${user.displayName}`)
     } catch (error) {
-      toast.error(getApiErrorMessage(error, 'Could not delete user.'));
+      toast.error(getApiErrorMessage(error, 'Could not delete user.'))
     }
   }
   const [drafts, setDrafts] = useState<Record<string, UserRowEdits>>({})
@@ -92,7 +92,7 @@ export default function AdminUsersPage() {
   }
 
   const saveRow = async (user: User) => {
-    const draft = rowDrafts[(user as any)._id]
+    const draft = rowDrafts[user._id]
     if (!draft) return
 
     const payload: AdminChangeRoleDto = {}
@@ -104,16 +104,16 @@ export default function AdminUsersPage() {
     if (Object.keys(payload).length === 0) return
 
     try {
-      await adminUpdateUser({ id: (user as any)._id, ...payload }).unwrap()
+      await adminUpdateUser({ id: user._id, ...payload }).unwrap()
       auditLogger.log(currentAdmin?._id || 'admin', 'update_user', {
-        targetUserId: (user as any)._id,
+        targetUserId: user._id,
         targetEmail: user.email,
         changes: payload,
       })
       toast.success(`Updated ${user.displayName}`)
       setDrafts((current) => {
         const next = { ...current }
-        delete next[(user as any)._id]
+        delete next[user._id]
         return next
       })
     } catch (error) {

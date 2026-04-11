@@ -5,7 +5,7 @@ export type AuditLogEntry = {
   timestamp: string;
   userId: string;
   action: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
 };
 
 export class AuditLogger {
@@ -21,7 +21,7 @@ export class AuditLogger {
     return AuditLogger.instance;
   }
 
-  log(userId: string, action: string, details?: Record<string, any>) {
+  log(userId: string, action: string, details?: Record<string, unknown>) {
     const entry: AuditLogEntry = {
       timestamp: new Date().toISOString(),
       userId,
@@ -36,12 +36,11 @@ export class AuditLogger {
 
     // Also log to console in dev
     if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
-      console.info('[AUDIT]', entry);
+      console.info('[AUDIT]', entry)
     }
   }
 
-  private async sendToBackend(action: string, details?: Record<string, any>): Promise<void> {
+  private async sendToBackend(action: string, details?: Record<string, unknown>): Promise<void> {
     try {
       const response = await fetch('/api/audit/log', {
         method: 'POST',
@@ -53,14 +52,12 @@ export class AuditLogger {
       });
 
       if (!response.ok && import.meta.env.DEV) {
-        // eslint-disable-next-line no-console
-        console.warn(`[AUDIT] Logging failed with status ${response.status}`);
+        console.warn(`[AUDIT] Logging failed with status ${response.status}`)
       }
     } catch (error) {
       // Silently fail — audit logging should never break the app
       if (import.meta.env.DEV) {
-        // eslint-disable-next-line no-console
-        console.warn('[AUDIT] Network error:', error instanceof Error ? error.message : error);
+        console.warn('[AUDIT] Network error:', error instanceof Error ? error.message : error)
       }
     }
   }
