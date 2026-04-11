@@ -23,6 +23,7 @@ const PermissionsPage = lazy(() => import('@/pages/PermissionsPage'))
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'))
 const AdminDashboardPage = lazy(() => import('@/pages/AdminDashboardPage'))
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'))
+const AdminSolarAnalyticsPage = lazy(() => import('@/pages/AdminSolarAnalyticsPage'))
 const UnauthorizedPage = lazy(() => import('@/pages/UnauthorizedPage'))
 const MySolarReportsPage = lazy(() => import('@/pages/MySolarReportsPage'))
 const AdminSolarReportsPage = lazy(() => import('@/pages/AdminSolarReportsPage'))
@@ -101,9 +102,19 @@ export function AppRouter() {
             }
           />
           <Route
+            path="/admin/solar/analytics"
+            element={
+              <RoleGuard allowedRoles={['weather_analyst', 'moderator', 'admin']}>
+                <BackendPermissionGuard action="weather.admin" fallback={<Navigate to="/unauthorized" replace />}>
+                  <AdminSolarAnalyticsPage />
+                </BackendPermissionGuard>
+              </RoleGuard>
+            }
+          />
+          <Route
             path="/admin/solar/reports"
             element={
-              <RoleGuard minRole="admin">
+              <RoleGuard allowedRoles={['weather_analyst', 'moderator', 'admin']}>
                 <BackendPermissionGuard action="weather.admin" fallback={<Navigate to="/unauthorized" replace />}>
                   <AdminSolarReportsPage />
                 </BackendPermissionGuard>

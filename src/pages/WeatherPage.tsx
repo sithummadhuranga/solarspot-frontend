@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Search, Sun, MapPin, Zap, BarChart2, ChevronRight, X, RefreshCw, Download } from 'lucide-react'
+import { toast } from 'sonner'
 import { Layout } from '@/components/shared/Layout'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { SolarWidget } from '@/features/weather/SolarWidget'
@@ -8,9 +9,23 @@ import { ForecastChart } from '@/features/weather/ForecastChart'
 import { SolarReportList } from '@/features/weather/SolarReportList'
 import { StationAnalyticsPanel } from '@/features/weather/StationAnalyticsPanel'
 import { useStationsList } from '@/hooks/useStations'
-import { useBulkRefreshMutation } from '@/features/weather/weatherApi'
+import { useBulkRefreshMutation, useExportWeatherMutation } from '@/features/weather/weatherApi'
 import { BackendPermissionGuard } from '@/guards/BackendPermissionGuard'
+import { getApiErrorMessage } from '@/lib/errors'
 import type { Station } from '@/types/station.types'
+
+function downloadExport(blob: Blob, filename: string) {
+  const href = URL.createObjectURL(blob)
+  const anchor = document.createElement('a')
+
+  anchor.href = href
+  anchor.download = filename
+  document.body.append(anchor)
+  anchor.click()
+  anchor.remove()
+
+  URL.revokeObjectURL(href)
+}
 
 //  Station Picker Card 
 function StationPickerCard({
@@ -84,8 +99,32 @@ export default function WeatherPage() {
   })
 
   const [bulkRefresh, { isLoading: isRefreshing }] = useBulkRefreshMutation()
+  const [exportWeather, { isLoading: isExporting }] = useExportWeatherMutation()
 
   const stations = stationsData?.data ?? []
+
+  const handleRefreshAll = async () => {
+    try {
+      const result = await bulkRefresh({ stationIds: [] }).unwrap()
+      toast.success(`Weather cache refreshed for ${result.data.refreshed} station${result.data.refreshed === 1 ? '' : 's'}.`)
+    } catch (error: unknown) {
+      toast.error(getApiErrorMessage(error, 'Could not refresh weather data.'))
+    }
+  }
+
+  const handleExport = async () => {
+    try {
+      const result = await exportWeather({
+        format: 'csv',
+        stationId: selectedStation?._id,
+      }).unwrap()
+
+      downloadExport(result.blob, result.filename)
+      toast.success(selectedStation ? 'Station weather export downloaded.' : 'Weather export downloaded.')
+    } catch (error: unknown) {
+      toast.error(getApiErrorMessage(error, 'Could not export weather data.'))
+    }
+  }
 
   return (
     <Layout showSidebar>
@@ -96,7 +135,7 @@ export default function WeatherPage() {
           <div className="flex gap-2">
             <BackendPermissionGuard action="weather.bulk-refresh">
               <button
-                onClick={() => bulkRefresh({ stationIds: [] })}
+                onClick={handleRefreshAll}
                 disabled={isRefreshing}
                 className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
               >
@@ -105,14 +144,14 @@ export default function WeatherPage() {
               </button>
             </BackendPermissionGuard>
             <BackendPermissionGuard action="weather.export">
-              <Link
-                to="/api/weather/export?format=csv"
-                target="_blank"
+              <button
+                onClick={handleExport}
+                disabled={isExporting}
                 className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 <Download className="h-3.5 w-3.5" />
-                Export CSV
-              </Link>
+                {isExporting ? 'Exporting…' : selectedStation ? 'Export Station CSV' : 'Export CSV'}
+              </button>
             </BackendPermissionGuard>
           </div>
         }

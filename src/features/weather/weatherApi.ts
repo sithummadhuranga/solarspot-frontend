@@ -1,13 +1,21 @@
 /**
  * weatherApi — RTK Query endpoints for Weather module (Member 3).
  *
- * Covers all 6 weather endpoints from PROJECT_OVERVIEW.md.
- * TODO (Member 3 — you): replace placeholder types with real shapes,
- *                        add providesTags / invalidatesTags for cache correctness.
+ * Covers all 6 weather endpoints from PROJECT_OVERVIEW.md plus the authenticated
+ * export flow used by solar admin/operator pages.
  */
 import { baseApi } from '@/app/baseApi'
 import type { ApiResponse } from '@/types/api.types'
-import type { WeatherData, WeatherForecast, HeatmapPoint, BestTimeResult, BulkRefreshInput } from '@/types/weather.types'
+import type {
+  WeatherData,
+  WeatherForecast,
+  HeatmapPoint,
+  BestTimeResult,
+  BulkRefreshInput,
+  BulkRefreshResult,
+  WeatherExportQuery,
+  WeatherExportResult,
+} from '@/types/weather.types'
 
 // ─── API slice ─────────────────────────────────────────────────────────────────
 export const weatherApi = baseApi.injectEndpoints({
@@ -17,13 +25,14 @@ export const weatherApi = baseApi.injectEndpoints({
     getStationWeather: builder.query<ApiResponse<WeatherData>, string>({
       query:       (stationId) => `/weather/${stationId}`,
       providesTags: (_res, _err, stationId) => [{ type: 'Weather', id: stationId }],
-      // TODO (Member 3): set keepUnusedDataFor based on TTL cache strategy
+      keepUnusedDataFor: 900,
     }),
 
     /** GET /api/weather/:stationId/forecast — multi-day solar forecast */
     getStationForecast: builder.query<ApiResponse<WeatherForecast>, string>({
       query:       (stationId) => `/weather/${stationId}/forecast`,
       providesTags: (_res, _err, stationId) => [{ type: 'Weather', id: `${stationId}-forecast` }],
+      keepUnusedDataFor: 3600,
     }),
 
     /** GET /api/weather/heatmap — nationwide solar radiation heatmap data */
@@ -39,15 +48,28 @@ export const weatherApi = baseApi.injectEndpoints({
     }),
 
     /** POST /api/weather/bulk-refresh — admin: force refresh all station caches */
-    bulkRefresh: builder.mutation<ApiResponse<{ refreshed: number }>, BulkRefreshInput>({
+    bulkRefresh: builder.mutation<ApiResponse<BulkRefreshResult>, BulkRefreshInput>({
       query:          (body) => ({ url: '/weather/bulk-refresh', method: 'POST', body }),
       invalidatesTags: ['Weather'],
     }),
 
-    /** GET /api/weather/export — weather_analyst: export CSV/JSON */
-    exportWeather: builder.query<Blob, { format: 'csv' | 'json'; from?: string; to?: string }>({
-      query: (params) => ({ url: '/weather/export', params, responseHandler: 'content-type' }),
-      // TODO (Member 3): handle file download via RTK Query or manual fetch
+    /** GET /api/weather/export — privileged download with bearer auth */
+    exportWeather: builder.mutation<WeatherExportResult, WeatherExportQuery>({
+      query: (params) => ({
+        url: '/weather/export',
+        params,
+        responseHandler: async (response) => {
+          const blob = await response.blob()
+          const disposition = response.headers.get('content-disposition') ?? ''
+          const filenameMatch = /filename="?([^";]+)"?/i.exec(disposition)
+
+          return {
+            blob,
+            filename: filenameMatch?.[1] ?? `weather-export.${params.format}`,
+            contentType: response.headers.get('content-type') ?? 'application/octet-stream',
+          }
+        },
+      }),
     }),
 
   }),
@@ -60,5 +82,5 @@ export const {
   useGetHeatmapQuery,
   useGetBestTimeQuery,
   useBulkRefreshMutation,
-  useExportWeatherQuery,
+  useExportWeatherMutation,
 } = weatherApi
