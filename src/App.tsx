@@ -1,12 +1,11 @@
 import { useEffect } from 'react'
-import axios from 'axios'
 import { AppRouter } from '@/router'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
-import { setCredentials, setInitialized, selectIsInitializing } from '@/features/auth/authSlice'
-import type { User } from '@/types/user.types'
-import { API_BASE_URL } from '@/lib/constants'
-import { normalizeUser } from '@/lib/user'
+import { setInitialized, selectIsInitializing } from '@/features/auth/authSlice'
+import { refreshTokenOnce } from '@/lib/refreshSingleton'
 
+// Module-level flag: the startup silent-refresh must fire exactly once per
+// page load regardless of React StrictMode's double-effect invocation.
 let silentRefreshAttempted = false
 
 function App() {
@@ -17,26 +16,16 @@ function App() {
     if (silentRefreshAttempted) return
     silentRefreshAttempted = true
 
-    axios
-      .post<{ data: { accessToken: string; user: User } }>(
-        `${API_BASE_URL}/auth/refresh`,
-        {},
-        { withCredentials: true },
-      )
-      .then((response) => {
-        dispatch(
-          setCredentials({
-            token: response.data.data.accessToken,
-            user: normalizeUser(response.data.data.user),
-          }),
-        )
-      })
-      .catch(() => {
-        // No valid refresh cookie.
-      })
-      .finally(() => {
-        dispatch(setInitialized())
-      })
+    // Use the shared singleton so the startup refresh and any concurrent 401
+    // interceptors NEVER simultaneously call POST /auth/refresh. The backend
+    // rotates the refresh cookie on every call (one-shot); two parallel
+    // requests would cause the second to fail → clearCredentials → logout.
+    //
+    // refreshTokenOnce() handles setCredentials (success) and clearCredentials
+    // (failure) internally. We only need to mark initialisation complete.
+    refreshTokenOnce().finally(() => {
+      dispatch(setInitialized())
+    })
   }, [dispatch])
 
   if (isInitializing) {

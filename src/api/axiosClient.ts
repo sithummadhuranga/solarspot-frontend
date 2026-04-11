@@ -1,9 +1,7 @@
 import axios, { type AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
 import { store } from '@/app/store'
-import { clearCredentials, setCredentials, setRefreshing } from '@/features/auth/authSlice'
-import type { User } from '@/types/user.types'
 import { API_BASE_URL } from '@/lib/constants'
-import { normalizeUser } from '@/lib/user'
+import { refreshTokenOnce } from '@/lib/refreshSingleton'
 
 // axiosClient base URL is derived from the same VITE_API_BASE_URL that RTK Query
 // uses — defaults to '/api' so all requests are relative to the current origin.
@@ -29,16 +27,26 @@ axiosClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 })
 
 // ─── Response interceptor — auto-refresh on 401 ───────────────────────────────
-let isRefreshing = false
-let refreshSubscribers: Array<(token: string) => void> = []
+//
+// Uses the shared `refreshTokenOnce` singleton so that Axios and RTK Query
+// never race to call POST /auth/refresh simultaneously. Because the backend
+// rotates the refresh cookie on every call, a second parallel refresh would
+// receive "token already rotated" → 401 → clearCredentials → logout.
+//
+// The subscriber queue below handles the case where MULTIPLE Axios requests
+// all fail with 401 at the same time: only the first spawns the refresh; the
+// rest queue up and are retried once the refresh settles.
 
-function subscribeToRefresh(cb: (token: string) => void) {
-  refreshSubscribers.push(cb)
+let pendingSubscribers: Array<(token: string) => void> = []
+let isWaitingForRefresh = false
+
+function enqueueRetry(cb: (token: string) => void) {
+  pendingSubscribers.push(cb)
 }
 
-function onRefreshDone(token: string) {
-  refreshSubscribers.forEach((cb) => cb(token))
-  refreshSubscribers = []
+function flushRetryQueue(token: string) {
+  pendingSubscribers.forEach((cb) => cb(token))
+  pendingSubscribers = []
 }
 
 axiosClient.interceptors.response.use(
@@ -46,51 +54,54 @@ axiosClient.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true
-
-      // Do NOT attempt a token refresh while the startup silent-refresh is
-      // still in-flight. The App.tsx initialization gate should prevent any
-      // requests reaching here, but this is a belt-and-suspenders guard.
-      if (store.getState().auth.isInitializing) {
-        return Promise.reject(error)
-      }
-
-      if (isRefreshing) {
-        // Queue the request until refresh completes
-        return new Promise((resolve, reject) => {
-          subscribeToRefresh((token) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`
-            resolve(axiosClient(originalRequest))
-          })
-          void reject // keep TS happy — reject is intentionally unused here
-        })
-      }
-
-      isRefreshing = true
-      store.dispatch(setRefreshing(true))
-
-      try {
-        const res = await axios.post<{ data: { accessToken: string; user: User } }>(
-          `${API_BASE_URL}/auth/refresh`,
-          {},
-          { withCredentials: true }
-        )
-        const { accessToken, user } = res.data.data
-        store.dispatch(setCredentials({ user: normalizeUser(user), token: accessToken }))
-        onRefreshDone(accessToken)
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`
-        return axiosClient(originalRequest)
-      } catch {
-        store.dispatch(clearCredentials())
-        window.location.href = '/login'
-        return Promise.reject(error)
-      } finally {
-        isRefreshing = false
-        store.dispatch(setRefreshing(false))
-      }
+    // Only intercept 401s that haven't already been retried.
+    if (error.response?.status !== 401 || originalRequest._retry) {
+      return Promise.reject(error)
     }
 
-    return Promise.reject(error)
-  }
+    // Skip refresh attempts that fire before App.tsx has finished its startup
+    // silent-refresh — the initialisation flow already handles this case.
+    if (store.getState().auth.isInitializing) {
+      return Promise.reject(error)
+    }
+
+    originalRequest._retry = true
+
+    // If a refresh is already in-flight (started by a concurrent Axios or
+    // RTK Query request), queue this request and wait.
+    if (isWaitingForRefresh) {
+      return new Promise((resolve, reject) => {
+        enqueueRetry((newToken) => {
+          originalRequest.headers.Authorization = `Bearer ${newToken}`
+          resolve(axiosClient(originalRequest))
+        })
+        // Provide reject so the promise is GC-able; it is only called if the
+        // refresh itself never resolves (shouldn't happen in practice).
+        void reject
+      })
+    }
+
+    isWaitingForRefresh = true
+
+    try {
+      // refreshTokenOnce() is shared with api.ts — at most one HTTP call is
+      // ever made regardless of how many parallel 401s arrive from both layers.
+      const newToken = await refreshTokenOnce()
+
+      if (newToken) {
+        flushRetryQueue(newToken)
+        originalRequest.headers.Authorization = `Bearer ${newToken}`
+        return axiosClient(originalRequest)
+      }
+
+      // Refresh failed — clearCredentials already dispatched inside the
+      // singleton. ProtectedRoute will redirect to /login automatically;
+      // no hard window.location redirect needed.
+      pendingSubscribers = []
+      return Promise.reject(error)
+    } finally {
+      isWaitingForRefresh = false
+    }
+  },
 )
+

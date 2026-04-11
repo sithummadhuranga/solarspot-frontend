@@ -5,11 +5,8 @@ import {
   type FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react'
 import type { RootState } from '@/app/store'
-import { clearCredentials, setCredentials, setRefreshing } from '@/features/auth/authSlice'
-import type { ApiResponse } from '@/types/api.types'
-import type { User } from '@/types/user.types'
-import { normalizeUser } from './user'
 import { API_BASE_URL } from './constants'
+import { refreshTokenOnce } from './refreshSingleton'
 
 // ─── Raw base query ────────────────────────────────────────────────────────────
 const rawBaseQuery = fetchBaseQuery({
@@ -24,31 +21,29 @@ const rawBaseQuery = fetchBaseQuery({
   },
 })
 
-// ─── Refresh response shape ────────────────────────────────────────────────────
-// Backend POST /api/auth/refresh returns { success, data: { accessToken, user } }
-interface RefreshResponse {
-  accessToken: string
-  user: User
-}
-
-let refreshPromise: Promise<ApiResponse<RefreshResponse> | null> | null = null
-
 function getRequestUrl(args: string | FetchArgs): string {
   return typeof args === 'string' ? args : args.url
 }
 
+// Skip the refresh-retry cycle for ALL /auth/* routes:
+//   - /auth/login, /auth/register, /auth/forgot-password, etc.
+//     → a 401 here means bad credentials, not an expired token; no retry needed.
+//   - /auth/refresh itself
+//     → the singleton already handles rotation; retrying would start an
+//       unintended second refresh call.
 function shouldSkipRefresh(url: string): boolean {
-  if (!url.startsWith('/auth/')) return false
-  return url !== '/auth/refresh'
+  return url.startsWith('/auth/')
 }
 
 // ─── Base query with automatic token refresh ──────────────────────────────────
 /**
- * Wraps every RTK Query request with a single-retry refresh flow:
- *  1. Execute original request.
- *  2. On 401 → call POST /auth/refresh.
- *  3. On success → store new token, retry original request.
- *  4. On refresh failure → clear credentials (redirect to /login handled by router).
+ * Wraps every RTK Query request with a single-retry refresh flow.
+ *
+ * Critical: uses the shared `refreshTokenOnce` singleton from refreshSingleton.ts
+ * so that Axios (axiosClient) and RTK Query NEVER simultaneously call
+ * POST /auth/refresh. The backend rotates the refresh cookie on every call;
+ * two parallel refreshes would cause the second one to fail, dispatch
+ * clearCredentials, and log the user out.
  */
 export const baseQueryWithReauth: BaseQueryFn<
   string | FetchArgs,
@@ -59,39 +54,19 @@ export const baseQueryWithReauth: BaseQueryFn<
   const url = getRequestUrl(args)
 
   if (result.error?.status === 401 && !shouldSkipRefresh(url)) {
-    if (!refreshPromise) {
-      api.dispatch(setRefreshing(true))
-      refreshPromise = Promise.resolve(
-        rawBaseQuery(
-          { url: '/auth/refresh', method: 'POST' },
-          api,
-          extraOptions
-        )
-      )
-        .then((refreshResult) => {
-          if (!refreshResult.data) return null
-          return refreshResult.data as ApiResponse<RefreshResponse>
-        })
-        .finally(() => {
-          refreshPromise = null
-          api.dispatch(setRefreshing(false))
-        })
-    }
+    // refreshTokenOnce is shared with axiosClient — only one HTTP call ever
+    // fires no matter how many parallel 401s arrive from both layers.
+    const newToken = await refreshTokenOnce()
 
-    const refreshed = await refreshPromise
-
-    if (refreshed?.data?.accessToken) {
-      api.dispatch(
-        setCredentials({
-          user: normalizeUser(refreshed.data.user),
-          token: refreshed.data.accessToken,
-        })
-      )
+    if (newToken) {
+      // Retry the original request; rawBaseQuery will pick up the new token
+      // from the Redux store (prepareHeaders reads state.auth.token).
       result = await rawBaseQuery(args, api, extraOptions)
-    } else {
-      api.dispatch(clearCredentials())
     }
+    // If newToken is null, clearCredentials was already dispatched inside
+    // refreshTokenOnce — ProtectedRoute handles the redirect to /login.
   }
 
   return result
 }
+

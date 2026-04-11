@@ -33,9 +33,13 @@ export async function getNearbyStations(
 }
 
 // ─── Moderation queue ─────────────────────────────────────────────────────────
-export async function getPendingStations(): Promise<PaginatedResponse<Station>> {
+export async function getPendingStations(
+  page = 1,
+  limit = 10,
+): Promise<PaginatedResponse<Station>> {
   const { data } = await axiosClient.get<PaginatedResponse<Station>>(
-    '/stations/pending'
+    '/stations/pending',
+    { params: { page, limit } },
   )
   return data
 }
@@ -84,14 +88,9 @@ export async function rejectStation(
   id: string,
   dto: RejectStationDto
 ): Promise<ApiResponse<Station>> {
-  const normalizedReason = (dto.reason ?? dto.rejectionReason)?.trim()
   const { data } = await axiosClient.patch<ApiResponse<Station>>(
     `/stations/${id}/reject`,
-    {
-      ...dto,
-      rejectionReason: normalizedReason,
-      reason: normalizedReason,
-    }
+    { rejectionReason: (dto.rejectionReason ?? dto.reason)?.trim() },
   )
   return data
 }
