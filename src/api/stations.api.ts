@@ -21,6 +21,17 @@ export async function getStations(
   return data
 }
 
+// ─── Search stations (dedicated endpoint) ───────────────────────────────────
+export async function searchStations(
+  params: { q: string; page?: number; limit?: number }
+): Promise<PaginatedResponse<Station>> {
+  const { data } = await axiosClient.get<PaginatedResponse<Station>>(
+    '/stations/search',
+    { params }
+  )
+  return data
+}
+
 // ─── Nearby stations ──────────────────────────────────────────────────────────
 export async function getNearbyStations(
   params: NearbyQueryParams
@@ -99,6 +110,22 @@ export async function rejectStation(
 export async function deleteStation(id: string): Promise<ApiResponse<null>> {
   const { data } = await axiosClient.delete<ApiResponse<null>>(
     `/stations/${id}`
+  )
+  return data
+}
+
+// ─── Feature station (admin/moderator) ───────────────────────────────────────
+export async function featureStation(id: string): Promise<ApiResponse<Station>> {
+  const { data } = await axiosClient.patch<ApiResponse<Station>>(
+    `/stations/${id}/feature`
+  )
+  return data
+}
+
+// ─── Station stats ───────────────────────────────────────────────────────────
+export async function getStationStats(id: string): Promise<ApiResponse<unknown>> {
+  const { data } = await axiosClient.get<ApiResponse<unknown>>(
+    `/stations/${id}/stats`
   )
   return data
 }

@@ -7,7 +7,7 @@ import { SolarWidget } from '@/features/weather/SolarWidget'
 import { ForecastChart } from '@/features/weather/ForecastChart'
 import { SolarReportList } from '@/features/weather/SolarReportList'
 import { StationAnalyticsPanel } from '@/features/weather/StationAnalyticsPanel'
-import { useListStationsQuery } from '@/features/stations/stationsApi'
+import { useStationsList } from '@/hooks/useStations'
 import { useBulkRefreshMutation } from '@/features/weather/weatherApi'
 import { BackendPermissionGuard } from '@/guards/BackendPermissionGuard'
 import type { Station } from '@/types/station.types'
@@ -76,7 +76,7 @@ export default function WeatherPage() {
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
   }, [search])
 
-  const { data: stationsData, isLoading: stationsLoading } = useListStationsQuery({
+  const { data: stationsData, isLoading: stationsLoading } = useStationsList({
     search: debouncedSearch || undefined,
     sortBy: 'featured',
     page:   1,

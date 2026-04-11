@@ -11,6 +11,8 @@ import { useCheckPermissionAccessQuery } from '@/features/permissions/permission
  */
 export function Sidebar() {
   const user = useAppSelector(selectCurrentUser)
+  const isModerator = user?.role === 'moderator' || user?.role === 'admin'
+  const isAdmin = user?.role === 'admin'
 
   const stationPendingCheck = useCheckPermissionAccessQuery(
     { action: 'stations.read-pending', context: {} },
@@ -27,11 +29,11 @@ export function Sidebar() {
     { skip: !user }
   )
 
-  const canModerateSations  = stationPendingCheck.data?.data?.allowed  ?? false
-  const canModerateReviews  = reviewModerateCheck.data?.data?.allowed  ?? false
-  const canReadPermissions  = permissionsReadCheck.data?.data?.allowed ?? false
+  const canModerateStations = isModerator && (stationPendingCheck.data?.data?.allowed  ?? false)
+  const canModerateReviews  = isModerator && (reviewModerateCheck.data?.data?.allowed  ?? false)
+  const canReadPermissions  = isAdmin && (permissionsReadCheck.data?.data?.allowed ?? false)
 
-  const hasModerationAccess = canModerateSations || canModerateReviews
+  const hasModerationAccess = canModerateStations || canModerateReviews
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-medium transition-colors ${
@@ -45,6 +47,11 @@ export function Sidebar() {
       <nav className="flex flex-col gap-1 p-4 text-sm">
 
         <p className="px-3 py-2 text-xs font-sg font-bold text-gray-400 uppercase tracking-wider">
+          Overview
+        </p>
+        <NavLink to="/dashboard" className={navLinkClass}>Dashboard</NavLink>
+
+        <p className="px-3 py-2 text-xs font-sg font-bold text-gray-400 uppercase tracking-wider">
           Stations
         </p>
         <NavLink to="/stations"       className={navLinkClass}>All Stations</NavLink>
@@ -55,7 +62,7 @@ export function Sidebar() {
             <p className="mt-4 px-3 py-2 text-xs font-sg font-bold text-gray-400 uppercase tracking-wider">
               Moderation
             </p>
-            {canModerateSations && (
+            {canModerateStations && (
               <NavLink to="/admin/stations/pending" className={navLinkClass}>
                 Station Queue
               </NavLink>

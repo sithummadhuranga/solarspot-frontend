@@ -47,6 +47,7 @@ export function Navbar() {
         </Link>
 
         <div className="hidden md:flex flex-1 items-center gap-5 mx-6">
+          {isAuthenticated && navLink('/dashboard', 'Dashboard')}
           {navLink('/stations', 'Stations')}
           {navLink('/map', 'Map')}
           {isAuthenticated && navLink('/my-stations', 'My Stations')}
@@ -104,6 +105,7 @@ export function Navbar() {
       {mobileOpen && (
         <div className="border-t border-gray-100 bg-white px-4 py-4 md:hidden space-y-1">
           {[
+            ...(isAuthenticated ? [{ to: '/dashboard', label: 'Dashboard', icon: <LayoutGrid className="h-4 w-4" /> }] : []),
             { to: '/stations', label: 'Stations', icon: <LayoutGrid className="h-4 w-4" /> },
             { to: '/map', label: 'Map', icon: <MapPin className="h-4 w-4" /> },
             ...(isAuthenticated ? [{ to: '/my-stations', label: 'My Stations', icon: <Zap className="h-4 w-4" /> }] : []),
