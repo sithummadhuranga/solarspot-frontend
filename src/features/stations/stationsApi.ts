@@ -70,10 +70,7 @@ export const stationsApi = baseApi.injectEndpoints({
       query: ({ id, reason }) => ({
         url: `/stations/${id}/reject`,
         method: 'PATCH',
-        body: {
-          reason,
-          rejectionReason: reason,
-        },
+        body: { rejectionReason: reason },
       }),
       invalidatesTags: (_res, _err, { id }) => [{ type: 'Station', id }],
     }),

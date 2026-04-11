@@ -49,7 +49,7 @@ export function useNearbyStations(params: NearbyQueryParams | null) {
 export function usePendingStations(page = 1) {
   return useQuery<PaginatedResponse<Station>>({
     queryKey: [...stationKeys.pending(), { page }],
-    queryFn:  () => getPendingStations(),
+    queryFn:  () => getPendingStations(page),
     staleTime: 0,
   })
 }

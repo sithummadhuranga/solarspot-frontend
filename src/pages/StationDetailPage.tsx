@@ -6,7 +6,7 @@ import 'leaflet/dist/leaflet.css'
 import {
   ChevronLeft, Star, MapPin, Zap, Sun, Clock, CheckCircle,
   Shield, User, Calendar, Loader2, AlertTriangle, Edit2,
-  MessageSquare, CloudSun,
+  CloudSun,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Navbar } from '@/components/shared/Navbar'
@@ -16,6 +16,7 @@ import { SolarWidget } from '@/features/weather/SolarWidget'
 import { ForecastChart } from '@/features/weather/ForecastChart'
 import { SolarReportList } from '@/features/weather/SolarReportList'
 import { StationAnalyticsPanel } from '@/features/weather/StationAnalyticsPanel'
+import { ReviewList } from '@/components/reviews/ReviewList'
 import { useStation, useApproveStation, useRejectStation } from '@/hooks/useStations'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
@@ -51,14 +52,14 @@ const STATION_PIN = L.divIcon({
 
 function StatCard({ icon, label, value, sub }: { icon: React.ReactNode; label: string; value: string; sub?: string }) {
   return (
-    <div className="flex items-start gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-solar-green-50">
+    <div className="flex items-start gap-3 rounded-2xl border border-gray-100/80 bg-white p-4 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f5faf0]">
         {icon}
       </div>
       <div>
-        <p className="text-xs font-medium text-gray-400">{label}</p>
-        <p className="text-sm font-bold text-gray-900">{value}</p>
-        {sub && <p className="text-xs text-gray-400">{sub}</p>}
+        <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{label}</p>
+        <p className="text-sm font-extrabold text-[#133c1d]">{value}</p>
+        {sub && <p className="text-[11px] text-gray-400 font-medium">{sub}</p>}
       </div>
     </div>
   )
@@ -267,18 +268,44 @@ export default function StationDetailPage() {
 
             {/* Description */}
             {station.description && (
-              <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-                <h2 className="mb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
+              <div className="rounded-2xl border border-gray-100/80 bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
+                <h2 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#8cc63f]"></span>
                   About this station
                 </h2>
-                <p className="text-[0.95rem] leading-relaxed text-gray-700 font-medium">{station.description}</p>
+                <p className="text-[0.92rem] leading-[1.75] text-gray-600 font-medium">{station.description}</p>
+
+                {/* Quick highlights row */}
+                <div className="mt-5 pt-4 border-t border-gray-100/80 flex flex-wrap items-center gap-3 text-[0.78rem] font-semibold text-gray-500">
+                  {station.solarPanelKw > 0 && (
+                    <span className="flex items-center gap-1.5 bg-amber-50 text-amber-700 px-2.5 py-1 rounded-lg">
+                      <Sun className="h-3.5 w-3.5" /> {station.solarPanelKw} kW Solar
+                    </span>
+                  )}
+                  {station.connectors.length > 0 && (
+                    <span className="flex items-center gap-1.5 bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg">
+                      <Zap className="h-3.5 w-3.5" /> {station.connectors.reduce((a, c) => a + c.count, 0)} Ports
+                    </span>
+                  )}
+                  {station.amenities.length > 0 && (
+                    <span className="flex items-center gap-1.5 bg-purple-50 text-purple-700 px-2.5 py-1 rounded-lg">
+                      {station.amenities.length} Amenities
+                    </span>
+                  )}
+                  {station.operatingHours?.alwaysOpen && (
+                    <span className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg">
+                      <Clock className="h-3.5 w-3.5" /> 24/7 Open
+                    </span>
+                  )}
+                </div>
               </div>
             )}
 
             {/* Connectors */}
             {station.connectors.length > 0 && (
-              <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-                <h2 className="mb-5 text-sm font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
+              <div className="rounded-2xl border border-gray-100/80 bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
+                <h2 className="mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#8cc63f]"></span>
                   Charging Connectors
                 </h2>
                 <div className="divide-y divide-gray-100">
@@ -310,17 +337,18 @@ export default function StationDetailPage() {
 
             {/* Amenities */}
             {station.amenities.length > 0 && (
-              <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-                <h2 className="mb-5 text-sm font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
+              <div className="rounded-2xl border border-gray-100/80 bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
+                <h2 className="mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#8cc63f]"></span>
                   Amenities
                 </h2>
                 <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
                   {station.amenities.map((a) => {
                     const info = AMENITY_INFO[a]
                     return (
-                      <div key={a} className="flex flex-col items-center gap-2 rounded-2xl border border-solar-green-100 bg-[#f5faf0] px-4 py-4 text-center transition-transform hover:-translate-y-1">
-                        <span className="text-3xl">{info.emoji}</span>
-                        <span className="text-xs font-bold text-[#133c1d]">{info.label}</span>
+                      <div key={a} className="flex flex-col items-center gap-2 rounded-2xl border border-gray-100/80 bg-[#f5faf0] px-4 py-4 text-center transition-all hover:-translate-y-1 hover:shadow-md">
+                        <span className="text-2xl">{info.emoji}</span>
+                        <span className="text-[11px] font-bold text-[#133c1d]">{info.label}</span>
                       </div>
                     )
                   })}
@@ -329,9 +357,9 @@ export default function StationDetailPage() {
             )}
 
             {/* Operating Hours */}
-            <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-              <h2 className="mb-5 flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
-                <Clock className="h-5 w-5" /> Operating Hours
+            <div className="rounded-2xl border border-gray-100/80 bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
+              <h2 className="mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
+                <Clock className="h-4 w-4" /> Operating Hours
               </h2>
               {station.operatingHours?.alwaysOpen ? (
                 <div className="flex items-center gap-3 rounded-xl bg-emerald-50 border border-emerald-200 px-5 py-4">
@@ -352,19 +380,21 @@ export default function StationDetailPage() {
               )}
             </div>
 
-            {/* ── Placeholder: Reviews (Member 2) ──────────────────────── */}
-            <div className="rounded-[20px] border-2 border-dashed border-gray-200 bg-white p-8 text-center">
-              <MessageSquare className="mx-auto h-10 w-10 text-gray-300 mb-3" />
-              <p className="text-sm font-bold text-gray-500 font-sg">Reviews & Ratings</p>
-              <p className="text-xs font-medium text-gray-400 mt-1">Member 2 — Reviews section will appear here</p>
-            </div>
+            {/* ── Reviews (Member 2) ─────────────────────────────────── */}
+            {id && (
+              <ReviewList
+                stationId={id}
+                averageRating={station.averageRating}
+                reviewCount={station.reviewCount}
+              />
+            )}
 
             {/* ── Solar Intelligence (Member 3) ─────────────────────── */}
             {id && (
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-1">
                   <CloudSun className="h-5 w-5 text-blue-500" />
-                  <h3 className="text-base font-bold text-gray-900">Solar Intelligence</h3>
+                  <h3 className="text-base font-sg font-extrabold text-[#133c1d]">Solar Intelligence</h3>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   <SolarWidget stationId={id} />
@@ -383,7 +413,7 @@ export default function StationDetailPage() {
           <div className="space-y-6">
 
             {/* Action buttons */}
-            <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] space-y-3">
+            <div className="rounded-2xl border border-gray-100/80 bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.04)] space-y-3">
               {/* Edit own station */}
               {isOwner && canOwnerEditStation && (
                 <Link to={`/my-stations`}
@@ -402,7 +432,7 @@ export default function StationDetailPage() {
 
             {/* Moderation panel */}
             {isMod && station.status === 'pending' && (
-              <div className="rounded-[20px] border border-amber-200 bg-amber-50 p-6 space-y-4 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+              <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 space-y-4 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
                 <div className="flex items-center gap-2">
                   <Shield className="h-5 w-5 text-amber-600" />
                   <p className="text-sm font-bold text-amber-800 font-sg">Moderation Required</p>
@@ -450,14 +480,14 @@ export default function StationDetailPage() {
 
             {/* Rejection reason */}
             {station.status === 'rejected' && station.rejectionReason && (
-              <div className="rounded-[20px] border border-red-200 bg-red-50 p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+              <div className="rounded-2xl border border-red-200 bg-red-50 p-5 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
                 <p className="text-xs font-bold text-red-700 mb-1.5 font-sg">Rejection Reason</p>
                 <p className="text-sm font-medium text-red-600 italic">"{station.rejectionReason}"</p>
               </div>
             )}
 
             {/* Meta info */}
-            <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] space-y-4">
+            <div className="rounded-2xl border border-gray-100/80 bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.04)] space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">Station Info</h3>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
@@ -492,7 +522,7 @@ export default function StationDetailPage() {
 
             {/* Mini map */}
             {hasMap && (
-              <div className="overflow-hidden rounded-[20px] border border-gray-100 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+              <div className="overflow-hidden rounded-2xl border border-gray-100/80 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
                 <MapContainer
                   center={[coords[1], coords[0]]}
                   zoom={14}

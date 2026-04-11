@@ -1,44 +1,54 @@
 // ─── Sub-types ────────────────────────────────────────────────────────────────
-export type ModerationStatus = 'approved' | 'pending' | 'flagged' | 'removed'
 
-export interface ReviewRatings {
-  overall:          number
-  solarReliability: number
-  chargingSpeed:    number
-  cleanliness:      number | null
-  accessibility:    number | null
+/** Populated author shape from .populate('author', 'displayName avatarUrl') */
+export interface ReviewAuthor {
+  _id:         string
+  displayName: string
+  avatarUrl:   string | null
 }
+
+/** Populated station shape from .populate('station', 'name') */
+export interface ReviewStation {
+  _id:  string
+  name: string
+}
+
+export type ModerationStatus = 'approved' | 'pending' | 'rejected' | 'flagged'
 
 // ─── Full review document ─────────────────────────────────────────────────────
 export interface Review {
-  _id:              string
-  station:          string
-  user:             string
-  ratings:          ReviewRatings
-  title:            string
-  body:             string
-  visitDate:        string | null
-  helpfulVotes:     number
+  _id:             string
+  station:         ReviewStation | string
+  author:          ReviewAuthor | string
+  rating:          number               // 1–5
+  title:           string | null
+  content:         string
   moderationStatus: ModerationStatus
-  flaggedBy:        string[]
-  moderatedBy:      string | null
-  moderatedAt:      string | null
-  createdAt:        string
-  updatedAt:        string
+  toxicityScore?:  number               // 0–1, only present for moderators
+  isFlagged:       boolean
+  flagCount:       number
+  flaggedBy:       string[]
+  helpfulVotes:    string[]
+  helpfulCount:    number
+  moderatedBy:     string | null
+  moderatedAt:     string | null
+  moderationNote:  string | null
+  isActive:        boolean
+  createdAt:       string
+  updatedAt:       string
 }
 
 // ─── DTOs ─────────────────────────────────────────────────────────────────────
 export interface CreateReviewDto {
-  title:     string
-  body:      string
-  visitDate?: string
-  ratings:   Omit<ReviewRatings, 'cleanliness' | 'accessibility'> &
-    Partial<Pick<ReviewRatings, 'cleanliness' | 'accessibility'>>
+  station:  string
+  rating:   number        // 1–5
+  title?:   string        // max 120 chars
+  content:  string        // 10–2000 chars
 }
 
-export type UpdateReviewDto = Partial<CreateReviewDto>
+export type UpdateReviewDto = Partial<Pick<CreateReviewDto, 'rating' | 'title' | 'content'>>
 
 export interface ModerateReviewDto {
-  action: 'approve' | 'remove'
-  note?:  string
+  moderationStatus: 'approved' | 'rejected'
+  moderationNote?:  string                  // max 500 chars
 }
