@@ -8,19 +8,27 @@
  * Owner: Member 3 · Ref: SolarIntelligence_Module_Prompt.md → A6
  */
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { useCreateSolarReportMutation } from './solarApi'
 import type { CreateReportDto } from '@/types/solar.types'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
+import { getApiErrorMessage } from '@/lib/errors'
 
 interface Props {
   stationId:    string
   onSuccess?:   () => void
 }
 
+function toDateTimeLocalValue(date: Date) {
+  const offset = date.getTimezoneOffset() * 60_000
+  return new Date(date.getTime() - offset).toISOString().slice(0, 16)
+}
+
 export function AddReportForm({ stationId, onSuccess }: Props) {
   const { isAuthenticated } = useAuth()
 
+  const [visitedAt, setVisitedAt]      = useState(() => toDateTimeLocalValue(new Date()))
   const [actualOutputKw, setActualOutputKw] = useState('')
   const [notes,          setNotes]          = useState('')
   const [isPublic,       setIsPublic]       = useState(true)
@@ -31,21 +39,32 @@ export function AddReportForm({ stationId, onSuccess }: Props) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setFormError(null)
+
+    if (actualOutputKw && Number.isNaN(Number(actualOutputKw))) {
+      setFormError('Actual output must be a valid number.')
+      return
+    }
+
     try {
       const dto: CreateReportDto = {
         stationId,
+        visitedAt: visitedAt ? new Date(visitedAt).toISOString() : undefined,
         isPublic,
         notes:         notes.trim() || null,
         actualOutputKw: actualOutputKw ? parseFloat(actualOutputKw) : undefined,
       }
+
       await createReport(dto).unwrap()
+      setVisitedAt(toDateTimeLocalValue(new Date()))
       setActualOutputKw('')
       setNotes('')
       setIsPublic(true)
+      toast.success('Solar report submitted.')
       onSuccess?.()
-    } catch (err: unknown) {
-      const msg = (err as { data?: { message?: string } })?.data?.message
-      setFormError(msg ?? 'Submission failed. Please try again.')
+    } catch (error: unknown) {
+      const message = getApiErrorMessage(error, 'Submission failed. Please try again.')
+      setFormError(message)
+      toast.error(message)
     }
   }
 
@@ -85,6 +104,21 @@ export function AddReportForm({ stationId, onSuccess }: Props) {
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px]">
         <div>
+          <label className="mb-1 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500" htmlFor="visitedAt">
+            Visit time
+          </label>
+          <input
+            id="visitedAt"
+            type="datetime-local"
+            max={toDateTimeLocalValue(new Date())}
+            value={visitedAt}
+            onChange={(e) => setVisitedAt(e.target.value)}
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 focus:border-[#8cc63f] focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/25"
+          />
+          <p className="mt-1 text-xs text-slate-500">Use the time you visited the station so the report lines up with the weather snapshot.</p>
+        </div>
+
+        <div>
           <label className="mb-1 block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500" htmlFor="actualOutputKw">
             Actual Output (kW)
           </label>
@@ -101,7 +135,7 @@ export function AddReportForm({ stationId, onSuccess }: Props) {
           <p className="mt-1 text-xs text-slate-500">Leave blank if you only want to contribute the weather snapshot.</p>
         </div>
 
-        <label className="flex items-start gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-slate-700">
+        <label className="flex items-start gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-slate-700 lg:col-span-2">
           <input
             id="isPublic"
             type="checkbox"

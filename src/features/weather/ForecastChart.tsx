@@ -25,6 +25,13 @@ interface Props {
   stationId: string
 }
 
+function formatMetric(value: number, maximumFractionDigits = 1) {
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits,
+  }).format(value)
+}
+
 function formatDt(iso: string) {
   try { return format(new Date(iso), 'dd MMM HH:mm') } catch { return iso }
 }
@@ -53,9 +60,9 @@ export function ForecastChart({ stationId }: Props) {
 
   if (isLoading) {
     return (
-      <div className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm animate-pulse">
+      <div className="rounded-[28px] border border-emerald-100 bg-white p-5 shadow-sm animate-pulse">
         <div className="mb-4 h-5 w-48 rounded bg-emerald-100" />
-        <div className="h-56 w-full rounded-2xl bg-slate-50" />
+        <div className="h-72 w-full rounded-[26px] bg-slate-50" />
       </div>
     )
   }
@@ -88,12 +95,12 @@ export function ForecastChart({ stationId }: Props) {
   const bestDts = new Set(bestWindows.map((window) => formatTick(window.dt)))
 
   return (
-    <div className="space-y-4 rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
-      <div>
+    <div className="flex h-full flex-col gap-4 rounded-[28px] border border-emerald-100 bg-white p-5 shadow-sm">
+      <div className="min-w-0">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
+          <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Solar Forecast</p>
-            <p className="text-base font-bold text-slate-900">{stationName}</p>
+            <p className="break-words text-lg font-black leading-tight text-slate-900">{stationName}</p>
             <p className="text-xs text-slate-500">{stationSolarPanelKw} kW array · Generated {generatedAtText}</p>
           </div>
           <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
@@ -103,66 +110,76 @@ export function ForecastChart({ stationId }: Props) {
       </div>
 
       {forecast.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 py-8 text-center text-sm text-slate-500">
+        <div className="flex min-h-[320px] flex-1 items-center justify-center rounded-[26px] border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">
           No forecast slots are available right now.
-        </p>
+        </div>
       ) : (
-        <ResponsiveContainer width="100%" height={260}>
-          <LineChart data={chartData} margin={{ top: 4, right: 8, left: -8, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#dbe4ea" />
-            <XAxis
-              dataKey="dt"
-              tick={{ fontSize: 10, fill: '#64748b' }}
-              interval="preserveStartEnd"
-            />
-            <YAxis yAxisId="score" domain={[0, 100]} tick={{ fontSize: 10, fill: '#64748b' }} />
-            <YAxis yAxisId="kw" orientation="right" tick={{ fontSize: 10, fill: '#64748b' }} />
-            <Tooltip content={<CustomTooltip />} />
-            <Legend wrapperStyle={{ fontSize: 12, color: '#64748b' }} />
-            {chartData
-              .filter((d) => bestDts.has(d.dt))
-              .map((d) => (
-                <ReferenceLine
-                  key={d.dt}
-                  x={d.dt}
-                  yAxisId="score"
-                  stroke="#facc15"
-                  strokeDasharray="4 3"
-                  label={{ value: '★', position: 'top', fontSize: 10, fill: '#facc15' }}
-                />
-              ))}
-            <Line
-              yAxisId="score"
-              type="monotone"
-              dataKey="score"
-              name="Solar Score (0-100)"
-              stroke="#1a6b3c"
-              strokeWidth={2}
-              dot={false}
-            />
-            <Line
-              yAxisId="kw"
-              type="monotone"
-              dataKey="kw"
-              name="Estimated Output (kW)"
-              stroke="#60a5fa"
-              strokeWidth={1.5}
-              dot={false}
-              strokeDasharray="4 2"
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        <div className="min-h-[320px] flex-1 rounded-[26px] border border-slate-100 bg-slate-50/70 p-3">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData} margin={{ top: 10, right: 8, left: -16, bottom: 8 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#dbe4ea" />
+              <XAxis
+                dataKey="dt"
+                tick={{ fontSize: 10, fill: '#64748b' }}
+                interval="preserveStartEnd"
+                minTickGap={22}
+                tickMargin={8}
+              />
+              <YAxis yAxisId="score" domain={[0, 100]} tick={{ fontSize: 10, fill: '#64748b' }} tickMargin={6} />
+              <YAxis yAxisId="kw" orientation="right" tick={{ fontSize: 10, fill: '#64748b' }} tickMargin={6} />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend wrapperStyle={{ fontSize: 12, color: '#64748b', paddingTop: 12 }} />
+              {chartData
+                .filter((d) => bestDts.has(d.dt))
+                .map((d) => (
+                  <ReferenceLine
+                    key={d.dt}
+                    x={d.dt}
+                    yAxisId="score"
+                    stroke="#facc15"
+                    strokeDasharray="4 3"
+                    label={{ value: '★', position: 'top', fontSize: 10, fill: '#facc15' }}
+                  />
+                ))}
+              <Line
+                yAxisId="score"
+                type="monotone"
+                dataKey="score"
+                name="Solar Score (0-100)"
+                stroke="#1a6b3c"
+                strokeWidth={2}
+                dot={false}
+              />
+              <Line
+                yAxisId="kw"
+                type="monotone"
+                dataKey="kw"
+                name="Estimated Output (kW)"
+                stroke="#60a5fa"
+                strokeWidth={1.5}
+                dot={false}
+                strokeDasharray="4 2"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       )}
 
       {bestWindows.length > 0 && (
-        <div className="flex flex-wrap gap-2 pt-1">
+        <div className="grid gap-2 pt-1">
           {bestWindows.map((w, i) => (
-            <span
+            <div
               key={i}
-              className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800"
+              className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900"
             >
-              ★ {w.label} · {formatDt(w.dt)} · {w.estimatedOutputKw} kW · {w.solarScore}/100
-            </span>
+              <div className="min-w-0">
+                <p className="font-semibold text-amber-800">★ {w.label}</p>
+                <p className="truncate text-amber-700">{formatDt(w.dt)}</p>
+              </div>
+              <p className="whitespace-nowrap font-semibold tabular-nums text-amber-900">
+                {formatMetric(w.estimatedOutputKw, 2)} kW · {w.solarScore}/100
+              </p>
+            </div>
           ))}
         </div>
       )}

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
+import { Navbar } from '@/components/shared/Navbar'
 import { useStationsList, useNearbyStations } from '@/hooks/useStations'
 import { useAuth } from '@/hooks/useAuth'
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, DEFAULT_SEARCH_RADIUS_KM, CONNECTOR_TYPES, AMENITIES } from '@/lib/constants'
@@ -54,9 +55,9 @@ function SidebarStationRow({ station }: { station: NearbyStation }) {
   return (
     <Link
       to={`/stations/${station._id}`}
-      className="group flex items-start gap-3 rounded-[16px] border border-gray-100 bg-white p-3 shadow-[0_4px_24px_rgba(0,0,0,0.04)] hover:border-[#8cc63f]/30 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] transition-all duration-200"
+      className="group flex items-start gap-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-[0_4px_24px_rgba(0,0,0,0.04)] hover:border-[#8cc63f]/30 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] transition-all duration-200"
     >
-      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-[#8cc63f]/10 to-[#8cc63f]/20">
+      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-linear-to-br from-[#8cc63f]/10 to-[#8cc63f]/20">
         {station.images.length > 0 ? (
           <img src={station.images[0]} alt="" className="h-full w-full object-cover" />
         ) : (
@@ -222,33 +223,59 @@ export default function StationMapPage() {
   ].filter(Boolean).length
 
   return (
-    <div className="relative flex h-screen w-full flex-col overflow-hidden">
+    <div className="relative flex h-screen w-full flex-col overflow-hidden bg-[#f7f9f4]">
 
-      {/* ── Top bar ─────────────────────────────────────────────────── */}
-      <div className="relative z-[1001] flex h-14 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-        <Link to="/" className="flex items-center gap-1.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#8cc63f]">
-            <Sun className="h-4 w-4 text-[#133c1d]" />
-          </div>
-          <span className="font-sg font-bold text-gray-900">SolarSpot</span>
-          <span className="ml-1 rounded-full bg-[#8cc63f]/10 px-2 py-0.5 text-[10px] font-semibold text-[#133c1d]">Map</span>
-        </Link>
-        <div className="flex items-center gap-2">
-          <Link to="/stations"
-            className="hidden sm:flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors">
-            <Layers className="h-3.5 w-3.5" /> List View
-          </Link>
-          {isAuthenticated && (
-            <Link to="/stations/new"
-              className="flex items-center gap-1.5 rounded-lg bg-[#8cc63f] px-3 py-1.5 text-xs font-sg font-semibold text-[#133c1d] hover:bg-[#7ab334] transition-colors">
-              <Plus className="h-3.5 w-3.5" /> Add Station
+      <Navbar />
+
+      {/* ── Map header ───────────────────────────────────────────────── */}
+      <div className="relative z-1001 shrink-0 border-b border-gray-200 bg-white/95 px-4 py-3 shadow-[0_4px_24px_rgba(0,0,0,0.04)] backdrop-blur supports-backdrop-filter:bg-white/85 lg:px-6">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+            <Link
+              to="/stations"
+              className="inline-flex w-fit items-center gap-2 rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-sm font-semibold text-gray-700 transition-colors hover:border-[#8cc63f]/40 hover:bg-[#f4faea] hover:text-[#133c1d]"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Back to Stations
             </Link>
-          )}
+
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-500">Map explorer</p>
+                <span className="rounded-full bg-[#f4faea] px-2.5 py-1 text-[11px] font-semibold text-[#133c1d]">
+                  {pagination ? `${pagination.total} station${pagination.total === 1 ? '' : 's'} in view` : 'Searching map…'}
+                </span>
+              </div>
+              <h1 className="mt-2 text-xl font-black text-[#133c1d]">Explore stations around you</h1>
+              <p className="mt-1 max-w-2xl text-sm text-gray-600">
+                Pan the map, refine the sidebar filters, and jump back to station details without losing the app navigation you use everywhere else.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              to="/stations"
+              className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+            >
+              <Layers className="h-4 w-4 text-[#8cc63f]" />
+              List view
+            </Link>
+            {isAuthenticated && (
+              <Link
+                to="/stations/new"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#8cc63f] px-3.5 py-2 text-sm font-sg font-semibold text-[#133c1d] transition-colors hover:bg-[#7ab334]"
+              >
+                <Plus className="h-4 w-4" />
+                Add Station
+              </Link>
+            )}
+          </div>
         </div>
       </div>
 
       {/* ── Body ─────────────────────────────────────────────────────── */}
-      <div className="relative flex flex-1 overflow-hidden">
+      <div className="relative flex min-h-0 flex-1 overflow-hidden">
 
         {/* ── Sidebar ───────────────────────────────────────────────── */}
         <aside className={cn(
@@ -277,7 +304,7 @@ export default function StationMapPage() {
                 type="text" value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search stations…"
-                className="w-full rounded-[16px] border-0 bg-white/95 py-2.5 pl-9 pr-8 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/50"
+                className="w-full rounded-2xl border-0 bg-white/95 py-2.5 pl-9 pr-8 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8cc63f]/50"
               />
               {searchInput && (
                 <button onClick={() => setSearchInput('')}
@@ -298,7 +325,7 @@ export default function StationMapPage() {
             <button
               onClick={() => setFiltersOpen((v) => !v)}
               className={cn(
-                'flex w-full items-center gap-1.5 rounded-[12px] px-3 py-1.5 text-xs font-medium transition-colors',
+                'flex w-full items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-medium transition-colors',
                 filtersOpen ? 'bg-[#8cc63f] text-[#133c1d]' : 'bg-white border border-gray-200 text-gray-600 hover:border-[#8cc63f]/50'
               )}>
               <SlidersHorizontal className="h-3.5 w-3.5" />
@@ -312,7 +339,7 @@ export default function StationMapPage() {
             </button>
 
             {filtersOpen && (
-              <div className="mt-2 space-y-3 rounded-[16px] border border-gray-100 bg-white p-3 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+              <div className="mt-2 space-y-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
                 {/* Connector */}
                 <div>
                   <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Connector</p>
@@ -466,7 +493,7 @@ export default function StationMapPage() {
         <div className="relative flex-1">
           {!sidebarOpen && (
             <button onClick={() => setSidebarOpen(true)}
-              className="absolute left-4 top-4 z-[1000] flex items-center gap-2 rounded-[16px] border border-gray-200 bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 shadow-[0_12px_48px_rgba(0,0,0,0.12)] hover:border-[#8cc63f]/50 transition-all">
+              className="absolute left-4 top-4 z-1000 flex items-center gap-2 rounded-2xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 shadow-[0_12px_48px_rgba(0,0,0,0.12)] hover:border-[#8cc63f]/50 transition-all">
               <SlidersHorizontal className="h-4 w-4 text-[#8cc63f]" />
               Stations
               {pagination && (
@@ -484,7 +511,7 @@ export default function StationMapPage() {
               () => toast.error('Could not get your current location'),
               { timeout: 8000, enableHighAccuracy: true, maximumAge: 60_000 }
             )}
-            className="absolute bottom-24 right-4 z-[1000] flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-[#8cc63f] shadow-[0_12px_48px_rgba(0,0,0,0.12)] hover:border-[#8cc63f]/50 hover:shadow-[0_16px_64px_rgba(0,0,0,0.16)] transition-all"
+            className="absolute bottom-24 right-4 z-1000 flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-[#8cc63f] shadow-[0_12px_48px_rgba(0,0,0,0.12)] hover:border-[#8cc63f]/50 hover:shadow-[0_16px_64px_rgba(0,0,0,0.16)] transition-all"
             title="My location">
             <Navigation2 className="h-4 w-4" />
           </button>
@@ -492,7 +519,7 @@ export default function StationMapPage() {
           {/* Add station FAB */}
           {isAuthenticated && (
             <Link to="/stations/new"
-              className="absolute bottom-8 right-4 z-[1000] flex items-center gap-2 rounded-[20px] bg-[#8cc63f] px-4 py-3 text-sm font-sg font-semibold text-[#133c1d] shadow-[0_12px_48px_rgba(0,0,0,0.12)] hover:bg-[#7ab334] hover:shadow-[0_16px_64px_rgba(0,0,0,0.16)] transition-all">
+              className="absolute bottom-8 right-4 z-1000 flex items-center gap-2 rounded-[20px] bg-[#8cc63f] px-4 py-3 text-sm font-sg font-semibold text-[#133c1d] shadow-[0_12px_48px_rgba(0,0,0,0.12)] hover:bg-[#7ab334] hover:shadow-[0_16px_64px_rgba(0,0,0,0.16)] transition-all">
               <Plus className="h-4 w-4" /> Add Station
             </Link>
           )}

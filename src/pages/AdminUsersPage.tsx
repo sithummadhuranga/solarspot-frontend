@@ -1,7 +1,10 @@
 import { useMemo, useState } from 'react'
+import { KeyRound } from 'lucide-react'
 import { toast } from 'sonner'
 import { Layout } from '@/components/shared/Layout'
 import { PageHeader } from '@/components/shared/PageHeader'
+import { UserPermissionsDialog } from '@/features/permissions/components/UserPermissionsDialog'
+import { useCheckPermissionAccessQuery } from '@/features/permissions/permissionsApi'
 import { useAdminUpdateUserMutation, useAdminDeleteUserMutation, useListUsersQuery } from '@/features/users/usersApi'
 import { auditLogger } from '@/utils/auditLogger'
 import { useAppSelector } from '@/app/hooks'
@@ -29,6 +32,7 @@ export default function AdminUsersPage() {
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState<string>('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
+  const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
   const { data, isLoading, isFetching, refetch } = useListUsersQuery({
     page,
@@ -44,7 +48,29 @@ export default function AdminUsersPage() {
   const [adminUpdateUser, { isLoading: isSaving }] = useAdminUpdateUserMutation()
   const [adminDeleteUser, { isLoading: isDeleting }] = useAdminDeleteUserMutation()
   const currentAdmin = useAppSelector(selectCurrentUser)
+  const manageUsersCheck = useCheckPermissionAccessQuery(
+    { action: 'users.manage', context: {} },
+    { skip: !currentAdmin }
+  )
+  const readPermissionsCheck = useCheckPermissionAccessQuery(
+    { action: 'permissions.read', context: {} },
+    { skip: !currentAdmin }
+  )
+  const managePermissionsCheck = useCheckPermissionAccessQuery(
+    { action: 'permissions.manage', context: {} },
+    { skip: !currentAdmin }
+  )
+
+  const canManageUsers = manageUsersCheck.data?.data?.allowed ?? false
+  const canReadPermissions = readPermissionsCheck.data?.data?.allowed ?? false
+  const canManagePermissions = managePermissionsCheck.data?.data?.allowed ?? false
+
   const handleDeleteUser = async (user: User) => {
+    if (!canManageUsers) {
+      toast.error('Your account can view users, but it does not have permission to delete them.')
+      return
+    }
+
     if (currentAdmin?._id === user._id) {
       toast.error('You cannot delete your own admin account from this screen.')
       return
@@ -131,10 +157,23 @@ export default function AdminUsersPage() {
     <Layout showSidebar>
       <PageHeader
         title="User Management"
-        description="Manage user roles and account status using RBAC-backed controls."
+        description="Manage user accounts, roles, account status, and user-specific permission access."
       />
 
       <div className="rounded-lg border bg-card p-4">
+        <div className="mb-4 flex flex-wrap gap-2 text-xs">
+          {!canManageUsers && (
+            <span className="rounded-full bg-amber-50 px-3 py-1.5 font-semibold text-amber-700">
+              Read-only user access: role and account changes are disabled for this account.
+            </span>
+          )}
+          {!canReadPermissions && (
+            <span className="rounded-full bg-slate-100 px-3 py-1.5 font-semibold text-slate-700">
+              Permission visibility is unavailable for this account.
+            </span>
+          )}
+        </div>
+
         <div className="mb-4 grid gap-3 md:grid-cols-4">
           <label className="flex flex-col gap-1 text-sm">
             <span className="font-medium">Search</span>
@@ -220,7 +259,17 @@ export default function AdminUsersPage() {
                   return (
                     <tr key={user._id} className="border-b last:border-b-0">
                       <td className="px-2 py-3 align-top">
-                        <p className="font-medium">{user.displayName}</p>
+                        {canReadPermissions ? (
+                          <button
+                            type="button"
+                            onClick={() => setSelectedUser(user)}
+                            className="text-left font-medium text-[#133c1d] transition-colors hover:text-[#0f3117] hover:underline"
+                          >
+                            {user.displayName}
+                          </button>
+                        ) : (
+                          <p className="font-medium">{user.displayName}</p>
+                        )}
                         <p className="text-xs text-muted-foreground">{user.email}</p>
                       </td>
 
@@ -228,6 +277,7 @@ export default function AdminUsersPage() {
                         <select
                           value={draft?.role ?? user.role}
                           onChange={(e) => setRowDraft(user._id, { role: e.target.value as UserRole })}
+                          disabled={!canManageUsers}
                           className="rounded-md border border-border px-2 py-1 outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/20"
                         >
                           {EDITABLE_ROLES.map((role) => (
@@ -244,6 +294,7 @@ export default function AdminUsersPage() {
                             type="checkbox"
                             checked={draft?.isActive ?? user.isActive}
                             onChange={(e) => setRowDraft(user._id, { isActive: e.target.checked })}
+                            disabled={!canManageUsers}
                           />
                           Enabled
                         </label>
@@ -255,6 +306,7 @@ export default function AdminUsersPage() {
                             type="checkbox"
                             checked={draft?.isBanned ?? Boolean(user.isBanned)}
                             onChange={(e) => setRowDraft(user._id, { isBanned: e.target.checked })}
+                            disabled={!canManageUsers}
                           />
                           Banned
                         </label>
@@ -269,9 +321,19 @@ export default function AdminUsersPage() {
                       </td>
 
                       <td className="px-2 py-3 align-top flex gap-2">
+                        {canReadPermissions && (
+                          <button
+                            type="button"
+                            onClick={() => setSelectedUser(user)}
+                            className="inline-flex items-center gap-1 rounded border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50"
+                          >
+                            <KeyRound className="h-3.5 w-3.5" />
+                            Permissions
+                          </button>
+                        )}
                         <button
                           type="button"
-                          disabled={!dirty || isSaving}
+                          disabled={!canManageUsers || !dirty || isSaving}
                           onClick={() => saveRow(user)}
                           className="rounded bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
                         >
@@ -279,7 +341,7 @@ export default function AdminUsersPage() {
                         </button>
                         <button
                           type="button"
-                          disabled={isDeleting || currentAdmin?._id === user._id}
+                          disabled={!canManageUsers || isDeleting || currentAdmin?._id === user._id}
                           onClick={() => handleDeleteUser(user)}
                           className="rounded bg-destructive px-3 py-1.5 text-xs font-medium text-destructive-foreground transition hover:bg-destructive/90 disabled:cursor-not-allowed disabled:opacity-50"
                         >
@@ -327,6 +389,15 @@ export default function AdminUsersPage() {
           </div>
         </div>
       </div>
+
+      <UserPermissionsDialog
+        user={selectedUser}
+        open={Boolean(selectedUser)}
+        onOpenChange={(open) => {
+          if (!open) setSelectedUser(null)
+        }}
+        canManagePermissions={canManagePermissions}
+      />
     </Layout>
   )
 }

@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Sun, Loader2, AlertCircle, CheckCircle2, Eye, EyeOff, Zap, Shield, Star } from 'lucide-react'
 import { useLoginMutation } from '../features/auth/authApi'
+import { useAppSelector } from '@/app/hooks'
+import { selectCurrentUser, selectIsInitializing } from '@/features/auth/authSlice'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -24,6 +26,8 @@ type LoginFormData = z.infer<typeof loginSchema>
 export default function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
+  const currentUser = useAppSelector(selectCurrentUser)
+  const isInitializing = useAppSelector(selectIsInitializing)
   const [showPassword, setShowPassword] = useState(false)
   const [loginSuccess, setLoginSuccess] = useState(false)
   const [login, { isLoading, error }] = useLoginMutation()
@@ -36,6 +40,12 @@ export default function LoginPage() {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) })
+
+  useEffect(() => {
+    if (!isInitializing && currentUser && !loginSuccess) {
+      navigate(from, { replace: true })
+    }
+  }, [currentUser, from, isInitializing, loginSuccess, navigate])
 
   const onSubmit = async (data: LoginFormData) => {
     try {

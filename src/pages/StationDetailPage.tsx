@@ -408,7 +408,10 @@ export default function StationDetailPage() {
                   <CloudSun className="h-5 w-5 text-blue-500" />
                   <h3 className="text-base font-sg font-extrabold text-[#133c1d]">Solar Intelligence</h3>
                 </div>
-                <div className="grid gap-4 md:grid-cols-2">
+                <div
+                  className="grid items-stretch gap-4"
+                  style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 360px), 1fr))' }}
+                >
                   <SolarWidget stationId={id} />
                   <ForecastChart stationId={id} />
                 </div>

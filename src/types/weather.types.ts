@@ -66,3 +66,21 @@ export interface BulkRefreshInput {
   stationIds?: string[]  // empty = refresh all
   force?:      boolean
 }
+
+export interface BulkRefreshResult {
+  refreshed: number
+  failed: number
+}
+
+export interface WeatherExportQuery {
+  format: 'csv' | 'json'
+  stationId?: string
+  from?: string
+  to?: string
+}
+
+export interface WeatherExportResult {
+  blob: Blob
+  filename: string
+  contentType: string
+}

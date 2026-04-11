@@ -19,6 +19,7 @@ import {
   Thermometer, Wind, Cloud, Zap, Filter,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { toast } from 'sonner'
 import { Layout } from '@/components/shared/Layout'
 import { PageHeader } from '@/components/shared/PageHeader'
 import {
@@ -26,6 +27,7 @@ import {
   useArchiveSolarReportMutation,
   usePublishSolarReportMutation,
 } from '@/features/weather/solarApi'
+import { getApiErrorMessage } from '@/lib/errors'
 import type { SolarReport } from '@/types/solar.types'
 import { formatDate } from '@/lib/utils'
 
@@ -80,17 +82,29 @@ function ReportTableRow({ report }: { report: SolarReport }) {
 
   const handleArchive = async () => {
     if (!window.confirm(`Archive report from "${submitter}"? It will be removed from public analytics.`)) return
-    try { await archive(report._id).unwrap(); setRowError(null) }
-    catch (e: unknown) { setRowError((e as { data?: { message?: string } })?.data?.message ?? 'Archive failed') }
+    try {
+      await archive(report._id).unwrap()
+      setRowError(null)
+      toast.success('Solar report archived.')
+    } catch (error: unknown) {
+      setRowError(getApiErrorMessage(error, 'Archive failed.'))
+      toast.error(getApiErrorMessage(error, 'Archive failed.'))
+    }
   }
 
   const handleRestore = async () => {
-    try { await publish(report._id).unwrap(); setRowError(null) }
-    catch (e: unknown) { setRowError((e as { data?: { message?: string } })?.data?.message ?? 'Restore failed') }
+    try {
+      await publish(report._id).unwrap()
+      setRowError(null)
+      toast.success('Solar report restored to published.')
+    } catch (error: unknown) {
+      setRowError(getApiErrorMessage(error, 'Restore failed.'))
+      toast.error(getApiErrorMessage(error, 'Restore failed.'))
+    }
   }
 
   return (
-    <div className="rounded-[16px] border border-gray-100 bg-white p-4 shadow-sm transition-all hover:border-[#8cc63f]/40">
+    <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-all hover:border-[#8cc63f]/40">
       <div className="flex items-start gap-3">
         <ScoreBadge score={report.solarScore} />
 
@@ -250,7 +264,7 @@ export default function AdminSolarReportsPage() {
         actions={
           <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2">
             <Shield className="h-4 w-4 shrink-0 text-red-500" />
-            <span className="text-xs font-bold text-red-700">Admin Only</span>
+            <span className="text-xs font-bold text-red-700">Operator Access</span>
           </div>
         }
       />
@@ -367,7 +381,7 @@ function AdminStatCard({ icon, label, value, color }: {
   icon: React.ReactNode; label: string; value: number; color: string
 }) {
   return (
-    <div className="rounded-[16px] border border-gray-100 bg-white p-4 shadow-sm">
+    <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
       <div className="mb-2 flex items-center gap-2">{icon}<span className="text-[10px] uppercase tracking-wider text-gray-400">{label}</span></div>
       <p className={`text-2xl font-extrabold tabular-nums ${color}`}>{value}</p>
     </div>

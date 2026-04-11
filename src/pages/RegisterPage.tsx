@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useRegisterMutation } from '../features/auth/authApi'
+import { useAppSelector } from '@/app/hooks'
+import { selectCurrentUser, selectIsInitializing } from '@/features/auth/authSlice'
 
 const registerSchema = z
   .object({
@@ -50,6 +52,8 @@ function PasswordStrength({ password }: { password: string }) {
 
 export default function RegisterPage() {
   const navigate = useNavigate()
+  const currentUser = useAppSelector(selectCurrentUser)
+  const isInitializing = useAppSelector(selectIsInitializing)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [registerUser, { isLoading, isSuccess, error }] = useRegisterMutation()
@@ -62,6 +66,12 @@ export default function RegisterPage() {
   } = useForm<RegisterFormData>({ resolver: zodResolver(registerSchema) })
 
   const passwordValue = useWatch({ control, name: 'password', defaultValue: '' })
+
+  useEffect(() => {
+    if (!isInitializing && currentUser) {
+      navigate('/stations', { replace: true })
+    }
+  }, [currentUser, isInitializing, navigate])
 
   const onSubmit = async (data: RegisterFormData) => {
     try {

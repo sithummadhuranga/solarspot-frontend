@@ -27,9 +27,15 @@ export function Sidebar() {
     { skip: !user }
   )
 
+  const weatherAdminCheck = useCheckPermissionAccessQuery(
+    { action: 'weather.admin', context: {} },
+    { skip: !user }
+  )
+
   const canModerateStations = stationPendingCheck.data?.data?.allowed  ?? false
   const canModerateReviews  = reviewModerateCheck.data?.data?.allowed  ?? false
   const canReadPermissions  = permissionsReadCheck.data?.data?.allowed ?? false
+  const canManageSolar      = weatherAdminCheck.data?.data?.allowed    ?? false
 
   const hasModerationAccess = canModerateStations || canModerateReviews
 
@@ -79,6 +85,16 @@ export function Sidebar() {
         <NavLink to="/profile"            className={navLinkClass}>My Profile</NavLink>
         <NavLink to="/solar/reports/mine" className={navLinkClass}>My Solar Reports</NavLink>
 
+        {canManageSolar && (
+          <>
+            <p className="mt-4 px-3 py-2 text-xs font-sg font-bold text-gray-400 uppercase tracking-wider">
+              Solar Ops
+            </p>
+            <NavLink to="/admin/solar/analytics" className={navLinkClass}>Solar Analytics</NavLink>
+            <NavLink to="/admin/solar/reports"   className={navLinkClass}>Solar Reports</NavLink>
+          </>
+        )}
+
         {canReadPermissions && (
           <>
             <p className="mt-4 px-3 py-2 text-xs font-sg font-bold text-gray-400 uppercase tracking-wider">
@@ -86,7 +102,6 @@ export function Sidebar() {
             </p>
             <NavLink to="/admin/users"         className={navLinkClass}>Users</NavLink>
             <NavLink to="/admin/permissions"   className={navLinkClass}>Permissions</NavLink>
-            <NavLink to="/admin/solar/reports" className={navLinkClass}>Solar Reports</NavLink>
           </>
         )}
 
