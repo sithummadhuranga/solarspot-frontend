@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { ProtectedRoute } from '@/guards/ProtectedRoute'
 import { BackendPermissionGuard } from '@/guards/BackendPermissionGuard'
-import { RoleGuard } from '@/guards/RoleGuard'
+import { AdminAreaGuard } from '@/guards/AdminAreaGuard'
 
 const HomePage = lazy(() => import('@/pages/HomePage'))
 const LoginPage = lazy(() => import('@/pages/LoginPage'))
@@ -66,69 +66,57 @@ export function AppRouter() {
           <Route
             path="/admin"
             element={
-              <RoleGuard minRole="admin">
+              <AdminAreaGuard>
                 <AdminDashboardPage />
-              </RoleGuard>
+              </AdminAreaGuard>
             }
           />
           <Route
             path="/admin/users"
             element={
-              <RoleGuard minRole="admin">
-                <BackendPermissionGuard action="users.read-list" fallback={<Navigate to="/unauthorized" replace />}>
-                  <AdminUsersPage />
-                </BackendPermissionGuard>
-              </RoleGuard>
+              <BackendPermissionGuard action="users.read-list" fallback={<Navigate to="/unauthorized" replace />}>
+                <AdminUsersPage />
+              </BackendPermissionGuard>
             }
           />
           <Route
             path="/admin/stations/pending"
             element={
-              <RoleGuard minRole="admin">
-                <BackendPermissionGuard action="stations.read-pending" fallback={<Navigate to="/unauthorized" replace />}>
-                  <ModerationQueuePage />
-                </BackendPermissionGuard>
-              </RoleGuard>
+              <BackendPermissionGuard action="stations.read-pending" fallback={<Navigate to="/unauthorized" replace />}>
+                <ModerationQueuePage />
+              </BackendPermissionGuard>
             }
           />
           <Route
             path="/admin/reviews"
             element={
-              <RoleGuard minRole="admin">
-                <BackendPermissionGuard action="reviews.moderate" fallback={<Navigate to="/unauthorized" replace />}>
-                  <ReviewsPage />
-                </BackendPermissionGuard>
-              </RoleGuard>
+              <BackendPermissionGuard action="reviews.moderate" fallback={<Navigate to="/unauthorized" replace />}>
+                <ReviewsPage />
+              </BackendPermissionGuard>
             }
           />
           <Route
             path="/admin/solar/analytics"
             element={
-              <RoleGuard allowedRoles={['weather_analyst', 'moderator', 'admin']}>
-                <BackendPermissionGuard action="weather.admin" fallback={<Navigate to="/unauthorized" replace />}>
-                  <AdminSolarAnalyticsPage />
-                </BackendPermissionGuard>
-              </RoleGuard>
+              <BackendPermissionGuard action="weather.admin" fallback={<Navigate to="/unauthorized" replace />}>
+                <AdminSolarAnalyticsPage />
+              </BackendPermissionGuard>
             }
           />
           <Route
             path="/admin/solar/reports"
             element={
-              <RoleGuard allowedRoles={['weather_analyst', 'moderator', 'admin']}>
-                <BackendPermissionGuard action="weather.admin" fallback={<Navigate to="/unauthorized" replace />}>
-                  <AdminSolarReportsPage />
-                </BackendPermissionGuard>
-              </RoleGuard>
+              <BackendPermissionGuard action="weather.admin" fallback={<Navigate to="/unauthorized" replace />}>
+                <AdminSolarReportsPage />
+              </BackendPermissionGuard>
             }
           />
           <Route
             path="/admin/permissions"
             element={
-              <RoleGuard minRole="admin">
-                <BackendPermissionGuard action="permissions.read" fallback={<Navigate to="/unauthorized" replace />}>
-                  <PermissionsPage />
-                </BackendPermissionGuard>
-              </RoleGuard>
+              <BackendPermissionGuard action="permissions.read" fallback={<Navigate to="/unauthorized" replace />}>
+                <PermissionsPage />
+              </BackendPermissionGuard>
             }
           />
         </Route>

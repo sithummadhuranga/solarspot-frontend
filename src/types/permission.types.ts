@@ -50,6 +50,16 @@ export interface UserPermissionOverrideItem {
   updatedAt?: string
 }
 
+export interface UserPermissionMatrixItem {
+  permission: PermissionItem
+  allowed: boolean
+  roleGranted: boolean
+  source: 'role' | 'override-grant' | 'override-deny' | 'none'
+  overrideEffect: 'grant' | 'deny' | null
+  overrideReason?: string | null
+  overrideExpiresAt?: string | null
+}
+
 export interface AuditLogItem {
   _id: string
   actor: string

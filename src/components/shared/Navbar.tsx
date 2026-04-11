@@ -3,15 +3,14 @@ import { Link, NavLink } from 'react-router-dom'
 import { Menu, X, Sun, MapPin, Zap, LayoutGrid, User2, LogOut, ShieldCheck } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/hooks/useAuth'
+import { useAdminAccess } from '@/hooks/useAdminAccess'
 import { cn } from '@/lib/utils'
 
 export function Navbar() {
   const { user, isAuthenticated, signOut } = useAuth()
+  const { hasAdminEntryAccess, isCheckingAdminAccess } = useAdminAccess()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
-
-  const isMod = user?.role === 'moderator' || user?.role === 'admin'
-  const isAdmin = user?.role === 'admin'
 
   const navLink = (to: string, label: string) => (
     <NavLink
@@ -51,15 +50,20 @@ export function Navbar() {
           {navLink('/stations', 'Stations')}
           {navLink('/map', 'Map')}
           {isAuthenticated && navLink('/my-stations', 'My Stations')}
-          {isMod && navLink('/admin/stations/pending', 'Station Queue')}
-          {isMod && navLink('/admin/reviews', 'Review Queue')}
-          {navLink('/weather', 'Weather')}
-          {isAdmin && navLink('/admin/permissions', 'Admin')}
         </div>
 
         <div className="hidden md:flex items-center gap-3 shrink-0">
           {isAuthenticated ? (
             <>
+              {hasAdminEntryAccess && !isCheckingAdminAccess && (
+                <Link
+                  to="/admin"
+                  className="inline-flex items-center gap-1.5 rounded-[12px] border border-[#133c1d]/15 bg-[#133c1d] px-3 py-1.5 text-xs font-sg font-semibold text-white transition-colors hover:bg-[#0f3117]"
+                >
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  Admin
+                </Link>
+              )}
               <Link
                 to="/stations/new"
                 className="inline-flex items-center gap-1.5 rounded-[12px] bg-[#8cc63f] px-3 py-1.5 text-xs font-sg font-semibold text-[#133c1d] hover:bg-[#7ab334] transition-colors"
@@ -109,9 +113,8 @@ export function Navbar() {
             { to: '/stations', label: 'Stations', icon: <LayoutGrid className="h-4 w-4" /> },
             { to: '/map', label: 'Map', icon: <MapPin className="h-4 w-4" /> },
             ...(isAuthenticated ? [{ to: '/my-stations', label: 'My Stations', icon: <Zap className="h-4 w-4" /> }] : []),
-            ...(isMod ? [
-              { to: '/admin/stations/pending', label: 'Station Queue', icon: <ShieldCheck className="h-4 w-4" /> },
-              { to: '/admin/reviews', label: 'Review Queue', icon: <ShieldCheck className="h-4 w-4" /> },
+            ...(hasAdminEntryAccess && !isCheckingAdminAccess ? [
+              { to: '/admin', label: 'Admin', icon: <ShieldCheck className="h-4 w-4" /> },
             ] : []),
           ].map((item) => (
             <Link

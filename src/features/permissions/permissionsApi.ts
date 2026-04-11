@@ -9,6 +9,7 @@ import type {
   RoleItem,
   RolePermissionItem,
   UserPermissionOverrideItem,
+  UserPermissionMatrixItem,
 } from '@/types/permission.types'
 
 interface AssignPermissionInput {
@@ -87,6 +88,11 @@ export const permissionsApi = baseApi.injectEndpoints({
       providesTags: (_res, _err, userId) => [{ type: 'User', id: userId }, 'Permission'],
     }),
 
+    getUserPermissionMatrix: builder.query<ApiResponse<UserPermissionMatrixItem[]>, string>({
+      query: (userId) => `/permissions/admin/users/${userId}/permissions/matrix`,
+      providesTags: (_res, _err, userId) => [{ type: 'User', id: userId }, 'Permission'],
+    }),
+
     overrideUserPermission: builder.mutation<ApiResponse<UserPermissionOverrideItem>, OverrideUserPermissionInput>({
       query: ({ userId, ...body }) => ({
         url: `/permissions/admin/users/${userId}/permissions`,
@@ -151,6 +157,7 @@ export const {
   useAssignPermissionToRoleMutation,
   useRemovePermissionFromRoleMutation,
   useGetUserEffectivePermissionsQuery,
+  useGetUserPermissionMatrixQuery,
   useOverrideUserPermissionMutation,
   useRemoveUserPermissionOverrideMutation,
   useCheckPermissionMutation,
