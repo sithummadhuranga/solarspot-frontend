@@ -43,6 +43,7 @@ export const usersApi = baseApi.injectEndpoints({
             )
           }
         } catch {
+          return
         }
       },
       invalidatesTags: ['User'],
@@ -55,6 +56,7 @@ export const usersApi = baseApi.injectEndpoints({
           await queryFulfilled
           dispatch(clearCredentials())
         } catch {
+          return
         }
       },
       invalidatesTags: ['User'],

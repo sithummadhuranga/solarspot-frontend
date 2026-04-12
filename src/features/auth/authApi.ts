@@ -42,6 +42,7 @@ export const authApi = baseApi.injectEndpoints({
             }),
           )
         } catch {
+          return
         }
       },
     }),

@@ -18,6 +18,18 @@ interface Props {
   stationId: string
 }
 
+interface TooltipPayloadEntry {
+  name?: string | number
+  value?: string | number
+  color?: string
+}
+
+interface CustomTooltipProps {
+  active?: boolean
+  payload?: TooltipPayloadEntry[]
+  label?: string | number
+}
+
 function formatMetric(value: number, maximumFractionDigits = 1) {
   return new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 0,
@@ -33,13 +45,13 @@ function formatTick(iso: string) {
   try { return format(new Date(iso), 'dd HH:mm') } catch { return iso }
 }
 
-function CustomTooltip({ active, payload, label }: any) {
+function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   if (!active || !payload?.length) return null
   return (
     <div className="rounded-lg border border-slate-700 bg-slate-800 p-3 text-sm text-white shadow-xl">
       <p className="font-semibold mb-1">{label}</p>
-      {payload.map((p: { name: string; value: number; color: string }) => (
-        <p key={p.name} style={{ color: p.color }}>
+      {payload.map((p) => (
+        <p key={String(p.name)} style={{ color: p.color }}>
           {p.name}: <strong>{p.value}</strong>
         </p>
       ))}
