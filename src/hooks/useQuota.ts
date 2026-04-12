@@ -1,7 +1,6 @@
 import { useGetQuotaStatsQuery } from '@/features/permissions/permissionsApi'
 import { useAuth } from './useAuth'
 
-// Daily limits are mirrored from backend QuotaService soft caps.
 const QUOTA_LIMITS: Record<string, number> = {
   brevo:       300,
   openweathermap: 1000,
@@ -10,27 +9,13 @@ const QUOTA_LIMITS: Record<string, number> = {
   cloudinary:  Infinity,
 }
 
-// Alert threshold: 80% of limit.
 const ALERT_THRESHOLD = 0.8
 
-/**
- * useQuota — read-only view of third-party API quota usage.
- *
- * Only admins can fetch quota data (requires `quotas.read` permission).
- * For other roles this hook returns null data without making an API call.
- *
- * TODO (Member 4): add real-time quota alert notifications once
- *                  the notification system is implemented.
- *
- * Usage:
- *   const { quotas, isNearLimit } = useQuota()
- *   if (isNearLimit('openweather')) { showWarning() }
- */
+
 export function useQuota() {
   const { role } = useAuth()
   const isAdmin  = role === 'admin' || role === 'moderator' || role === 'permission_auditor'
 
-  // Skip the network call for non-admins.
   const { data, isLoading, error } = useGetQuotaStatsQuery(undefined, {
     skip: !isAdmin,
     pollingInterval: 5 * 60 * 1000, // re-fetch every 5 min

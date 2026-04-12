@@ -11,7 +11,6 @@ import { useAuth } from '@/hooks/useAuth'
 import { formatDate } from '@/lib/utils'
 import type { Station } from '@/types/station.types'
 
-// ─── Inline approval confirmation popover ────────────────────────────────────
 
 interface ApproveButtonProps {
   station:   Station
@@ -49,12 +48,10 @@ function ApproveButton({ station, onApprove, isPending }: ApproveButtonProps) {
   )
 }
 
-// ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function ModerationQueuePage() {
   const [page,        setPage]        = useState(1)
   const [rejectTarget, setRejectTarget] = useState<Station | null>(null)
-  // Track which rows are fading (just-actioned)
   const [fadingIds,   setFadingIds]   = useState<Set<string>>(new Set())
   const { role } = useAuth()
   const isAdmin = role === 'admin'

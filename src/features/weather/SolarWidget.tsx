@@ -1,14 +1,4 @@
-/**
- * SolarWidget — Live solar output widget for a station.
- *
- * Shows: current temperature, cloud cover, UV index, estimated kW output,
- * and solar score with a colour-coded indicator.
- *
- * ⚠ OWM Attribution — required by OpenWeatherMap free-tier licence:
- *   "Powered by OpenWeatherMap" must be displayed whenever OWM data is shown.
- *
- * Owner: Member 3 · Ref: SolarIntelligence_Module_Prompt.md → A6
- */
+
 import { Cloud, MapPin, Sun, Thermometer, Wind, Zap } from 'lucide-react'
 import { format } from 'date-fns'
 import { useGetLiveWeatherQuery } from './solarApi'

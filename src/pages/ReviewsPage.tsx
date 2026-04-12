@@ -18,7 +18,6 @@ const PAGE_SIZE = 10
 
 type TabKey = 'pending' | 'flagged'
 
-// ─── Reusable paginated review list ──────────────────────────────────────────
 
 interface ReviewSectionProps {
   reviews:        Review[]
@@ -125,7 +124,6 @@ function ReviewSection({
   )
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function ReviewsPage() {
   const { user } = useAuth()
@@ -134,7 +132,6 @@ export default function ReviewsPage() {
   const [flaggedPage,  setFlaggedPage]  = useState(1)
   const [moderateTarget, setModerateTarget] = useState<Review | null>(null)
 
-  // Pending reviews — those held by toxicity AI scoring (moderationStatus: 'pending')
   const {
     data:      pendingData,
     isLoading: pendingLoading,
@@ -146,7 +143,6 @@ export default function ReviewsPage() {
     sort:             'newest',
   })
 
-  // Community-flagged reviews — those flagged 3+ times by users
   const {
     data:      flaggedData,
     isLoading: flaggedLoading,
@@ -188,7 +184,7 @@ export default function ReviewsPage() {
         description="Approve or reject reviews held by AI toxicity screening or community flags"
       />
 
-      {/* ── Total badge ────────────────────────────────────────────── */}
+      {}
       {totalQueued > 0 && (
         <div className="mb-4 flex items-center gap-2">
           <AlertTriangle className="h-4 w-4 text-amber-500" />
@@ -198,7 +194,7 @@ export default function ReviewsPage() {
         </div>
       )}
 
-      {/* ── Tabs ───────────────────────────────────────────────────── */}
+      {}
       <div className="mb-6 flex gap-1 rounded-[14px] bg-gray-100 p-1">
         {tabs.map((tab) => (
           <button
@@ -227,7 +223,7 @@ export default function ReviewsPage() {
         ))}
       </div>
 
-      {/* ── Pending tab ────────────────────────────────────────────── */}
+      {}
       {activeTab === 'pending' && (
         <>
           <div className="mb-4 rounded-[14px] border border-amber-200 bg-amber-50 px-4 py-3">
@@ -253,7 +249,7 @@ export default function ReviewsPage() {
         </>
       )}
 
-      {/* ── Flagged tab ────────────────────────────────────────────── */}
+      {}
       {activeTab === 'flagged' && (
         <>
           <div className="mb-4 rounded-[14px] border border-red-200 bg-red-50 px-4 py-3">
@@ -278,7 +274,7 @@ export default function ReviewsPage() {
         </>
       )}
 
-      {/* ── Moderation modal ───────────────────────────────────────── */}
+      {}
       {moderateTarget && (
         <ModerationModal
           review={moderateTarget}

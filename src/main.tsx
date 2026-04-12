@@ -14,9 +14,7 @@ import '@/features/weather/weatherApi'
 import '@/features/weather/solarApi'
 import '@/features/users/usersApi'
 import '@/features/permissions/permissionsApi'
-// ──────────────────────────────────────────────────────────────────────────────
 
-// Recover from stale chunk URLs after a new deployment/build.
 if (typeof window !== 'undefined') {
   window.addEventListener('vite:preloadError', (event) => {
     event.preventDefault()

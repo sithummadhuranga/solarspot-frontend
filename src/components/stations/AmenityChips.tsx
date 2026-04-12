@@ -19,7 +19,7 @@ const AMENITY_CONFIG: Record<Amenity, { label: string; Icon: React.FC<{ classNam
 
 interface AmenityChipsProps {
   amenities: Amenity[]
-  /** Show only icons without labels (compact mode) */
+  
   compact?: boolean
   className?: string
 }
@@ -48,5 +48,5 @@ export function AmenityChips({ amenities, compact = false, className }: AmenityC
   )
 }
 
-/** Exported so forms can render an amenity picker */
+
 export { AMENITY_CONFIG }

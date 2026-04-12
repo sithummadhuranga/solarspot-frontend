@@ -1,33 +1,3 @@
-// ─── API base URL ─────────────────────────────────────────────────────────────
-// ARCHITECTURE: Always '/api' in production.
-//   - Vercel:  vercel.json rewrites /api/* → Render server-side (no browser CORS).
-//   - Docker:  vite.config.ts proxy forwards /api/* → backend container.
-//   - Dev:     same Vite proxy; VITE_API_BASE_URL can override for special setups.
-//
-// import.meta.env.PROD is set by Vite at build time and CANNOT be overridden
-// by any dashboard env var — this prevents VITE_API_BASE_URL from accidentally
-// baking an absolute Render URL into the production bundle and breaking CORS.
-export const API_BASE_URL: string = import.meta.env.PROD
-  ? '/api'
-  : (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '/api'
-
-// ─── Roles ────────────────────────────────────────────────────────────────────
-export const ROLES = {
-  GUEST: 'guest',
-  USER:      'user',
-  STATION_OWNER: 'station_owner',
-  FEATURED_CONTRIBUTOR: 'featured_contributor',
-  TRUSTED_REVIEWER: 'trusted_reviewer',
-  REVIEW_MODERATOR: 'review_moderator',
-  WEATHER_ANALYST: 'weather_analyst',
-  PERMISSION_AUDITOR: 'permission_auditor',
-  MODERATOR: 'moderator',
-  ADMIN:     'admin',
-} as const
-
-export type Role = (typeof ROLES)[keyof typeof ROLES]
-
-/** Numeric hierarchy — higher = more permissions (0 = unauthenticated guest) */
 export const ROLE_LEVEL: Record<string, number> = {
   guest:     0,
   user:      1,
@@ -41,7 +11,6 @@ export const ROLE_LEVEL: Record<string, number> = {
   admin:     4,
 }
 
-// ─── Station options ──────────────────────────────────────────────────────────
 export const CONNECTOR_TYPES = [
   'USB-C',
   'Type-2',
@@ -76,12 +45,11 @@ export const STATION_STATUSES = [
 
 export type StationStatus = (typeof STATION_STATUSES)[number]
 
-// ─── Pagination defaults ──────────────────────────────────────────────────────
 export const DEFAULT_PAGE_SIZE = 10
 export const MAX_PAGE_SIZE     = 50
 
-// ─── Map defaults ─────────────────────────────────────────────────────────────
-/** Colombo, Sri Lanka (default map centre) */
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+
 export const DEFAULT_MAP_CENTER: [number, number] = [6.9271, 79.8612]
 export const DEFAULT_MAP_ZOOM   = 13
 export const DEFAULT_SEARCH_RADIUS_KM = 10

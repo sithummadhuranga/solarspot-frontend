@@ -7,7 +7,7 @@ import { StationCard } from '@/components/stations/StationCard'
 import carSvg from '@/assets/images/car.svg'
 import chargingStationSvg from '@/assets/images/charging station.svg'
 
-/* ─────────────────────────────────────────────────────────────────────── */
+
 
 export default function HomePage() {
   const { isAuthenticated } = useAuth()
@@ -20,16 +20,16 @@ export default function HomePage() {
   return (
     <div className="overflow-x-hidden bg-white">
 
-      {/* ── Announcement Bar ── */}
+      {}
       <div className="bg-[#0b2614] text-center text-[0.78rem] font-medium tracking-wide text-white/70 py-2.5 px-4">
         🌞 Book Online &nbsp;·&nbsp; Request a booking (pending confirmation) within 24 hours
       </div>
 
-      {/* ── Landing Navbar ── */}
+      {}
       <nav className="relative z-50 border-b border-white/10 bg-transparent">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-6 lg:px-8">
 
-          {/* Brand */}
+          {}
           <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#8cc63f] shadow-lg shadow-[#8cc63f]/20 transition-transform group-hover:scale-105">
               <Sun className="h-5 w-5 text-[#0b2614]" />
@@ -39,7 +39,7 @@ export default function HomePage() {
             </span>
           </Link>
 
-          {/* Center links — hidden <md */}
+          {}
           <div className="hidden lg:flex items-center gap-7">
             {[
               { label: 'Home', href: '#hero' },
@@ -64,9 +64,9 @@ export default function HomePage() {
             )}
           </div>
 
-          {/* Right side */}
+          {}
           <div className="flex items-center gap-3 shrink-0">
-            {/* Phone — hidden <md */}
+            {}
             <div className="hidden md:flex items-center gap-2.5 text-[#133c1d] mr-2">
               <Phone className="h-4 w-4 text-[#1a6b3c]" />
               <div className="leading-tight">
@@ -92,21 +92,21 @@ export default function HomePage() {
         </div>
       </nav>
 
-      {/* ═══════════════════════════════════════════════════════════════════ */}
-      {/* HERO SECTION                                                       */}
-      {/* ═══════════════════════════════════════════════════════════════════ */}
+      {}
+      {}
+      {}
       <section id="hero" className="relative overflow-hidden bg-[#8cc63f]">
 
-        {/* Gradient orbs */}
+        {}
         <div className="hero-orb w-[600px] h-[600px] bg-[#97cf42] -top-[15%] -right-[8%] opacity-60" />
         <div className="hero-orb w-[480px] h-[480px] bg-[#a2d94d] top-[5%] right-[4%] opacity-50" style={{ animationDelay: '2s' }} />
         <div className="hero-orb w-[350px] h-[350px] bg-[#afde5a] top-[15%] right-[12%] opacity-40" style={{ animationDelay: '4s' }} />
 
-        {/* Content */}
+        {}
         <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-4 pt-12 pb-40 lg:pt-16 lg:pb-48 min-h-[60vh] lg:min-h-[80vh]">
 
-            {/* LEFT — Text */}
+            {}
             <div className="w-full lg:w-[48%] lg:shrink-0">
               <h1 className="font-sg font-extrabold tracking-tight leading-[1.05]"
                 style={{ fontSize: 'clamp(2.2rem, 5.5vw, 3.8rem)' }}
@@ -135,7 +135,7 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              {/* Social row */}
+              {}
               <div className="mt-8 flex items-center gap-4 text-[0.78rem] font-semibold text-white/60 tracking-wide">
                 {['FB', 'TW', 'YT', 'LD'].map((s) => (
                   <a key={s} href="#" className="hover:text-white transition-colors">{s}</a>
@@ -145,7 +145,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* RIGHT — Car image */}
+            {}
             <div className="relative w-full lg:w-[52%] lg:flex-1 h-[280px] sm:h-[360px] lg:h-[520px] xl:h-[560px]">
               <img
                 src={carSvg}
@@ -156,12 +156,12 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Bottom SVG Curve */}
+        {}
         <div className="absolute bottom-[-2px] left-0 w-full z-20" style={{ lineHeight: 0 }}>
           <svg viewBox="0 0 1440 110" className="block w-full" style={{ height: 'clamp(60px, 8vw, 100px)' }} preserveAspectRatio="none">
             <path d="M0,110 L0,0 Q720,160 1440,0 L1440,110 Z" fill="#fafdf7" />
           </svg>
-          {/* Scroll indicator */}
+          {}
           <a href="#about"
             className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center w-14 h-14 rounded-full bg-[#133c1d] shadow-xl shadow-black/20 hover:bg-[#0b2614] transition-all animate-bounce"
             style={{ bottom: 'clamp(18px, 3vw, 30px)' }}
@@ -171,14 +171,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════════════ */}
-      {/* ABOUT / FEATURES                                                   */}
-      {/* ═══════════════════════════════════════════════════════════════════ */}
+      {}
+      {}
+      {}
       <section id="about" className="bg-[#fafdf7]" style={{ padding: 'clamp(5rem, 10vw, 8rem) 0 clamp(3.5rem, 7vw, 5.5rem)' }}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center lg:items-end gap-12 lg:gap-16">
 
-            {/* Charging Station Image */}
+            {}
             <div className="w-48 sm:w-56 lg:w-[420px] xl:w-[520px] shrink-0 flex justify-center">
               <img
                 src={chargingStationSvg}
@@ -187,7 +187,7 @@ export default function HomePage() {
               />
             </div>
 
-            {/* Text + Feature cards */}
+            {}
             <div className="flex-1 min-w-0">
               <span className="inline-flex items-center gap-2 text-[0.72rem] font-sg font-bold text-[#1a6b3c] uppercase tracking-[0.15em] mb-3">
                 <span className="w-2 h-2 rounded-full bg-[#8cc63f]" /> About Us
@@ -205,7 +205,7 @@ export default function HomePage() {
                 helping you discover, rate, and share the best charging experiences.
               </p>
 
-              {/* Feature cards */}
+              {}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
                   { icon: MapPin,    title: 'Geospatial Discovery', desc: 'Interactive map to find solar stations near you — search by distance & availability.', color: 'text-blue-600', bg: 'bg-blue-50' },
@@ -229,9 +229,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════════════ */}
-      {/* STATS BAR                                                          */}
-      {/* ═══════════════════════════════════════════════════════════════════ */}
+      {}
+      {}
+      {}
       <section className="relative mesh-gradient noise-overlay py-16">
         <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
@@ -259,9 +259,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════════════ */}
-      {/* FEATURED STATIONS                                                  */}
-      {/* ═══════════════════════════════════════════════════════════════════ */}
+      {}
+      {}
+      {}
       <section className="bg-[#fafdf7]" style={{ padding: 'clamp(3.5rem, 7vw, 5.5rem) 0' }}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
@@ -302,12 +302,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════════════ */}
-      {/* CTA BANNER                                                         */}
-      {/* ═══════════════════════════════════════════════════════════════════ */}
+      {}
+      {}
+      {}
       {!isAuthenticated && (
         <section className="relative overflow-hidden" style={{ padding: 'clamp(4rem, 8vw, 6.5rem) 0' }}>
-          {/* Subtle bg gradient */}
+          {}
           <div className="absolute inset-0 bg-gradient-to-br from-[#f0fdf4] via-[#dcfce7]/60 to-[#f0fdf4]" />
           <div className="absolute inset-0 opacity-[0.03]"
             style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #1a6b3c 1px, transparent 0)', backgroundSize: '32px 32px' }}
@@ -340,14 +340,14 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ═══════════════════════════════════════════════════════════════════ */}
-      {/* FOOTER                                                             */}
-      {/* ═══════════════════════════════════════════════════════════════════ */}
+      {}
+      {}
+      {}
       <footer id="footer" className="bg-[#071a0e]" style={{ padding: 'clamp(3rem, 6vw, 4.5rem) 0 2rem' }}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
 
-            {/* Brand */}
+            {}
             <div>
               <div className="flex items-center gap-2.5 mb-4">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#8cc63f]/20">
@@ -360,7 +360,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* Platform links */}
+            {}
             <div>
               <h4 className="font-sg font-bold text-[0.7rem] text-white/70 uppercase tracking-[0.14em] mb-5">Platform</h4>
               <ul className="space-y-2.5">
@@ -376,7 +376,7 @@ export default function HomePage() {
               </ul>
             </div>
 
-            {/* Account links */}
+            {}
             <div>
               <h4 className="font-sg font-bold text-[0.7rem] text-white/70 uppercase tracking-[0.14em] mb-5">Account</h4>
               <ul className="space-y-2.5">
@@ -392,7 +392,7 @@ export default function HomePage() {
               </ul>
             </div>
 
-            {/* Contact */}
+            {}
             <div>
               <h4 className="font-sg font-bold text-[0.7rem] text-white/70 uppercase tracking-[0.14em] mb-5">Contact</h4>
               <div className="space-y-2.5 text-[0.85rem] text-white/35">
@@ -403,7 +403,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Bottom bar */}
+          {}
           <div className="border-t border-white/[0.06] pt-6 flex flex-wrap items-center justify-between gap-3">
             <span className="text-[0.75rem] text-white/20">
               © {new Date().getFullYear()} SolarSpot. All rights reserved.

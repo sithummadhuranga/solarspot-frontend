@@ -40,10 +40,10 @@ High-level data flow:
 
 | Member | Module |
 |--------|--------|
-| Sathush Nanyakkara (@sathushnanayakkara) | Station Management |
+| Sathush Nanyakkara (@sathufit) | Station Management |
 | Nimnath Nadushka (@nnimnath) | Review System |
 | Sithum Madhuranga (@sithummadhuranga) | Weather Intelligence |
-| Christine Lowe (@shwethalowe) | Auth & Users |
+| Christine Lowe (@christineshwethalowe) | Auth & Users |
 
 Ownership guidance:
 

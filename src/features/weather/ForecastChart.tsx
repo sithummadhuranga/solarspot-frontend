@@ -1,11 +1,4 @@
-/**
- * ForecastChart — 5-day solar score + estimated output line chart.
- *
- * Uses recharts to display forecast slots annotated with solar calculations.
- * Also highlights the top 3 best charging windows as reference lines.
- *
- * Owner: Member 3 · Ref: SolarIntelligence_Module_Prompt.md → A6
- */
+
 import {
   ResponsiveContainer,
   LineChart,
@@ -40,7 +33,6 @@ function formatTick(iso: string) {
   try { return format(new Date(iso), 'dd HH:mm') } catch { return iso }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null
   return (

@@ -1,4 +1,3 @@
-// ─── Current weather ──────────────────────────────────────────────────────────
 export interface WeatherData {
   temperature:   number      // °C
   feelsLike:     number      // °C
@@ -12,7 +11,6 @@ export interface WeatherData {
   timestamp:     string
 }
 
-// ─── Forecast ─────────────────────────────────────────────────────────────────
 export interface ForecastSlot {
   timestamp:     string
   temperature:   number
@@ -21,7 +19,6 @@ export interface ForecastSlot {
   icon:          string
 }
 
-// ─── Best charging time ───────────────────────────────────────────────────────
 export interface BestTimeSlot {
   date:          string
   startHour:     number
@@ -31,7 +28,6 @@ export interface BestTimeSlot {
   reason:        string
 }
 
-// ─── Solar irradiance index ───────────────────────────────────────────────────
 export interface SolarIndex {
   lat:        number
   lng:        number
@@ -42,26 +38,25 @@ export interface SolarIndex {
   calculatedAt: string
 }
 
-// ─── Composite types used by weatherApi ───────────────────────────────────────
 
-/** Full forecast response (array of slots keyed by stationId) */
+
 export interface WeatherForecast {
   stationId: string
   slots:     ForecastSlot[]
   generatedAt: string
 }
 
-/** Heatmap data point — alias for SolarIndex, used by GET /weather/heatmap */
+
 export type HeatmapPoint = SolarIndex
 
-/** Best time response returned by GET /weather/best-time/:stationId */
+
 export interface BestTimeResult {
   stationId: string
   slots:     BestTimeSlot[]
   generatedAt: string
 }
 
-/** Body for POST /weather/bulk-refresh (Member 3) */
+
 export interface BulkRefreshInput {
   stationIds?: string[]  // empty = refresh all
   force?:      boolean

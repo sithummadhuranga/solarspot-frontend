@@ -43,7 +43,6 @@ export const usersApi = baseApi.injectEndpoints({
             )
           }
         } catch {
-          // Component-level error handling keeps UX feedback localized.
         }
       },
       invalidatesTags: ['User'],
@@ -56,7 +55,6 @@ export const usersApi = baseApi.injectEndpoints({
           await queryFulfilled
           dispatch(clearCredentials())
         } catch {
-          // Keep existing auth state when server-side deletion fails.
         }
       },
       invalidatesTags: ['User'],

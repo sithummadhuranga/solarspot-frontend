@@ -1,5 +1,3 @@
-// src/utils/auditLogger.ts
-// Production-level audit logger for admin actions
 
 export type AuditLogEntry = {
   timestamp: string;
@@ -30,11 +28,8 @@ export class AuditLogger {
     };
     this.logs.push(entry);
 
-    // Send to backend API (both dev and production)
-    // Fire and forget — don't await or throw errors
     void this.sendToBackend(action, details);
 
-    // Also log to console in dev
     if (import.meta.env.DEV) {
       console.info('[AUDIT]', entry)
     }
@@ -55,7 +50,6 @@ export class AuditLogger {
         console.warn(`[AUDIT] Logging failed with status ${response.status}`)
       }
     } catch (error) {
-      // Silently fail — audit logging should never break the app
       if (import.meta.env.DEV) {
         console.warn('[AUDIT] Network error:', error instanceof Error ? error.message : error)
       }

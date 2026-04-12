@@ -78,7 +78,7 @@ export default function MyStationsPage() {
     <div className="min-h-screen bg-[#f5faf0]">
       <Navbar />
 
-      {/* Hero banner */}
+      {}
       <div className="relative overflow-hidden bg-[#8cc63f]">
         <div className="absolute inset-0 opacity-20"
           style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, #97cf42 0%, transparent 60%)' }}
@@ -102,7 +102,7 @@ export default function MyStationsPage() {
 
       <div className="mx-auto max-w-5xl px-4 py-10 lg:px-8">
 
-        {/* Stats bar */}
+        {}
         <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {[
             { label: 'Total',    count: counts.all,      bg: 'bg-white',           icon: <Sun className="h-5 w-5 text-[#1a6b3c]" />, text: 'text-[#133c1d]' },
@@ -118,14 +118,14 @@ export default function MyStationsPage() {
           ))}
         </div>
 
-        {/* Loading */}
+        {}
         {isLoading && (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-80 rounded-[20px] bg-white border border-gray-100 shadow-sm animate-pulse" />)}
           </div>
         )}
 
-        {/* Empty */}
+        {}
         {!isLoading && stations.length === 0 && (
           <div className="flex flex-col items-center justify-center rounded-[20px] border-2 border-dashed border-gray-200 bg-white py-24 text-center shadow-sm">
             <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-[#f5faf0]">
@@ -145,7 +145,7 @@ export default function MyStationsPage() {
           </div>
         )}
 
-        {/* Grid */}
+        {}
         {!isLoading && stations.length > 0 && (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {stations.map((station) => (
@@ -167,7 +167,7 @@ export default function MyStationsPage() {
           </div>
         )}
 
-        {/* Pagination */}
+        {}
         {pagination && pagination.totalPages > 1 && (
           <div className="mt-10 flex items-center justify-center gap-3">
             <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="gap-1.5 border-2 border-gray-200 hover:border-[#8cc63f] hover:text-[#133c1d] font-bold rounded-xl">

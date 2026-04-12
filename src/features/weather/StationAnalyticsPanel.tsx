@@ -1,11 +1,4 @@
-/**
- * StationAnalyticsPanel — Aggregated crowdsourced solar analytics for a station.
- *
- * Shows: average score, accuracy, estimated vs actual output, and a
- * 30-day trend bar chart of daily average solar scores.
- *
- * Owner: Member 3 · Ref: SolarIntelligence_Module_Prompt.md → A6
- */
+
 import {
   ResponsiveContainer,
   BarChart,
@@ -23,7 +16,6 @@ interface Props {
   stationId: string
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null
   return (

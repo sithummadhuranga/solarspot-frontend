@@ -1,4 +1,3 @@
-// ─── Pagination ───────────────────────────────────────────────────────────────
 export interface Pagination {
   page:       number
   limit:      number
@@ -8,7 +7,6 @@ export interface Pagination {
   hasPrev:    boolean
 }
 
-// ─── Standard API envelope ────────────────────────────────────────────────────
 export interface ApiResponse<T> {
   success:   boolean
   message:   string
@@ -20,7 +18,6 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
   pagination: Pagination
 }
 
-// ─── Error shape returned by the backend ─────────────────────────────────────
 export interface ApiError {
   success:    false
   message:    string
@@ -28,7 +25,6 @@ export interface ApiError {
   statusCode: number
 }
 
-// ─── RTK Query error helpers ──────────────────────────────────────────────────
 export interface SerializedApiError {
   status:  number
   data:    ApiError

@@ -1,4 +1,3 @@
-// ─── Roles (seeded in backend) ────────────────────────────────────────────────
 export type UserRole =
   | 'guest'
   | 'user'
@@ -20,14 +19,12 @@ export interface UserRoleObject {
 
 export type UserRoleRef = UserRole | UserRoleObject
 
-// ─── Preferences ──────────────────────────────────────────────────────────────
 export interface UserPreferences {
   defaultRadius:      number
   connectorTypes:     string[]
   emailNotifications: boolean
 }
 
-// ─── Full user document (returned by API — password never included) ────────────
 export interface User {
   _id:              string
   email:            string
@@ -45,7 +42,6 @@ export interface User {
   deletedAt?:       string | null
 }
 
-// ─── DTOs ─────────────────────────────────────────────────────────────────────
 export interface UpdateProfileDto {
   displayName?: string
 }

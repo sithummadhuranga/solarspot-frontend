@@ -4,8 +4,6 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { setInitialized, selectIsInitializing } from '@/features/auth/authSlice'
 import { refreshTokenOnce } from '@/lib/refreshSingleton'
 
-// Module-level flag: the startup silent-refresh must fire exactly once per
-// page load regardless of React StrictMode's double-effect invocation.
 let silentRefreshAttempted = false
 
 function App() {
@@ -16,13 +14,6 @@ function App() {
     if (silentRefreshAttempted) return
     silentRefreshAttempted = true
 
-    // Use the shared singleton so the startup refresh and any concurrent 401
-    // interceptors NEVER simultaneously call POST /auth/refresh. The backend
-    // rotates the refresh cookie on every call (one-shot); two parallel
-    // requests would cause the second to fail → clearCredentials → logout.
-    //
-    // refreshTokenOnce() handles setCredentials (success) and clearCredentials
-    // (failure) internally. We only need to mark initialisation complete.
     refreshTokenOnce().finally(() => {
       dispatch(setInitialized())
     })

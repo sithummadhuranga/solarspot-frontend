@@ -73,7 +73,7 @@ Use this as the primary reference for setup, architecture, ownership, deployment
 
 | Member | Module |
 |--------|--------|
-| Sathush Nanyakkara (@sathushnanayakkara) | Station Management |
+| Sathush Nanyakkara (@sathufit) | Station Management |
 | Nimnath Nadushka (@nnimnath) | Review System |
 | Sithum Madhuranga (@sithummadhuranga) | Weather Intelligence |
-| Christine Lowe (@shwethalowe) | Auth & Users |
+| Christine Lowe (@christineshwethalowe) | Auth & Users |

@@ -256,7 +256,7 @@ export default function AddStationPage() {
       <Navbar />
       <div className="mx-auto max-w-2xl px-4 py-8">
 
-        {/* Header */}
+        {}
         <div className="mb-6 flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-[16px] bg-[#8cc63f] text-[#133c1d]">
             <Sun className="h-5 w-5" />
@@ -271,7 +271,7 @@ export default function AddStationPage() {
 
         <div className="rounded-[20px] bg-white border border-gray-100 shadow-[0_4px_24px_rgba(0,0,0,0.04)] p-6 space-y-6">
 
-          {/* Step heading */}
+          {}
           <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
             <div className="flex h-9 w-9 items-center justify-center rounded-[16px] bg-[#8cc63f]/10 text-[#8cc63f]">
               {stepIcons[step - 1]}
@@ -279,7 +279,7 @@ export default function AddStationPage() {
             <h2 className="text-lg font-sg font-semibold text-[#133c1d]">{stepTitles[step - 1]}</h2>
           </div>
 
-          {/* ── STEP 1: Location ─────────────────────────────────────────── */}
+          {}
           {step === 1 && (
             <div className="space-y-5">
               <div>
@@ -329,7 +329,7 @@ export default function AddStationPage() {
             </div>
           )}
 
-          {/* ── STEP 2: Connectors ──────────────────────────────────────── */}
+          {}
           {step === 2 && (
             <div className="space-y-4">
               <p className="text-sm text-gray-500">Add all connector types available at this station.</p>
@@ -395,7 +395,7 @@ export default function AddStationPage() {
             </div>
           )}
 
-          {/* ── STEP 3: Details ─────────────────────────────────────────── */}
+          {}
           {step === 3 && (
             <div className="space-y-6">
               <div>
@@ -427,7 +427,7 @@ export default function AddStationPage() {
                 </div>
               </div>
 
-              {/* Amenities */}
+              {}
               <div>
                 <Label className="text-sm font-medium text-gray-700">Amenities</Label>
                 <div className="mt-2.5 grid grid-cols-3 gap-2">
@@ -453,7 +453,7 @@ export default function AddStationPage() {
                 </div>
               </div>
 
-              {/* Image URLs */}
+              {}
               <div>
                 <Label className="text-sm font-medium text-gray-700">Photo URLs</Label>
                 <p className="mb-2 text-xs text-gray-400">Add direct image URLs to show in the station gallery.</p>
@@ -486,7 +486,7 @@ export default function AddStationPage() {
                 )}
               </div>
 
-              {/* Operating Hours */}
+              {}
               <div>
                 <Label className="text-sm font-medium text-gray-700">Operating Hours</Label>
                 <div className="mt-2.5 space-y-3">
@@ -542,7 +542,7 @@ export default function AddStationPage() {
             </div>
           )}
 
-          {/* ── STEP 4: Review ───────────────────────────────────────────── */}
+          {}
           {step === 4 && (
             <div className="space-y-4">
               <div className="rounded-[16px] bg-[#8cc63f]/10 border border-[#8cc63f]/30 p-4">
@@ -624,7 +624,7 @@ export default function AddStationPage() {
           )}
         </div>
 
-        {/* Navigation */}
+        {}
         <div className="mt-5 flex items-center justify-between">
           {step > 1 ? (
             <Button variant="outline" onClick={back} className="gap-1.5 rounded-[16px]">

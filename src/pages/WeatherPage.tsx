@@ -27,7 +27,6 @@ function downloadExport(blob: Blob, filename: string) {
   URL.revokeObjectURL(href)
 }
 
-//  Station Picker Card 
 function StationPickerCard({
   station,
   selected,
@@ -68,7 +67,6 @@ function StationPickerCard({
   )
 }
 
-//  Skeleton 
 function StationCardSkeleton() {
   return (
     <div className="rounded-xl border border-gray-100 bg-white p-4 animate-pulse space-y-2">
@@ -78,7 +76,6 @@ function StationCardSkeleton() {
   )
 }
 
-//  Page 
 export default function WeatherPage() {
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
@@ -159,10 +156,10 @@ export default function WeatherPage() {
 
       <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
 
-        {/*  Station Picker (left panel)  */}
+        {}
         <div className="space-y-3">
           <div className="sticky top-4">
-            {/* Search */}
+            {}
             <div className="relative mb-3">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
               <input
@@ -181,7 +178,7 @@ export default function WeatherPage() {
               )}
             </div>
 
-            {/* Station list */}
+            {}
             <div className="space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
               {stationsLoading
                 ? Array.from({ length: 6 }).map((_, i) => <StationCardSkeleton key={i} />)
@@ -204,10 +201,10 @@ export default function WeatherPage() {
           </div>
         </div>
 
-        {/*  Solar Intel Panel (right)  */}
+        {}
         <div>
           {!selectedStation ? (
-            /* Empty state */
+            
             <div className="flex h-full min-h-100 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 bg-white p-12 text-center">
               <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-solar-green-50">
                 <Sun className="h-8 w-8 text-[#8cc63f]" />
@@ -219,7 +216,7 @@ export default function WeatherPage() {
             </div>
           ) : (
             <div className="space-y-6">
-              {/* Station header */}
+              {}
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-lg font-bold text-gray-900">{selectedStation.name}</h2>
@@ -239,20 +236,20 @@ export default function WeatherPage() {
                 </Link>
               </div>
 
-              {/* Live weather + forecast */}
+              {}
               <div className="grid gap-4 xl:grid-cols-2">
                 <SolarWidget stationId={selectedStation._id} />
                 <ForecastChart stationId={selectedStation._id} />
               </div>
 
-              {/* Analytics */}
+              {}
               <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-gray-400 font-medium">
                 <BarChart2 className="h-3.5 w-3.5" />
                 Station Analytics
               </div>
               <StationAnalyticsPanel stationId={selectedStation._id} />
 
-              {/* Community reports */}
+              {}
               <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-gray-400 font-medium mt-2">
                 <Sun className="h-3.5 w-3.5" />
                 Community Reports
@@ -263,7 +260,7 @@ export default function WeatherPage() {
         </div>
       </div>
 
-      {/* Attribution  OWM free-tier requires this on any page displaying OWM data */}
+      {}
       <p className="mt-8 text-center text-xs text-gray-400">
         Solar output estimates and weather data powered by{' '}
         <a href="https://openweathermap.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">

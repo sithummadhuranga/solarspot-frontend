@@ -6,26 +6,17 @@ import { getRoleSlug } from '@/lib/auth'
 import type { UserRole } from '@/types/user.types'
 
 interface RoleGuardProps {
-  /** Roles that are allowed to access the wrapped content. */
+  
   allowedRoles?: UserRole[]
-  /** Minimum role required (inclusive, e.g. 'admin' allows admin and higher). */
+  
   minRole?: UserRole
-  /** Rendered when the user has the required role. */
+  
   children: ReactNode
-  /** Where to redirect on role mismatch. Defaults to /unauthorized. */
+  
   fallback?: string
 }
 
-/**
- * RoleGuard — renders children only when the current user's role is in allowedRoles.
- *
- * Supports both allowedRoles and minRole (role hierarchy).
- * Usage:
- *   <RoleGuard minRole="admin">
- *     <AdminPanel />
- *   </RoleGuard>
- *   <RoleGuard allowedRoles={['admin', 'moderator']}>...</RoleGuard>
- */
+
 const ROLE_HIERARCHY: UserRole[] = [
   'guest',
   'user',

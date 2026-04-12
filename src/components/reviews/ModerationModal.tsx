@@ -58,7 +58,7 @@ export function ModerationModal({ review, onClose }: ModerationModalProps) {
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
 
       <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[24px] bg-white shadow-[0_25px_80px_rgba(0,0,0,0.18)] p-6">
-        {/* Header */}
+        {}
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-base font-extrabold text-[#133c1d] font-sg">Moderate review</h2>
           <button onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors">
@@ -66,9 +66,9 @@ export function ModerationModal({ review, onClose }: ModerationModalProps) {
           </button>
         </div>
 
-        {/* Review preview */}
+        {}
         <div className="mb-5 rounded-[16px] bg-[#f5faf0] p-4">
-          {/* Station name */}
+          {}
           {stationName && (
             <div className="flex items-center gap-1.5 mb-3 pb-3 border-b border-[#c9e6a0]/60">
               <MapPin className="h-3.5 w-3.5 text-[#1a6b3c] shrink-0" />
@@ -76,7 +76,7 @@ export function ModerationModal({ review, onClose }: ModerationModalProps) {
             </div>
           )}
 
-          {/* Author + date + rating */}
+          {}
           <div className="flex items-center gap-3 mb-3">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-xs font-extrabold text-[#1a6b3c]">
               {author.avatarUrl
@@ -94,15 +94,15 @@ export function ModerationModal({ review, onClose }: ModerationModalProps) {
             <StarRating value={review.rating} readonly size="sm" />
           </div>
 
-          {/* Review title */}
+          {}
           {review.title && (
             <p className="text-sm font-bold text-[#133c1d] mb-2">{review.title}</p>
           )}
 
-          {/* Full review content — no line-clamp so the moderator sees everything */}
+          {}
           <p className="text-sm font-medium text-gray-700 leading-relaxed whitespace-pre-wrap">{review.content}</p>
 
-          {/* Status badges */}
+          {}
           <div className="mt-3 flex flex-wrap gap-2">
             <span className={`rounded-full border px-2.5 py-1 text-xs font-bold ${statusBadge}`}>
               {review.moderationStatus}
@@ -120,7 +120,7 @@ export function ModerationModal({ review, onClose }: ModerationModalProps) {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Context note for flagged reviews */}
+          {}
           {review.moderationStatus === 'flagged' && (
             <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
               <p className="text-xs font-bold text-amber-700">
@@ -133,7 +133,7 @@ export function ModerationModal({ review, onClose }: ModerationModalProps) {
             </div>
           )}
 
-          {/* Action selection */}
+          {}
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-[#1a6b3c] mb-3">Action</p>
             <div className="grid grid-cols-2 gap-3">
@@ -163,7 +163,7 @@ export function ModerationModal({ review, onClose }: ModerationModalProps) {
             </div>
           </div>
 
-          {/* Moderator note */}
+          {}
           <div>
             <label className="block text-xs font-bold uppercase tracking-widest text-[#1a6b3c] mb-2">
               Note <span className="text-gray-400 font-normal normal-case tracking-normal">(optional)</span>
