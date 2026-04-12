@@ -1,9 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Layout } from '@/components/shared/Layout'
 
-/**
- * NotFoundPage — 404 fallback rendered by the catch-all route.
- */
+
 export default function NotFoundPage() {
   return (
     <Layout>

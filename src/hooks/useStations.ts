@@ -18,7 +18,6 @@ import type { ApiResponse, PaginatedResponse } from '@/types/api.types'
 import type { Station, NearbyStation } from '@/types/station.types'
 import type { StationQueryParams, NearbyQueryParams, CreateStationDto, UpdateStationDto, RejectStationDto } from '@/types/station.types'
 
-// ─── Query key factory (convention from project spec) ─────────────────────────
 export const stationKeys = {
   all:     ['stations'] as const,
   lists:   () => [...stationKeys.all, 'list'] as const,
@@ -36,7 +35,6 @@ interface UseStationsListOptions {
   enabled?: boolean
 }
 
-// ─── Queries ──────────────────────────────────────────────────────────────────
 
 export function useStationsList(params: StationQueryParams = {}, options: UseStationsListOptions = {}) {
   return useQuery<PaginatedResponse<Station>>({
@@ -94,7 +92,6 @@ export function useStationStats(id: string | undefined) {
   })
 }
 
-// ─── Mutations ────────────────────────────────────────────────────────────────
 
 export function useCreateStation() {
   const queryClient = useQueryClient()

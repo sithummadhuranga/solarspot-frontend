@@ -15,7 +15,6 @@ import { AMENITY_CONFIG } from '@/components/stations/AmenityChips'
 import { useCreateStation, useUpdateStation } from '@/hooks/useStations'
 import type { Station } from '@/types/station.types'
 
-// ─── Zod schema (mirrors backend Joi) ────────────────────────────────────────
 
 const CONNECTOR_TYPES = ['USB-C', 'Type-2', 'CCS', 'CHAdeMO', 'Tesla-NACS', 'AC-Socket'] as const
 const AMENITIES       = ['wifi','cafe','restroom','parking','security','shade','water','repair_shop','ev_parking'] as const
@@ -34,38 +33,33 @@ const scheduleItemSchema = z.object({
 })
 
 const stationFormSchema = z.object({
-  // Step 1
   name:            z.string().min(3, 'Min 3 characters').max(100, 'Max 100 characters'),
   description:     z.string().max(1000).optional(),
   addressMode:     z.enum(['string', 'coordinates']),
   addressString:   z.string().optional(),
   lat:             z.number().optional(),
   lng:             z.number().optional(),
-  // Step 2
   solarPanelKw:    z.number().min(0.1, 'Required'),
   connectors:      z.array(connectorSchema).min(1, 'Add at least one connector'),
   alwaysOpen:      z.boolean(),
   schedule:        z.array(scheduleItemSchema).optional(),
-  // Step 3
   amenities:       z.array(z.enum(AMENITIES)).optional(),
   images:          z.array(z.string().url('Must be a valid URL')).max(5).optional(),
 })
 
 type StationFormValues = z.infer<typeof stationFormSchema>
 
-// ─── Component ────────────────────────────────────────────────────────────────
 
 interface StationFormModalProps {
   open:      boolean
   onClose:   () => void
-  /** Pass existing station to enter edit mode */
+  
   station?:  Station
 }
 
 const STEP_LABELS = ['Basic Info', 'Technical', 'Extras']
 const TOTAL_STEPS = 3
 
-// Which fields belong to each step for per-step validation
 const STEP_1_FIELDS: (keyof StationFormValues)[] = ['name', 'description', 'addressMode', 'addressString', 'lat', 'lng']
 const STEP_2_FIELDS: (keyof StationFormValues)[] = ['solarPanelKw', 'connectors', 'alwaysOpen', 'schedule']
 
@@ -167,7 +161,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
           <DialogTitle className="font-sg font-bold text-[#133c1d]">{isEdit ? 'Edit Station' : 'Submit a Station'}</DialogTitle>
         </DialogHeader>
 
-        {/* Progress bar */}
         <div className="mt-2 mb-6">
           <div className="flex justify-between mb-2">
             {STEP_LABELS.map((label, i) => (
@@ -188,7 +181,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {/* ── Step 1: Basic Info ────────────────────────────────────── */}
           {step === 0 && (
             <>
               <div className="space-y-1.5">
@@ -208,7 +200,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
                 {errors.description && <p className="text-xs text-red-600">{errors.description.message}</p>}
               </div>
 
-              {/* Address mode toggle */}
               <div className="space-y-2">
                 <Label>Location</Label>
                 <div className="flex gap-2">
@@ -265,7 +256,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
             </>
           )}
 
-          {/* ── Step 2: Technical ─────────────────────────────────────── */}
           {step === 1 && (
             <>
               <div className="space-y-1.5">
@@ -274,7 +264,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
                 {errors.solarPanelKw && <p className="text-xs text-red-600">{errors.solarPanelKw.message}</p>}
               </div>
 
-              {/* Connectors */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label>Connectors <span className="text-red-500">*</span></Label>
@@ -340,7 +329,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
                 </div>
               </div>
 
-              {/* Operating hours */}
               <div className="space-y-2">
                 <Label>Operating hours</Label>
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -408,10 +396,8 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
             </>
           )}
 
-          {/* ── Step 3: Extras ────────────────────────────────────────── */}
           {step === 2 && (
             <>
-              {/* Amenities */}
               <div className="space-y-2">
                 <Label>Amenities</Label>
                 <Controller
@@ -453,7 +439,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
                 />
               </div>
 
-              {/* Images — up to 5 Cloudinary / CDN URLs */}
               <div className="space-y-2">
                 <Label>Images <span className="text-gray-400 font-normal">(up to 5 URLs)</span></Label>
                 <div className="space-y-2">
@@ -472,7 +457,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
                 </div>
               </div>
 
-              {/* Review summary */}
               <div className="rounded-[16px] border border-gray-200 bg-gray-50 p-4 space-y-1 text-sm">
                 <p className="font-medium text-gray-800">Ready to submit</p>
                 <p className="text-gray-500">
@@ -483,7 +467,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
             </>
           )}
 
-          {/* ─── Navigation ─────────────────────────────────────────── */}
           <DialogFooter className="border-t pt-4 mt-2">
             {step > 0 && (
               <Button type="button" variant="outline" onClick={goBack} disabled={isPending}>

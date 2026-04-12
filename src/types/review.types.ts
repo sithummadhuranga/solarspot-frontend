@@ -1,13 +1,12 @@
-// ─── Sub-types ────────────────────────────────────────────────────────────────
 
-/** Populated author shape from .populate('author', 'displayName avatarUrl') */
+
 export interface ReviewAuthor {
   _id:         string
   displayName: string
   avatarUrl:   string | null
 }
 
-/** Populated station shape from .populate('station', 'name') */
+
 export interface ReviewStation {
   _id:  string
   name: string
@@ -15,7 +14,6 @@ export interface ReviewStation {
 
 export type ModerationStatus = 'approved' | 'pending' | 'rejected' | 'flagged'
 
-// ─── Full review document ─────────────────────────────────────────────────────
 export interface Review {
   _id:             string
   station:         ReviewStation | string
@@ -38,7 +36,6 @@ export interface Review {
   updatedAt:       string
 }
 
-// ─── DTOs ─────────────────────────────────────────────────────────────────────
 export interface CreateReviewDto {
   station:  string
   rating:   number        // 1–5

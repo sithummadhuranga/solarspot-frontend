@@ -1,12 +1,4 @@
-/**
- * AddReportForm — Create a new crowdsourced solar observation report.
- *
- * Requires authentication; form is disabled when user is not logged in.
- * Auto-fetches live weather on submit — user only needs to supply optional
- * actualOutputKw and notes.
- *
- * Owner: Member 3 · Ref: SolarIntelligence_Module_Prompt.md → A6
- */
+
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useCreateSolarReportMutation } from './solarApi'

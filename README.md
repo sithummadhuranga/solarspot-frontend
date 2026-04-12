@@ -57,6 +57,12 @@ src/
 
 UI primitives are from [shadcn/ui](https://ui.shadcn.com/) — copy-pasted, fully customizable Radix + Tailwind components. Add new ones with `npx shadcn@latest add <component>`.
 
+## Main Frontend Documentation
+
+Use this as the primary reference for setup, architecture, ownership, deployment, and troubleshooting:
+
+- [Frontend Main Guide](frontend-deployment-guide.md)
+
 ## Deployment — Vercel
 
 1. Connect repo to Vercel
@@ -67,7 +73,7 @@ UI primitives are from [shadcn/ui](https://ui.shadcn.com/) — copy-pasted, full
 
 | Member | Module |
 |--------|--------|
-| Member 1 | Station Management |
-| Member 2 | Review System |
-| Member 3 | Weather Intelligence |
-| Member 4 | Auth & Users |
+| Sathush Nanyakkara (@sathufit) | Station Management |
+| Nimnath Nadushka (@nnimnath) | Review System |
+| Sithum Madhuranga (@sithummadhuranga) | Weather Intelligence |
+| Christine Lowe (@christineshwethalowe) | Auth & Users |

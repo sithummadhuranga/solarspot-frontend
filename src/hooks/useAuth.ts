@@ -8,13 +8,7 @@ import {
 import { useLogoutMutation } from '@/features/auth/authApi'
 import type { User } from '@/types/user.types'
 
-/**
- * useAuth — convenience hook for auth state and actions.
- *
- * Returns the current user, a typed isAuthenticated flag, and action helpers.
- * Always use this hook instead of selecting auth state directly.
- *
- */
+
 export function useAuth() {
   const dispatch = useAppDispatch()
   const user = useAppSelector(selectCurrentUser)

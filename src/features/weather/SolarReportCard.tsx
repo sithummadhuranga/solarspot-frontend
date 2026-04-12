@@ -1,11 +1,4 @@
-/**
- * SolarReportCard — single solar report summary card.
- *
- * Displays estimated vs actual output, solar score, weather conditions,
- * and observation notes. Includes publish/delete actions for the report owner.
- *
- * Owner: Member 3 · Ref: SolarIntelligence_Module_Prompt.md → A6
- */
+
 import { useState } from 'react'
 import { Cloud, Thermometer, Wind, Sun, Trash2, Globe, Lock, CheckCircle } from 'lucide-react'
 import type { SolarReport } from '@/types/solar.types'

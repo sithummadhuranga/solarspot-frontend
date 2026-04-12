@@ -1,4 +1,3 @@
-// ─── Sub-types ────────────────────────────────────────────────────────────────
 export type StationStatus = 'pending' | 'active' | 'inactive' | 'rejected'
 export type ConnectorType = 'USB-C' | 'Type-2' | 'CCS' | 'CHAdeMO' | 'Tesla-NACS' | 'AC-Socket'
 export type Day = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun'
@@ -43,7 +42,6 @@ export interface StationSubmittedBy {
   avatar?:     string | null
 }
 
-// ─── Full station document ────────────────────────────────────────────────────
 export interface Station {
   _id:             string
   name:            string
@@ -71,7 +69,6 @@ export interface Station {
   updatedAt:       string
 }
 
-// ─── DTOs ─────────────────────────────────────────────────────────────────────
 export interface ConnectorInput {
   type:    ConnectorType
   powerKw: number
@@ -98,12 +95,10 @@ export interface RejectStationDto {
   reason?: string
 }
 
-// ─── Nearby station (has extra distanceKm field) ──────────────────────────────
 export interface NearbyStation extends Station {
   distanceKm: number
 }
 
-// ─── Query params ─────────────────────────────────────────────────────────────
 export interface StationQueryParams {
   page?:          number
   limit?:         number

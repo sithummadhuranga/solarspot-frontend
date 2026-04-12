@@ -1,11 +1,4 @@
-/**
- * SolarReportList — Paginated list of solar reports for a station.
- *
- * Shows the AddReportForm at the top, then a paginated list of
- * SolarReportCards, and a simple next/prev pagination control.
- *
- * Owner: Member 3 · Ref: SolarIntelligence_Module_Prompt.md → A6
- */
+
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react'

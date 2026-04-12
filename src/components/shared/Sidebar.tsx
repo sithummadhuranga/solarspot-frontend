@@ -3,12 +3,7 @@ import { useAppSelector } from '@/app/hooks'
 import { selectCurrentUser } from '@/features/auth/authSlice'
 import { useCheckPermissionAccessQuery } from '@/features/permissions/permissionsApi'
 
-/**
- * Sidebar — contextual navigation for authenticated/admin sections.
- *
- * Rendered by Layout only when showSidebar={true}.
- * Items are conditionally shown based on the current user's permissions.
- */
+
 export function Sidebar() {
   const user = useAppSelector(selectCurrentUser)
 

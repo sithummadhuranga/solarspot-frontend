@@ -78,7 +78,7 @@ export default function RegisterPage() {
       await registerUser({ displayName: data.displayName, email: data.email, password: data.password }).unwrap()
       setTimeout(() => navigate('/login', { state: { registered: true } }), 2500)
     } catch {
-      // Error is rendered from RTK Query state.
+      return
     }
   }
 
@@ -87,11 +87,8 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex">
-
-      {/* ── Left panel — branding (hidden on mobile) ── */}
       <div className="hidden lg:flex lg:w-[45%] xl:w-[42%] relative overflow-hidden mesh-gradient noise-overlay">
         <div className="relative z-10 flex flex-col justify-between p-10 xl:p-14 w-full">
-          {/* Brand */}
           <Link to="/" className="flex items-center gap-2.5 group">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#8cc63f]/20 transition-transform group-hover:scale-105">
               <Sun className="h-5 w-5 text-[#8cc63f]" />
@@ -99,7 +96,6 @@ export default function RegisterPage() {
             <span className="font-sg text-lg font-extrabold text-white tracking-tight">SolarSpot</span>
           </Link>
 
-          {/* Middle content */}
           <div>
             <h2 className="font-sg font-extrabold text-white text-3xl xl:text-4xl leading-tight tracking-tight mb-4">
               Join the{' '}
@@ -108,8 +104,6 @@ export default function RegisterPage() {
             <p className="text-white/50 font-medium text-[0.95rem] leading-relaxed max-w-sm mb-10">
               Create your free account to discover solar-powered EV charging stations across Sri Lanka.
             </p>
-
-            {/* Feature pills */}
             <div className="space-y-3">
               {[
                 { icon: Zap, text: 'Find & manage charging stations' },
@@ -125,18 +119,13 @@ export default function RegisterPage() {
               ))}
             </div>
           </div>
-
-          {/* Bottom */}
           <p className="text-[0.72rem] text-white/20">
             © {new Date().getFullYear()} SolarSpot · Sri Lanka&apos;s #1 Solar EV Network
           </p>
         </div>
       </div>
-
-      {/* ── Right panel — form ── */}
       <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-8 bg-gradient-to-br from-[#fafdf7] via-white to-[#f0fdf4]">
 
-        {/* Mobile brand */}
         <Link to="/" className="lg:hidden flex items-center gap-2 mb-8">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#8cc63f] shadow-sm">
             <Sun className="h-5 w-5 text-[#133c1d]" />
@@ -241,7 +230,6 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      {/* Progress bar keyframe */}
       <style>{`@keyframes progressBar { from { width: 0; } to { width: 100%; } }`}</style>
     </div>
   )

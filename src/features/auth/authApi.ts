@@ -42,7 +42,7 @@ export const authApi = baseApi.injectEndpoints({
             }),
           )
         } catch {
-          // Error handling stays at component level.
+          return
         }
       },
     }),

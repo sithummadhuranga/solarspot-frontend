@@ -3,20 +3,11 @@ import type { ReactNode } from 'react'
 interface PageHeaderProps {
   title:       string
   description?: string
-  /** Optional action buttons / breadcrumbs rendered top-right. */
+  
   actions?:    ReactNode
 }
 
-/**
- * PageHeader — consistent page title block used by every page component.
- *
- * Usage:
- *   <PageHeader
- *     title="Charging Stations"
- *     description="Discover solar-powered stations near you"
- *     actions={<Link to="/stations/new">Add Station</Link>}
- *   />
- */
+
 export function PageHeader({ title, description, actions }: PageHeaderProps) {
   return (
     <div className="mb-6 flex items-start justify-between gap-4">

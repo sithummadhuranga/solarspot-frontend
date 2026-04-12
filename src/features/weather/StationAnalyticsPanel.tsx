@@ -1,11 +1,4 @@
-/**
- * StationAnalyticsPanel — Aggregated crowdsourced solar analytics for a station.
- *
- * Shows: average score, accuracy, estimated vs actual output, and a
- * 30-day trend bar chart of daily average solar scores.
- *
- * Owner: Member 3 · Ref: SolarIntelligence_Module_Prompt.md → A6
- */
+
 import {
   ResponsiveContainer,
   BarChart,
@@ -23,14 +16,25 @@ interface Props {
   stationId: string
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function CustomTooltip({ active, payload, label }: any) {
+interface TooltipPayloadEntry {
+  name?: string | number
+  value?: string | number
+  color?: string
+}
+
+interface CustomTooltipProps {
+  active?: boolean
+  payload?: TooltipPayloadEntry[]
+  label?: string | number
+}
+
+function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   if (!active || !payload?.length) return null
   return (
     <div className="rounded-lg border border-slate-700 bg-slate-800 p-3 text-sm text-white shadow-xl">
       <p className="font-semibold mb-1">{label}</p>
-      {payload.map((p: { name: string; value: number; color: string }) => (
-        <p key={p.name} style={{ color: p.color }}>
+      {payload.map((p) => (
+        <p key={String(p.name)} style={{ color: p.color }}>
           {p.name}: <strong>{p.value}</strong>
         </p>
       ))}

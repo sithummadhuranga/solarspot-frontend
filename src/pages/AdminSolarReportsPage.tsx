@@ -1,17 +1,4 @@
-/**
- * AdminSolarReportsPage — moderator/admin solar report management hub.
- *
- * Allows admins and moderators to:
- *   - Browse all solar reports across all stations and users
- *   - Filter by status and station
- *   - Archive reports that violate community guidelines
- *   - Restore archived reports (publish them)
- *
- * This page is protected by backend-authoritative permission checks.
- * Route: /admin/solar/reports (inside ProtectedRoute + BackendPermissionGuard)
- *
- * Owner: Member 3 · Ref: SolarIntelligence_Module_Prompt.md → A6
- */
+
 import { useState, useRef, useEffect } from 'react'
 import {
   Shield, Sun, Search, X, Archive, CheckCircle2, Clock,
@@ -31,11 +18,9 @@ import { getApiErrorMessage } from '@/lib/errors'
 import type { SolarReport } from '@/types/solar.types'
 import { formatDate } from '@/lib/utils'
 
-// ── Types ─────────────────────────────────────────────────────────────────────
 
 type StatusFilter = 'all' | 'published' | 'draft' | 'archived'
 
-// ── Status badge ──────────────────────────────────────────────────────────────
 
 function StatusBadge({ status }: { status: SolarReport['status'] }) {
   const cfg = {
@@ -52,7 +37,6 @@ function StatusBadge({ status }: { status: SolarReport['status'] }) {
   )
 }
 
-// ── Score badge ───────────────────────────────────────────────────────────────
 
 function ScoreBadge({ score }: { score: number }) {
   const colour =
@@ -68,7 +52,6 @@ function ScoreBadge({ score }: { score: number }) {
   )
 }
 
-// ── Report table row ──────────────────────────────────────────────────────────
 
 function ReportTableRow({ report }: { report: SolarReport }) {
   const [archive, { isLoading: archiving }] = useArchiveSolarReportMutation()
@@ -109,7 +92,6 @@ function ReportTableRow({ report }: { report: SolarReport }) {
         <ScoreBadge score={report.solarScore} />
 
         <div className="flex-1 min-w-0">
-          {/* Station + submitter */}
           <div className="flex flex-wrap items-center gap-2 mb-1">
             <Link
               to={`/stations/${stationId}`}
@@ -125,7 +107,6 @@ function ReportTableRow({ report }: { report: SolarReport }) {
             <time>{formatDate(report.visitedAt)}</time>
           </div>
 
-          {/* Output metrics */}
           <div className="mb-3 flex flex-wrap gap-4">
             <Stat label="Est." value={`${report.estimatedOutputKw} kW`} colour="text-sky-700" />
             {report.actualOutputKw !== null && (
@@ -136,7 +117,6 @@ function ReportTableRow({ report }: { report: SolarReport }) {
             )}
           </div>
 
-          {/* Weather conditions */}
           <div className="mb-3 flex flex-wrap gap-2 text-[11px] text-gray-500">
             <span className="flex items-center gap-1"><Thermometer className="h-3 w-3" />{w.temperatureC}°C</span>
             <span className="flex items-center gap-1"><Cloud className="h-3 w-3" />{w.cloudCoverPct}%</span>
@@ -144,21 +124,18 @@ function ReportTableRow({ report }: { report: SolarReport }) {
             <span className="flex items-center gap-1"><Wind className="h-3 w-3" />{w.windSpeedKph} km/h</span>
           </div>
 
-          {/* Notes */}
           {report.notes && (
             <p className="mb-3 line-clamp-2 border-l-2 border-gray-200 pl-2 text-xs italic text-gray-500">
               {report.notes}
             </p>
           )}
 
-          {/* Error */}
           {rowError && (
             <p className="mb-2 flex items-center gap-1 text-xs text-red-600">
               <AlertCircle className="h-3.5 w-3.5 shrink-0" /> {rowError}
             </p>
           )}
 
-          {/* Admin actions */}
           <div className="flex gap-2">
             {report.status !== 'archived' ? (
               <button
@@ -195,7 +172,6 @@ function Stat({ label, value, colour }: { label: string; value: string; colour: 
   )
 }
 
-// ── Filter tab ────────────────────────────────────────────────────────────────
 
 function FilterTab({ active, label, onClick }: {
   active: boolean; label: string; onClick: () => void
@@ -214,7 +190,6 @@ function FilterTab({ active, label, onClick }: {
   )
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
 
 const LIMIT = 12
 
@@ -246,7 +221,6 @@ export default function AdminSolarReportsPage() {
   const reports    = query.data?.data ?? []
   const pagination = query.data?.pagination
 
-  // Client-side station name filter (for the visible page since stationId filter requires ObjectId)
   const filtered = debouncedStation.trim()
     ? reports.filter((r) => {
         const name = typeof r.station === 'object' ? r.station.name : ''
@@ -269,7 +243,6 @@ export default function AdminSolarReportsPage() {
         }
       />
 
-      {/* ── Summary stats ─────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 mb-6">
         <AdminStatCard icon={<FileText className="h-4 w-4 text-gray-500" />} label="Total" value={statsAll?.pagination.total ?? 0} color="text-[#133c1d]" />
         <AdminStatCard icon={<CheckCircle2 className="h-4 w-4 text-emerald-600" />} label="Published" value={statsPublished?.pagination.total ?? 0} color="text-emerald-700" />
@@ -277,9 +250,7 @@ export default function AdminSolarReportsPage() {
         <AdminStatCard icon={<Archive className="h-4 w-4 text-gray-500" />} label="Archived" value={statsArchived?.pagination.total ?? 0} color="text-gray-700" />
       </div>
 
-      {/* ── Filters bar ───────────────────────────────────────────────────── */}
       <div className="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-        {/* Status filter */}
         <div className="flex items-center gap-1 rounded-xl border border-gray-200 bg-gray-50 p-1">
           <Filter className="ml-2 mr-1 h-3.5 w-3.5 shrink-0 text-gray-500" />
           <FilterTab active={statusFilter === 'all'} label="All" onClick={() => handleStatusChange('all')} />
@@ -288,7 +259,6 @@ export default function AdminSolarReportsPage() {
           <FilterTab active={statusFilter === 'archived'} label="Archived" onClick={() => handleStatusChange('archived')} />
         </div>
 
-        {/* Station name filter */}
         <div className="relative flex-1 min-w-52">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-500" />
           <input
@@ -305,7 +275,6 @@ export default function AdminSolarReportsPage() {
         </div>
       </div>
 
-      {/* ── Loading ─────────────────────────────────────────────────────────── */}
       {query.isLoading && (
         <div className="space-y-3">
           {Array.from({ length: 5 }).map((_, i) => (
@@ -314,7 +283,6 @@ export default function AdminSolarReportsPage() {
         </div>
       )}
 
-      {/* ── Empty state ────────────────────────────────────────────────────── */}
       {!query.isLoading && filtered.length === 0 && (
         <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 bg-white py-20 text-center">
           <Zap className="mb-3 h-12 w-12 text-gray-400" />
@@ -323,19 +291,16 @@ export default function AdminSolarReportsPage() {
         </div>
       )}
 
-      {/* ── Report list ───────────────────────────────────────────────────── */}
       {!query.isLoading && filtered.length > 0 && (
         <>
           <div className="space-y-3 mb-6">
             {filtered.map((r) => <ReportTableRow key={r._id} report={r} />)}
           </div>
 
-          {/* Count */}
           <p className="mb-4 text-center text-xs text-gray-500">
             Page {page} · {pagination?.total ?? 0} total report{(pagination?.total ?? 0) !== 1 ? 's' : ''}
           </p>
 
-          {/* Pagination */}
           {(pagination?.totalPages ?? 1) > 1 && (
             <div className="flex items-center justify-center gap-3">
               <button
@@ -360,7 +325,6 @@ export default function AdminSolarReportsPage() {
         </>
       )}
 
-      {/* Attribution */}
       <p className="mt-10 text-center text-xs text-gray-500">
         Solar data powered by{' '}
         <a href="https://openweathermap.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#133c1d]">

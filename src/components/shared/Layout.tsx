@@ -5,16 +5,11 @@ import { ApiStatusBanner } from './ApiStatusBanner'
 
 interface LayoutProps {
   children: ReactNode
-  /** Show sidebar — false on full-width pages like the map. */
+  
   showSidebar?: boolean
 }
 
-/**
- * Layout — root shell shared by all authenticated and public pages.
- *
- * TODO (all teams): add toast/notification provider, modal portal, and
- *                   global loading overlay here once UI library is connected.
- */
+
 export function Layout({ children, showSidebar = false }: LayoutProps) {
   return (
     <div className="min-h-screen bg-[#f5faf0]">

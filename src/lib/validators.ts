@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { CONNECTOR_TYPES, AMENITIES } from './constants'
 
-// ─── Auth ─────────────────────────────────────────────────────────────────────
 export const loginSchema = z.object({
   email:    z.string().email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -33,14 +32,12 @@ export const resetPasswordSchema = z
     path: ['confirmPassword'],
   })
 
-// ─── User profile ─────────────────────────────────────────────────────────────
 export const updateProfileSchema = z.object({
   displayName: z.string().min(2).max(50).optional(),
   bio:         z.string().max(300).optional(),
   avatarUrl:   z.string().url().optional(),
 })
 
-// ─── Station ──────────────────────────────────────────────────────────────────
 export const createStationSchema = z.object({
   name:          z.string().min(3).max(100),
   description:   z.string().max(1000).optional(),
@@ -59,7 +56,6 @@ export const createStationSchema = z.object({
   operatingHours:  z.object({ alwaysOpen: z.boolean() }).optional(),
 })
 
-// ─── Review ───────────────────────────────────────────────────────────────────
 export const createReviewSchema = z.object({
   title:     z.string().min(5).max(100),
   body:      z.string().min(20).max(2000),
@@ -73,7 +69,6 @@ export const createReviewSchema = z.object({
   }),
 })
 
-// ─── Derived TypeScript types ─────────────────────────────────────────────────
 export type LoginFormData           = z.infer<typeof loginSchema>
 export type RegisterFormData        = z.infer<typeof registerSchema>
 export type ForgotPasswordFormData  = z.infer<typeof forgotPasswordSchema>
