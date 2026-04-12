@@ -48,7 +48,9 @@ export type StationStatus = (typeof STATION_STATUSES)[number]
 export const DEFAULT_PAGE_SIZE = 10
 export const MAX_PAGE_SIZE     = 50
 
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+export const API_BASE_URL = import.meta.env.PROD
+  ? '/api'
+  : (import.meta.env.VITE_API_BASE_URL || '/api')
 
 export const DEFAULT_MAP_CENTER: [number, number] = [6.9271, 79.8612]
 export const DEFAULT_MAP_ZOOM   = 13

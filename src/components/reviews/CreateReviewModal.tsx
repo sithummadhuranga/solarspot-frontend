@@ -67,13 +67,10 @@ export function CreateReviewModal({ stationId, editTarget, onClose }: CreateRevi
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {}
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
 
-      {}
       <div className="relative w-full max-w-lg rounded-[24px] bg-white shadow-[0_25px_80px_rgba(0,0,0,0.18)] p-6">
 
-        {}
         {submitResult === 'rejected' && (
           <div className="flex flex-col items-center text-center gap-4 py-6">
             <div className="flex items-center justify-center h-14 w-14 rounded-full bg-red-100">
@@ -119,7 +116,6 @@ export function CreateReviewModal({ stationId, editTarget, onClose }: CreateRevi
           </div>
         )}
 
-        {}
         {!submitResult && (<>
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -139,7 +135,6 @@ export function CreateReviewModal({ stationId, editTarget, onClose }: CreateRevi
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {}
           <div>
             <label className="block text-xs font-bold uppercase tracking-widest text-[#1a6b3c] mb-2">
               Overall rating <span className="text-red-400">*</span>
@@ -152,7 +147,6 @@ export function CreateReviewModal({ stationId, editTarget, onClose }: CreateRevi
             </div>
           </div>
 
-          {}
           <div>
             <label className="block text-xs font-bold uppercase tracking-widest text-[#1a6b3c] mb-2">
               Title <span className="text-gray-400 font-normal normal-case tracking-normal">(optional)</span>
@@ -167,7 +161,6 @@ export function CreateReviewModal({ stationId, editTarget, onClose }: CreateRevi
             />
           </div>
 
-          {}
           <div>
             <label className="block text-xs font-bold uppercase tracking-widest text-[#1a6b3c] mb-2">
               Review <span className="text-red-400">*</span>
@@ -185,14 +178,12 @@ export function CreateReviewModal({ stationId, editTarget, onClose }: CreateRevi
             </p>
           </div>
 
-          {}
           {error && (
             <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3">
               <p className="text-xs font-bold text-red-600">{error}</p>
             </div>
           )}
 
-          {}
           <div className="flex gap-3 pt-1">
             <button
               type="button"

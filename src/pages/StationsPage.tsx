@@ -85,7 +85,6 @@ export default function StationsPage() {
     <div className="min-h-screen bg-[#f8fafc]">
       <Navbar />
 
-      {}
       <div className="relative overflow-hidden bg-[#8cc63f]">
         <div className="absolute inset-0 opacity-20"
           style={{
@@ -114,7 +113,6 @@ export default function StationsPage() {
             )}
           </div>
 
-          {}
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="relative flex-1">
               <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
@@ -136,7 +134,6 @@ export default function StationsPage() {
             </div>
 
             <div className="flex items-center gap-3">
-              {}
               <select
                 value={sortBy}
                 onChange={(e) => { setSortBy(e.target.value as StationQueryParams['sortBy']); setPage(1) }}
@@ -145,7 +142,6 @@ export default function StationsPage() {
                 {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
 
-              {}
               <button
                 onClick={() => setFiltersOpen((v) => !v)}
                 className={cn(
@@ -164,7 +160,6 @@ export default function StationsPage() {
                 )}
               </button>
 
-              {}
               <div className="flex rounded-xl bg-white shadow-md overflow-hidden">
                 <button
                   onClick={() => setViewMode('grid')}
@@ -188,13 +183,11 @@ export default function StationsPage() {
         </div>
       </div>
 
-      {}
       {filtersOpen && (
         <div className="border-b border-gray-200 bg-[#f5faf0] shadow-inner">
           <div className="mx-auto max-w-7xl px-4 py-6 lg:px-8">
             <div className="flex flex-wrap items-start gap-8">
 
-              {}
               <div>
                 <p className="mb-3 text-xs font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
                   Connector Type
@@ -228,7 +221,6 @@ export default function StationsPage() {
                 </div>
               </div>
 
-              {}
               <div>
                 <p className="mb-3 text-xs font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
                   Min Rating
@@ -251,7 +243,6 @@ export default function StationsPage() {
                 </div>
               </div>
 
-              {}
               <div>
                 <p className="mb-3 text-xs font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
                   Verified Only
@@ -284,7 +275,6 @@ export default function StationsPage() {
         </div>
       )}
 
-      {}
       {activeFiltersCount > 0 && !filtersOpen && (
         <div className="border-b border-gray-100 bg-white">
           <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 lg:px-8">
@@ -317,10 +307,8 @@ export default function StationsPage() {
         </div>
       )}
 
-      {}
       <main className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
 
-        {}
         {isLoading && (
           <div className={cn(
             'grid gap-5',
@@ -330,7 +318,6 @@ export default function StationsPage() {
           </div>
         )}
 
-        {}
         {!isLoading && stations.length === 0 && (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-solar-green-50 mb-4">
@@ -348,7 +335,6 @@ export default function StationsPage() {
           </div>
         )}
 
-        {}
         {!isLoading && stations.length > 0 && (
           <>
             <div className={cn(
@@ -360,7 +346,6 @@ export default function StationsPage() {
               ))}
             </div>
 
-            {}
             {pagination && pagination.totalPages > 1 && (
               <div className="mt-12 flex items-center justify-between border-t border-gray-200 pt-8">
                 <p className="text-sm font-medium text-gray-500">

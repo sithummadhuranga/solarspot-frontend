@@ -88,10 +88,8 @@ export function ReviewCard({
       review.moderationStatus === 'rejected' && 'opacity-60',
       className,
     )}>
-      {}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          {}
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f5faf0] text-base font-extrabold text-[#1a6b3c]">
             {author.avatarUrl
               ? <img src={author.avatarUrl} alt={author.displayName} className="h-10 w-10 rounded-full object-cover" />
@@ -110,7 +108,6 @@ export function ReviewCard({
         </div>
       </div>
 
-      {}
       {moderationBadge && review.moderationStatus !== 'approved' && (
         <div className={cn(
           'mt-3 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold',
@@ -124,13 +121,11 @@ export function ReviewCard({
         </div>
       )}
 
-      {}
       {review.title && (
         <p className="mt-4 text-sm font-bold text-[#133c1d]">{review.title}</p>
       )}
       <p className="mt-2 text-sm font-medium leading-relaxed text-gray-700">{review.content}</p>
 
-      {}
       {isModerator && review.moderationNote && (
         <div className="mt-3 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3">
           <p className="text-xs font-bold text-amber-700">Moderation note:</p>
@@ -138,10 +133,8 @@ export function ReviewCard({
         </div>
       )}
 
-      {}
       <div className="mt-4 flex items-center justify-between gap-2 border-t border-gray-100 pt-4">
         <div className="flex items-center gap-2">
-          {}
           {currentUserId && !isOwn && review.moderationStatus === 'approved' && (
             <button
               onClick={handleHelpful}
@@ -158,7 +151,6 @@ export function ReviewCard({
             </button>
           )}
 
-          {}
           {(!currentUserId || isOwn) && optimisticCount > 0 && (
             <span className="flex items-center gap-1.5 text-xs font-medium text-gray-400">
               <ThumbsUp className="h-3.5 w-3.5" />
@@ -168,7 +160,6 @@ export function ReviewCard({
         </div>
 
         <div className="flex items-center gap-1.5">
-          {}
           {isModerator && onModerate && review.moderationStatus !== 'approved' && (
             <button
               onClick={() => onModerate(review)}
@@ -178,7 +169,6 @@ export function ReviewCard({
             </button>
           )}
 
-          {}
           {isOwn && onEdit && review.moderationStatus !== 'rejected' && (
             <button
               onClick={() => onEdit(review)}
@@ -188,7 +178,6 @@ export function ReviewCard({
             </button>
           )}
 
-          {}
           {currentUserId && !isOwn && (
             optimisticHasFlagged ? (
               <button
@@ -211,7 +200,6 @@ export function ReviewCard({
             )
           )}
 
-          {}
           {(isOwn || isModerator) && (
             <button
               onClick={handleDelete}

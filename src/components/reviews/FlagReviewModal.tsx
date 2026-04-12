@@ -46,7 +46,6 @@ export function FlagReviewModal({ review, onClose, onSuccess }: FlagReviewModalP
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
 
       <div className="relative w-full max-w-md rounded-[24px] bg-white shadow-[0_25px_80px_rgba(0,0,0,0.18)] p-6">
-        {}
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-50">

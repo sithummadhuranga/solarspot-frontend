@@ -58,7 +58,6 @@ export function ReviewList({ stationId, averageRating = 0, reviewCount = 0 }: Re
 
   return (
     <div id="reviews-section" className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-      {}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <MessageSquare className="h-5 w-5 text-[#1a6b3c]" />
@@ -82,7 +81,6 @@ export function ReviewList({ stationId, averageRating = 0, reviewCount = 0 }: Re
         )}
       </div>
 
-      {}
       {averageRating > 0 && reviewCount > 0 && (
         <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-6 rounded-[16px] bg-[#f5faf0] p-5">
           <div className="flex flex-col items-center shrink-0">
@@ -114,7 +112,6 @@ export function ReviewList({ stationId, averageRating = 0, reviewCount = 0 }: Re
         </div>
       )}
 
-      {}
       {reviewCount > 0 && (
         <div className="mb-4 flex items-center justify-between">
           <p className="text-xs font-medium text-gray-400">
@@ -132,7 +129,6 @@ export function ReviewList({ stationId, averageRating = 0, reviewCount = 0 }: Re
         </div>
       )}
 
-      {}
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
           <Loader2 className="h-7 w-7 animate-spin text-[#1a6b3c]" />
@@ -169,7 +165,6 @@ export function ReviewList({ stationId, averageRating = 0, reviewCount = 0 }: Re
         </div>
       )}
 
-      {}
       {pagination && pagination.totalPages > 1 && (
         <div className="mt-6 flex items-center justify-center gap-2">
           <button
@@ -216,7 +211,6 @@ export function ReviewList({ stationId, averageRating = 0, reviewCount = 0 }: Re
         </div>
       )}
 
-      {}
       {(showCreate || editTarget) && (
         <CreateReviewModal
           stationId={stationId}

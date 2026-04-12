@@ -148,7 +148,6 @@ export default function StationDetailPage() {
     <div className="min-h-screen bg-[#f5faf0]">
       <Navbar />
 
-      {}
       <div className="relative h-72 w-full overflow-hidden bg-[#8cc63f] sm:h-80 lg:h-96">
         {station.images.length > 0 && (
           <>
@@ -158,7 +157,6 @@ export default function StationDetailPage() {
               className="absolute inset-0 h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-linear-to-t from-[#0b2614]/90 via-[#0b2614]/40 to-transparent" />
-            {}
             {station.images.length > 1 && (
               <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-2">
                 {station.images.map((_, i) => (
@@ -176,7 +174,6 @@ export default function StationDetailPage() {
           </>
         )}
 
-        {}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
           <button
             onClick={() => navigate(-1)}
@@ -193,7 +190,6 @@ export default function StationDetailPage() {
           </div>
         </div>
 
-        {}
         <div className="absolute bottom-0 left-0 right-0 p-6">
           <div className="mx-auto max-w-7xl">
             <div className="flex items-end justify-between gap-4">
@@ -219,7 +215,6 @@ export default function StationDetailPage() {
                 </div>
               </div>
 
-              {}
               <div className="hidden sm:flex flex-col items-end shrink-0">
                 <div className="flex items-center gap-0.5">
                   {Array.from({ length: 5 }).map((_, i) => (
@@ -242,14 +237,11 @@ export default function StationDetailPage() {
         </div>
       </div>
 
-      {}
       <div className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-3">
 
-          {}
           <div className="space-y-8 lg:col-span-2">
 
-            {}
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
               <StatCard
                 icon={<Star className="h-6 w-6 text-amber-500" />}
@@ -277,7 +269,6 @@ export default function StationDetailPage() {
               />
             </div>
 
-            {}
             {station.description && (
               <div className="rounded-2xl border border-gray-100/80 bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
                 <h2 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
@@ -286,7 +277,6 @@ export default function StationDetailPage() {
                 </h2>
                 <p className="text-[0.92rem] leading-[1.75] text-gray-600 font-medium">{station.description}</p>
 
-                {}
                 <div className="mt-5 pt-4 border-t border-gray-100/80 flex flex-wrap items-center gap-3 text-[0.78rem] font-semibold text-gray-500">
                   {station.solarPanelKw > 0 && (
                     <span className="flex items-center gap-1.5 bg-amber-50 text-amber-700 px-2.5 py-1 rounded-lg">
@@ -312,7 +302,6 @@ export default function StationDetailPage() {
               </div>
             )}
 
-            {}
             {station.connectors.length > 0 && (
               <div className="rounded-2xl border border-gray-100/80 bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
                 <h2 className="mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
@@ -346,7 +335,6 @@ export default function StationDetailPage() {
               </div>
             )}
 
-            {}
             {station.amenities.length > 0 && (
               <div className="rounded-2xl border border-gray-100/80 bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
                 <h2 className="mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
@@ -367,7 +355,6 @@ export default function StationDetailPage() {
               </div>
             )}
 
-            {}
             <div className="rounded-2xl border border-gray-100/80 bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
               <h2 className="mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">
                 <Clock className="h-4 w-4" /> Operating Hours
@@ -391,7 +378,6 @@ export default function StationDetailPage() {
               )}
             </div>
 
-            {}
             {id && (
               <ReviewList
                 stationId={id}
@@ -400,7 +386,6 @@ export default function StationDetailPage() {
               />
             )}
 
-            {}
             {id && (
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-1">
@@ -423,12 +408,9 @@ export default function StationDetailPage() {
             )}
           </div>
 
-          {}
           <div className="space-y-6">
 
-            {}
             <div className="rounded-2xl border border-gray-100/80 bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.04)] space-y-3">
-              {}
               {isOwner && canOwnerEditStation && (
                 <Link to={`/my-stations`}
                   className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-gray-200 py-3 text-sm font-bold text-gray-700 hover:border-[#8cc63f] hover:text-[#133c1d] transition-all"
@@ -457,7 +439,6 @@ export default function StationDetailPage() {
               )}
             </div>
 
-            {}
             {isMod && station.status === 'pending' && (
               <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 space-y-4 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
                 <div className="flex items-center gap-2">
@@ -505,7 +486,6 @@ export default function StationDetailPage() {
               </div>
             )}
 
-            {}
             {station.status === 'rejected' && station.rejectionReason && (
               <div className="rounded-2xl border border-red-200 bg-red-50 p-5 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
                 <p className="text-xs font-bold text-red-700 mb-1.5 font-sg">Rejection Reason</p>
@@ -513,7 +493,6 @@ export default function StationDetailPage() {
               </div>
             )}
 
-            {}
             <div className="rounded-2xl border border-gray-100/80 bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.04)] space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-widest text-[#1a6b3c] font-sg">Station Info</h3>
               <div className="space-y-3">
@@ -547,7 +526,6 @@ export default function StationDetailPage() {
               </div>
             </div>
 
-            {}
             {hasMap && (
               <div className="overflow-hidden rounded-2xl border border-gray-100/80 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
                 <MapContainer
@@ -578,7 +556,6 @@ export default function StationDetailPage() {
         </div>
       </div>
 
-      {}
       <RejectionReasonModal
         open={rejectOpen}
         stationName={station.name}

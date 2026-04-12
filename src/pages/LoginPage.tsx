@@ -76,7 +76,6 @@ export default function LoginPage() {
             <span className="font-sg text-lg font-extrabold text-white tracking-tight">SolarSpot</span>
           </Link>
 
-          {}
           <div>
             <h2 className="font-sg font-extrabold text-white text-3xl xl:text-4xl leading-tight tracking-tight mb-4">
               Welcome back to the{' '}
@@ -221,7 +220,6 @@ export default function LoginPage() {
         )}
       </div>
 
-      {}
       <style>{`@keyframes progressBar { from { width: 0; } to { width: 100%; } }`}</style>
     </div>
   )

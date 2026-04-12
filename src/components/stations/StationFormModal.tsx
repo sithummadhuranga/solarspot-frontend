@@ -161,7 +161,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
           <DialogTitle className="font-sg font-bold text-[#133c1d]">{isEdit ? 'Edit Station' : 'Submit a Station'}</DialogTitle>
         </DialogHeader>
 
-        {}
         <div className="mt-2 mb-6">
           <div className="flex justify-between mb-2">
             {STEP_LABELS.map((label, i) => (
@@ -182,7 +181,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {}
           {step === 0 && (
             <>
               <div className="space-y-1.5">
@@ -202,7 +200,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
                 {errors.description && <p className="text-xs text-red-600">{errors.description.message}</p>}
               </div>
 
-              {}
               <div className="space-y-2">
                 <Label>Location</Label>
                 <div className="flex gap-2">
@@ -259,7 +256,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
             </>
           )}
 
-          {}
           {step === 1 && (
             <>
               <div className="space-y-1.5">
@@ -268,7 +264,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
                 {errors.solarPanelKw && <p className="text-xs text-red-600">{errors.solarPanelKw.message}</p>}
               </div>
 
-              {}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label>Connectors <span className="text-red-500">*</span></Label>
@@ -334,7 +329,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
                 </div>
               </div>
 
-              {}
               <div className="space-y-2">
                 <Label>Operating hours</Label>
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -402,10 +396,8 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
             </>
           )}
 
-          {}
           {step === 2 && (
             <>
-              {}
               <div className="space-y-2">
                 <Label>Amenities</Label>
                 <Controller
@@ -447,7 +439,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
                 />
               </div>
 
-              {}
               <div className="space-y-2">
                 <Label>Images <span className="text-gray-400 font-normal">(up to 5 URLs)</span></Label>
                 <div className="space-y-2">
@@ -466,7 +457,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
                 </div>
               </div>
 
-              {}
               <div className="rounded-[16px] border border-gray-200 bg-gray-50 p-4 space-y-1 text-sm">
                 <p className="font-medium text-gray-800">Ready to submit</p>
                 <p className="text-gray-500">
@@ -477,7 +467,6 @@ export function StationFormModal({ open, onClose, station }: StationFormModalPro
             </>
           )}
 
-          {}
           <DialogFooter className="border-t pt-4 mt-2">
             {step > 0 && (
               <Button type="button" variant="outline" onClick={goBack} disabled={isPending}>

@@ -34,7 +34,6 @@ export function StationCard({ station, className, actions }: StationCardProps) {
         className
       )}
     >
-      {}
       <Link to={`/stations/${station._id}`} className="relative block h-44 w-full overflow-hidden bg-gradient-to-br from-[#f5faf0] to-[#dcfce7] flex-shrink-0">
         {station.images.length > 0 ? (
           <img
@@ -50,7 +49,6 @@ export function StationCard({ station, className, actions }: StationCardProps) {
           </div>
         )}
 
-        {}
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/20 to-transparent" />
 
         {station.isFeatured && (
@@ -74,7 +72,6 @@ export function StationCard({ station, className, actions }: StationCardProps) {
           {cfg.label}
         </div>
 
-        {}
         {station.averageRating > 0 && (
           <div className="absolute left-3 bottom-3 flex items-center gap-1 rounded-full bg-black/60 backdrop-blur-md px-2.5 py-1">
             <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
@@ -84,9 +81,7 @@ export function StationCard({ station, className, actions }: StationCardProps) {
         )}
       </Link>
 
-      {}
       <div className="flex flex-1 flex-col p-4 pt-3.5">
-        {}
         <Link to={`/stations/${station._id}`} className="block mb-2">
           <h3 className="truncate font-sg font-extrabold text-[#133c1d] text-[1.05rem] leading-snug group-hover:text-[#1a6b3c] transition-colors">
             {station.name}
@@ -101,12 +96,10 @@ export function StationCard({ station, className, actions }: StationCardProps) {
           )}
         </div>
 
-        {}
         {station.description && (
           <p className="text-[0.78rem] leading-relaxed text-gray-400 line-clamp-2 mb-3">{station.description}</p>
         )}
 
-        {}
         {station.connectors.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-3">
             {station.connectors.slice(0, 3).map((c, i) => (
@@ -120,7 +113,6 @@ export function StationCard({ station, className, actions }: StationCardProps) {
           </div>
         )}
 
-        {}
         <div className="mt-auto flex items-center justify-between pt-3 border-t border-gray-100/80">
           <div className="flex items-center gap-2 text-[11px] font-medium text-gray-500">
             {station.isVerified && (

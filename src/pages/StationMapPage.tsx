@@ -222,7 +222,6 @@ export default function StationMapPage() {
 
       <Navbar />
 
-      {}
       <div className="relative z-1001 shrink-0 border-b border-gray-200 bg-white/95 px-4 py-3 shadow-[0_4px_24px_rgba(0,0,0,0.04)] backdrop-blur supports-backdrop-filter:bg-white/85 lg:px-6">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
@@ -269,16 +268,13 @@ export default function StationMapPage() {
         </div>
       </div>
 
-      {}
       <div className="relative flex min-h-0 flex-1 overflow-hidden">
 
-        {}
         <aside className={cn(
           'relative z-10 flex flex-col overflow-hidden bg-white shadow-xl transition-all duration-300 ease-in-out',
           sidebarOpen ? 'w-80 min-w-[20rem]' : 'w-0'
         )}>
 
-          {}
           <div className="shrink-0 bg-[#133c1d] px-4 py-4">
             <div className="flex items-center justify-between mb-3">
               <div>
@@ -292,7 +288,6 @@ export default function StationMapPage() {
                 <X className="h-4 w-4" />
               </button>
             </div>
-            {}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
               <input
@@ -310,7 +305,6 @@ export default function StationMapPage() {
             </div>
           </div>
 
-          {}
           <div className="shrink-0 border-b border-gray-100 bg-gray-50 px-3 py-2">
             {(listError || nearbyError) && (
               <div className="mb-2 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-2 text-[11px] text-amber-700">
@@ -335,7 +329,6 @@ export default function StationMapPage() {
 
             {filtersOpen && (
               <div className="mt-2 space-y-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-                {}
                 <div>
                   <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Connector</p>
                   <div className="flex flex-wrap gap-1">
@@ -355,7 +348,6 @@ export default function StationMapPage() {
                   </div>
                 </div>
 
-                {}
                 <div>
                   <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
                     Min Rating {minRating > 0 && <span className="text-amber-500">({minRating}★+)</span>}
@@ -365,7 +357,6 @@ export default function StationMapPage() {
                     className="w-full accent-[#8cc63f]" />
                 </div>
 
-                {}
                 <div>
                   <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Amenities</p>
                   <div className="flex flex-wrap gap-1">
@@ -397,7 +388,6 @@ export default function StationMapPage() {
                   </div>
                 </div>
 
-                {}
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex-1">
                     <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Sort</p>
@@ -440,7 +430,6 @@ export default function StationMapPage() {
             )}
           </div>
 
-          {}
           <div className="flex-1 overflow-y-auto px-3 py-3">
             {listLoading ? (
               <div className="space-y-2">
@@ -484,7 +473,6 @@ export default function StationMapPage() {
           </div>
         </aside>
 
-        {}
         <div className="relative flex-1">
           {!sidebarOpen && (
             <button onClick={() => setSidebarOpen(true)}
@@ -499,7 +487,6 @@ export default function StationMapPage() {
             </button>
           )}
 
-          {}
           <button
             onClick={() => navigator.geolocation?.getCurrentPosition(
               ({ coords }) => setMapCenter({ lat: coords.latitude, lng: coords.longitude }),
@@ -511,7 +498,6 @@ export default function StationMapPage() {
             <Navigation2 className="h-4 w-4" />
           </button>
 
-          {}
           {isAuthenticated && (
             <Link to="/stations/new"
               className="absolute bottom-8 right-4 z-1000 flex items-center gap-2 rounded-[20px] bg-[#8cc63f] px-4 py-3 text-sm font-sg font-semibold text-[#133c1d] shadow-[0_12px_48px_rgba(0,0,0,0.12)] hover:bg-[#7ab334] hover:shadow-[0_16px_64px_rgba(0,0,0,0.16)] transition-all">
